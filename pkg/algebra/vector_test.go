@@ -137,7 +137,7 @@ func TestVector_DivideScalar(t *testing.T) {
 	v1 := NewVector(1, -2, 3)
 	c := 2.0
 
-	res := []float64{0.5, -1, 1.4, 0}
+	res := []float64{0.5, -1, 1.5, 0}
 
 	v1 = v1.DivideScalar(c)
 	for i, v := range res {
@@ -252,10 +252,6 @@ func TestCrossProduct(t *testing.T) {
 	testVectorEquals(t, cross.Get(), res)
 }
 
-func equals(a, b float64) bool {
-	EPSILON := 0.00001
-	return a-b < EPSILON || b-a < EPSILON
-}
 
 func testVectorEquals(t *testing.T, values, results []float64) {
 	for i, v := range results {

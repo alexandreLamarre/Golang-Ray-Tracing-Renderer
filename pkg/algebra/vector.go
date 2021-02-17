@@ -21,7 +21,7 @@ func NewVector(data ...float64) *Vector {
 }
 
 //Get getter function for the vector tuple
-func (v *Vector) Get() []float64{
+func (v *Vector) Get() []float64 {
 	return v.tuple
 }
 
@@ -171,5 +171,5 @@ func CrossProduct(v1 *Vector, v2 *Vector) (*Vector, error) {
 	}
 	a := v1.tuple
 	b := v2.tuple
-	return NewVector(a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]), nil
+	return NewVector(a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]), nil
 }

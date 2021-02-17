@@ -10,7 +10,7 @@ func main() {
 	fmt.Println("Golang ray tracer V 0.1")
 	err := examples.CreateProjectileExample()
 
-	if err != nil{
+	if err != nil {
 		log.Println(err)
 	}
 }
