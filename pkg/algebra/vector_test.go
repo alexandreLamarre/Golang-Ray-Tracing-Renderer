@@ -28,6 +28,12 @@ func TestVector_IsVector(t *testing.T) {
 	}
 }
 
+func TestVector_Get(t *testing.T) {
+	v := NewVector([]float64{1.0, 2.0, 3.0})
+
+	testVectorEquals(t, v.Get(), []float64{1.0, 2.0, 3.0, 0.0})
+}
+
 func TestVector_Add(t *testing.T) {
 	v1 := NewPoint([]float64{3, -2, 5})
 	v2 := NewVector([]float64{-2, 3, 1})
@@ -40,7 +46,7 @@ func TestVector_Add(t *testing.T) {
 
 	res := []float64{1.0, 1.0, 6.0, 1.0}
 
-	testVectorEquals(t, v3.tuple, res)
+	testVectorEquals(t, v3.Get(), res)
 
 	if !v3.IsPoint() {
 		t.Errorf("Expected v3 to be a point")
@@ -59,7 +65,7 @@ func TestVector_Subtract(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	testVectorEquals(t, v3.tuple, res)
+	testVectorEquals(t, v3.Get(), res)
 	if !v3.IsVector() {
 		t.Errorf("Expected v3 to be a vector")
 	}
@@ -75,7 +81,7 @@ func TestVector_Subtract(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	testVectorEquals(t, v3.tuple, res)
+	testVectorEquals(t, v3.Get(), res)
 
 	if !v3.IsPoint() {
 		t.Errorf("Expected v3 to be a vector")
@@ -92,7 +98,7 @@ func TestVector_Subtract(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	testVectorEquals(t, v3.tuple, res)
+	testVectorEquals(t, v3.Get(), res)
 
 	if !v3.IsVector() {
 		t.Errorf("Expected v3 to be a vector")
@@ -105,7 +111,7 @@ func TestVector_Negate(t *testing.T) {
 	v1 = v1.Negate()
 	res := []float64{-1, 2, -3, 1}
 
-	testVectorEquals(t, v1.tuple, res)
+	testVectorEquals(t, v1.Get(), res)
 }
 
 func TestVector_MultScalar(t *testing.T) {
@@ -115,7 +121,7 @@ func TestVector_MultScalar(t *testing.T) {
 
 	v1 = v1.MultScalar(c)
 
-	testVectorEquals(t, v1.tuple, res)
+	testVectorEquals(t, v1.Get(), res)
 
 	v1 = NewVector([]float64{1, -2, 3})
 	c = 0.5
@@ -123,7 +129,7 @@ func TestVector_MultScalar(t *testing.T) {
 
 	v1 = v1.MultScalar(c)
 
-	testVectorEquals(t, v1.tuple, res)
+	testVectorEquals(t, v1.Get(), res)
 }
 
 func TestVector_DivideScalar(t *testing.T) {
@@ -135,8 +141,8 @@ func TestVector_DivideScalar(t *testing.T) {
 
 	v1 = v1.DivideScalar(c)
 	for i, v := range res {
-		if !equals(v1.tuple[i], v) {
-			t.Errorf("Expected %g, got %g", v, v1.tuple[i])
+		if !equals(v1.Get()[i], v) {
+			t.Errorf("Expected %g, got %g", v, v1.Get()[i])
 		}
 	}
 
@@ -179,7 +185,7 @@ func TestVector_Normalize(t *testing.T) {
 	}
 	res := []float64{1.0, 0.0, 0.0, 0.0}
 
-	testVectorEquals(t, v2.tuple, res)
+	testVectorEquals(t, v2.Get(), res)
 
 	v1 = NewVector([]float64{1, 2, 3})
 	v2, err = v1.Normalize()
@@ -190,7 +196,7 @@ func TestVector_Normalize(t *testing.T) {
 	}
 
 	res = []float64{1 / math.Sqrt(14), 2 / math.Sqrt(14), 3 / math.Sqrt(14), 0.0}
-	testVectorEquals(t, v2.tuple, res)
+	testVectorEquals(t, v2.Get(), res)
 
 	if !equals(v2.Magnitude(), 1) {
 		t.Errorf("Expected vector's magnitude to be %g, instead got: %g", 1.0, v2.Magnitude())
@@ -228,7 +234,7 @@ func TestCrossProduct(t *testing.T) {
 
 	res := []float64{-1, 2, -1}
 
-	testVectorEquals(t, cross.tuple, res)
+	testVectorEquals(t, cross.Get(), res)
 
 	v1 = NewVector([]float64{1.0, 2.0, 3.0})
 	v2 = NewVector([]float64{2.0, 3.0, 4.0})
@@ -243,7 +249,7 @@ func TestCrossProduct(t *testing.T) {
 
 	res = []float64{1, -2, 1}
 
-	testVectorEquals(t, cross.tuple, res)
+	testVectorEquals(t, cross.Get(), res)
 }
 
 func equals(a, b float64) bool {

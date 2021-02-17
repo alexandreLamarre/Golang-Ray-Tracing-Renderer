@@ -20,6 +20,11 @@ func NewVector(data []float64) *Vector {
 	return v
 }
 
+//Get getter function for the vector tuple
+func (v *Vector) Get() []float64{
+	return v.tuple
+}
+
 //IsPoint returns true iff the Vector is a point
 func (v *Vector) IsPoint() bool {
 	return v.tuple[len(v.tuple)-1] == 1.0
