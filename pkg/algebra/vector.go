@@ -7,14 +7,14 @@ type Vector struct {
 }
 
 //NewPoint creates a tuple with the data and appends a 1.0 to signify it is a point
-func NewPoint(data []float64) *Vector {
+func NewPoint(data ...float64) *Vector {
 	newData := append(data, 1.0)
 	v := &Vector{tuple: newData}
 	return v
 }
 
 //NewVector creates a tuple with the data and appends a 0.0 to signify it is point
-func NewVector(data []float64) *Vector {
+func NewVector(data ...float64) *Vector {
 	newData := append(data, 0.0)
 	v := &Vector{tuple: newData}
 	return v
@@ -171,5 +171,5 @@ func CrossProduct(v1 *Vector, v2 *Vector) (*Vector, error) {
 	}
 	a := v1.tuple
 	b := v2.tuple
-	return NewVector([]float64{a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]}), nil
+	return NewVector(a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]), nil
 }

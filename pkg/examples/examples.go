@@ -11,13 +11,13 @@ import (
 func CreateProjectileExample() error{
 	c := canvas.NewCanvas(900, 550)
 	color := &canvas.Color{1, 0, 0}
-	startVelocity, err := algebra.NewVector([]float64{1, 1.8, 0.0}).Normalize()
+	startVelocity, err := algebra.NewVector(1, 1.8, 0.0).Normalize()
 	if err != nil {
 		return err
 	}
 	startVelocity = startVelocity.MultScalar(11.25)
-	p := &projectile{position: algebra.NewPoint([]float64{0, 1, 0}), velocity: startVelocity}
-	e := &environment{gravity: algebra.NewVector([]float64{0, -0.1, 0}), wind: algebra.NewVector([]float64{-0.01, 0, 0})}
+	p := &projectile{position: algebra.NewPoint(0, 1, 0), velocity: startVelocity}
+	e := &environment{gravity: algebra.NewVector(0, -0.1, 0), wind: algebra.NewVector(-0.01, 0, 0)}
 
 	fmt.Println(c.ToPpmHeader(255))
 

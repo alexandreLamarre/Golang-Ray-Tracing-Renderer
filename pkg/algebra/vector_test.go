@@ -6,7 +6,7 @@ import (
 )
 
 func TestVector_IsPoint(t *testing.T) {
-	v1 := NewPoint([]float64{0.0, 0.0, 1.0})
+	v1 := NewPoint(0.0, 0.0, 1.0)
 	if !v1.IsPoint() {
 		t.Errorf("Expected %v to be a point", v1.tuple)
 	}
@@ -17,7 +17,7 @@ func TestVector_IsPoint(t *testing.T) {
 }
 
 func TestVector_IsVector(t *testing.T) {
-	v := NewVector([]float64{0.0, 1.0, 0.0})
+	v := NewVector(0.0, 1.0, 0.0)
 
 	if v.IsPoint() {
 		t.Errorf("Expected %v to not be a point", v.tuple)
@@ -29,14 +29,14 @@ func TestVector_IsVector(t *testing.T) {
 }
 
 func TestVector_Get(t *testing.T) {
-	v := NewVector([]float64{1.0, 2.0, 3.0})
+	v := NewVector(1.0, 2.0, 3.0)
 
 	testVectorEquals(t, v.Get(), []float64{1.0, 2.0, 3.0, 0.0})
 }
 
 func TestVector_Add(t *testing.T) {
-	v1 := NewPoint([]float64{3, -2, 5})
-	v2 := NewVector([]float64{-2, 3, 1})
+	v1 := NewPoint(3, -2, 5)
+	v2 := NewVector(-2, 3, 1)
 
 	v3, err := v1.Add(v2)
 
@@ -54,8 +54,8 @@ func TestVector_Add(t *testing.T) {
 }
 
 func TestVector_Subtract(t *testing.T) {
-	v1 := NewPoint([]float64{3.0, 2.0, 1.0})
-	v2 := NewPoint([]float64{5.0, 6.0, 7.0})
+	v1 := NewPoint(3.0, 2.0, 1.0)
+	v2 := NewPoint(5.0, 6.0, 7.0)
 
 	res := []float64{-2, -4, -6, 0.0}
 
@@ -70,8 +70,8 @@ func TestVector_Subtract(t *testing.T) {
 		t.Errorf("Expected v3 to be a vector")
 	}
 
-	v1 = NewPoint([]float64{3.0, 2.0, 1.0})
-	v2 = NewVector([]float64{5.0, 6.0, 7.0})
+	v1 = NewPoint(3.0, 2.0, 1.0)
+	v2 = NewVector(5.0, 6.0, 7.0)
 
 	res = []float64{-2, -4, -6, 1.0}
 
@@ -87,8 +87,8 @@ func TestVector_Subtract(t *testing.T) {
 		t.Errorf("Expected v3 to be a vector")
 	}
 
-	v1 = NewVector([]float64{3.0, 2.0, 1.0})
-	v2 = NewVector([]float64{5.0, 6.0, 7.0})
+	v1 = NewVector(3.0, 2.0, 1.0)
+	v2 = NewVector(5.0, 6.0, 7.0)
 
 	res = []float64{-2, -4, -6, 0.0}
 
@@ -115,7 +115,7 @@ func TestVector_Negate(t *testing.T) {
 }
 
 func TestVector_MultScalar(t *testing.T) {
-	v1 := NewVector([]float64{1, -2, 3})
+	v1 := NewVector(1, -2, 3)
 	c := 3.5
 	res := []float64{3.5, -7, 10.5, 0}
 
@@ -123,7 +123,7 @@ func TestVector_MultScalar(t *testing.T) {
 
 	testVectorEquals(t, v1.Get(), res)
 
-	v1 = NewVector([]float64{1, -2, 3})
+	v1 = NewVector(1, -2, 3)
 	c = 0.5
 	res = []float64{0.5, -1, 1.5, 0}
 
@@ -134,7 +134,7 @@ func TestVector_MultScalar(t *testing.T) {
 
 func TestVector_DivideScalar(t *testing.T) {
 
-	v1 := NewVector([]float64{1, -2, 3})
+	v1 := NewVector(1, -2, 3)
 	c := 2.0
 
 	res := []float64{0.5, -1, 1.4, 0}
@@ -150,7 +150,7 @@ func TestVector_DivideScalar(t *testing.T) {
 
 func TestVector_Magnitude(t *testing.T) {
 
-	v1 := NewVector([]float64{1, 0, 0})
+	v1 := NewVector(1, 0, 0)
 
 	res := 1.0
 
@@ -158,19 +158,19 @@ func TestVector_Magnitude(t *testing.T) {
 		t.Errorf("Expected %g, got:%g", res, v1.Magnitude())
 	}
 
-	v1 = NewVector([]float64{0, 1, 0})
+	v1 = NewVector(0, 1, 0)
 
 	if !equals(v1.Magnitude(), res) {
 		t.Errorf("Expected %g, got:%g", res, v1.Magnitude())
 	}
 
-	v1 = NewVector([]float64{0, 0, 1})
+	v1 = NewVector(0, 0, 1)
 
 	if !equals(v1.Magnitude(), res) {
 		t.Errorf("Expected %g, got: %g", res, v1.Magnitude())
 	}
 
-	v1 = NewVector([]float64{-1, -2, -3})
+	v1 = NewVector(-1, -2, -3)
 	res = math.Sqrt(14)
 	if !equals(v1.Magnitude(), res) {
 		t.Errorf("Expected %g, got: %g", res, v1.Magnitude())
@@ -178,7 +178,7 @@ func TestVector_Magnitude(t *testing.T) {
 }
 
 func TestVector_Normalize(t *testing.T) {
-	v1 := NewVector([]float64{4, 0, 0})
+	v1 := NewVector(4, 0, 0)
 	v2, err := v1.Normalize()
 	if err != nil {
 		t.Errorf("Zero divide in Normalize method")
@@ -187,7 +187,7 @@ func TestVector_Normalize(t *testing.T) {
 
 	testVectorEquals(t, v2.Get(), res)
 
-	v1 = NewVector([]float64{1, 2, 3})
+	v1 = NewVector(1, 2, 3)
 	v2, err = v1.Normalize()
 
 	if err != nil {
@@ -204,8 +204,8 @@ func TestVector_Normalize(t *testing.T) {
 }
 
 func TestDotProduct(t *testing.T) {
-	v1 := NewVector([]float64{1.0, 2.0, 3.0})
-	v2 := NewVector([]float64{2.0, 3.0, 4.0})
+	v1 := NewVector(1.0, 2.0, 3.0)
+	v2 := NewVector(2.0, 3.0, 4.0)
 
 	res := 20.0
 	dot, err := DotProduct(v1, v2)
@@ -221,8 +221,8 @@ func TestDotProduct(t *testing.T) {
 }
 
 func TestCrossProduct(t *testing.T) {
-	v1 := NewVector([]float64{1.0, 2.0, 3.0})
-	v2 := NewVector([]float64{2.0, 3.0, 4.0})
+	v1 := NewVector(1.0, 2.0, 3.0)
+	v2 := NewVector(2.0, 3.0, 4.0)
 
 	cross, err := CrossProduct(v1, v2)
 
@@ -236,8 +236,8 @@ func TestCrossProduct(t *testing.T) {
 
 	testVectorEquals(t, cross.Get(), res)
 
-	v1 = NewVector([]float64{1.0, 2.0, 3.0})
-	v2 = NewVector([]float64{2.0, 3.0, 4.0})
+	v1 = NewVector(1.0, 2.0, 3.0)
+	v2 = NewVector(2.0, 3.0, 4.0)
 
 	cross, err = CrossProduct(v2, v1)
 
