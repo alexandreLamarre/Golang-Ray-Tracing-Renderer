@@ -43,7 +43,6 @@ func (v *Vector) Add(v2 *Vector) (*Vector, error) {
 		res[i] = val + v2.tuple[i]
 	}
 
-
 	return &Vector{res}, nil
 }
 
@@ -65,14 +64,14 @@ func (v *Vector) Subtract(v2 *Vector) (*Vector, error) {
 }
 
 //Negate returns -vector
-func (v *Vector) Negate() *Vector{
+func (v *Vector) Negate() *Vector {
 
 	res := make([]float64, len(v.tuple), len(v.tuple))
 
-	for i:=0; i < len(v.tuple); i++{
-		if i == len(v.tuple)- 1{
+	for i := 0; i < len(v.tuple); i++ {
+		if i == len(v.tuple)-1 {
 			res[i] = v.tuple[i] // keep attribute that keeps track of pointedness/vectoredness the same
-		} else{
+		} else {
 			res[i] = -v.tuple[i]
 		}
 	}
@@ -81,15 +80,15 @@ func (v *Vector) Negate() *Vector{
 }
 
 //MultScalar performs vector scalar multiplication
-func (v *Vector) MultScalar(c float64) *Vector{
+func (v *Vector) MultScalar(c float64) *Vector {
 
 	res := make([]float64, len(v.tuple), len(v.tuple))
 
-	for i, val := range v.tuple{
-		if i == len(v.tuple) -1 {
+	for i, val := range v.tuple {
+		if i == len(v.tuple)-1 {
 			res[i] = val // keep attribute that keeps track of pointedness/vectoredness the same
 		} else {
-			res[i] = c*val
+			res[i] = c * val
 		}
 	}
 
@@ -97,26 +96,26 @@ func (v *Vector) MultScalar(c float64) *Vector{
 }
 
 //DivideScalar performs vector scalar division. (Notationally more convenient sometimes than MultScalar method)
-func (v* Vector) DivideScalar(c float64) *Vector{
+func (v *Vector) DivideScalar(c float64) *Vector {
 	res := make([]float64, len(v.tuple), len(v.tuple))
 
-	for i, val := range v.tuple{
-		if i == len(v.tuple) -1 {
+	for i, val := range v.tuple {
+		if i == len(v.tuple)-1 {
 			res[i] = val
-		} else{
-			res[i] = (1/c)*val
+		} else {
+			res[i] = (1 / c) * val
 		}
 	}
 	return &Vector{res}
 }
 
 //Magnitude returns the provided vectors magnitude
-func (v* Vector) Magnitude() float64{
-	sum:= 0.0
-	for i, val := range v.tuple{
-		if i == len(v.tuple) -1{
+func (v *Vector) Magnitude() float64 {
+	sum := 0.0
+	for i, val := range v.tuple {
+		if i == len(v.tuple)-1 {
 			continue
-		} else{
+		} else {
 			sum += math.Pow(val, 2)
 		}
 
@@ -133,11 +132,11 @@ func (v *Vector) Normalize() (*Vector, error) {
 
 	res := make([]float64, len(v.tuple), len(v.tuple))
 
-	for i, val := range v.tuple{
-		if i == len(v.tuple) - 1{
+	for i, val := range v.tuple {
+		if i == len(v.tuple)-1 {
 			res[i] = val
-		} else{
-			res[i] = val/norm
+		} else {
+			res[i] = val / norm
 		}
 	}
 
@@ -145,27 +144,27 @@ func (v *Vector) Normalize() (*Vector, error) {
 }
 
 //DotProduct returns the dot product of two vectors
-func  DotProduct(v *Vector, v2 *Vector) (float64, error){
-	if len(v.tuple) != len(v2.tuple){
-		return 0.0,MismatchedLength([2]int{len(v.tuple), len(v2.tuple)})
+func DotProduct(v *Vector, v2 *Vector) (float64, error) {
+	if len(v.tuple) != len(v2.tuple) {
+		return 0.0, MismatchedLength([2]int{len(v.tuple), len(v2.tuple)})
 	}
 
 	sum := 0.0
-	for i, val := range v.tuple{
-		sum += val*v2.tuple[i]
+	for i, val := range v.tuple {
+		sum += val * v2.tuple[i]
 	}
 	return sum, nil
 }
 
 func CrossProduct(v1 *Vector, v2 *Vector) (*Vector, error) {
-	if len(v1.tuple) != len(v2.tuple){
-		return nil,MismatchedLength([2]int{len(v1.tuple), len(v2.tuple)})
+	if len(v1.tuple) != len(v2.tuple) {
+		return nil, MismatchedLength([2]int{len(v1.tuple), len(v2.tuple)})
 	}
 
-	if len(v1.tuple) != 4{
+	if len(v1.tuple) != 4 {
 		return nil, ExpectedDimension(3)
 	}
 	a := v1.tuple
 	b := v2.tuple
-	return NewVector([]float64{a[1]*b[2] - a[2]*b[1], a[2] * b[0] - a[0]*b[2], a[0]*b[1]-a[1]*b[0]}), nil
+	return NewVector([]float64{a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]}), nil
 }
