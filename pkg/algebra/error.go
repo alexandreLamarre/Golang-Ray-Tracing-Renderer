@@ -16,6 +16,12 @@ type ExpectedDimension int
 //InvalidMatrixIndex is an error returned when an index provided is out of bounds of one of the matrix slices
 type InvalidMatrixIndex int
 
+//ExpectedSquareMatrix is an returned when a method expects a square matrix but receives a n x m matrix (n != m)
+type ExpectedSquareMatrix [2]int
+
+//NotInvertibleError is when a matrix argument is supposed to be invertible but is not
+type NotInvertibleError int
+
 func (e MismatchedLength) Error() string {
 	return fmt.Sprintf("Expected %d and %d to match", e[0], e[1])
 }
@@ -30,4 +36,12 @@ func (e ExpectedDimension) Error() string {
 
 func (e InvalidMatrixIndex) Error() string {
 	return fmt.Sprintf("Index %d out of matrix bounds", e)
+}
+
+func (e ExpectedSquareMatrix) Error() string {
+	return fmt.Sprintf("Expected Square Matrix, got dimension %d X %d", e[0], e[1])
+}
+
+func (e NotInvertibleError) Error() string {
+	return fmt.Sprintf("Matrix is not invertible")
 }
