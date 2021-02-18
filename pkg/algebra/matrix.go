@@ -300,6 +300,84 @@ func (m *Matrix) Inverse() *Matrix {
 	return mInverse.Transpose()
 }
 
+//TranslationMatrix returns a 4x4 translation matrix for 3d vectors/points
+func TranslationMatrix(x, y, z float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		1, 0, 0, x,
+		0, 1, 0, y,
+		0, 0, 1, z,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+//ScalingMatrix returns a 4x4 scaling matrix for 3d vectors/points
+func ScalingMatrix(x, y, z float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		x, 0, 0, 0,
+		0, y, 0, 0,
+		0, 0, z, 0,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+//RotationX returns a 4x4 matrix that rotates a 3d vector/point around the x-axis
+func RotationX(r float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		1, 0, 0, 0,
+		0, math.Cos(r), -math.Sin(r), 0,
+		0, math.Sin(r), math.Cos(r), 0,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+//RotationY returns a 4x4 matrix that rotates a 3d vector/point around the x-axis
+func RotationY(r float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		math.Cos(r), 0, math.Sin(r), 0,
+		0, 1, 0, 0,
+		-math.Sin(r), 0, math.Cos(r), 0,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+//RotationZ returns a 4x4 matrix that rotates a 3d vector/point around the x-axis
+func RotationZ(r float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		math.Cos(r), -math.Sin(r), 0, 0,
+		math.Sin(r), math.Cos(r), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+//Shearing returns a 4x4 matrix that is used to shear a
+func Shearing(xy, xz, yx, yz, zx, zy float64) *Matrix {
+	m, err := NewMatrix(4, 4,
+		1, xy, xz, 0,
+		yx, 1, yz, 0,
+		zx, zy, 1, 0,
+		0, 0, 0, 1)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
 //stack datatype helper for matrix functions/methods
 type stack []float64
 

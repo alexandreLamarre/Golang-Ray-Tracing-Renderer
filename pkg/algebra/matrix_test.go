@@ -1,6 +1,7 @@
 package algebra
 
 import (
+	"math"
 	"testing"
 )
 
@@ -360,6 +361,201 @@ func TestMatrix_Transpose(t *testing.T) {
 
 	res := [][]float64{{0, 9, 1, 0}, {9, 8, 8, 0}, {3, 0, 5, 5}, {0, 8, 3, 8}}
 	testMatrixEquals(t, m.Get(), res)
+}
+
+func TestTranslationMatrix(t *testing.T) {
+	m := TranslationMatrix(5, -3, 2)
+	p := NewPoint(-3, 4, 5)
+	p = m.MultiplyByVec(p)
+	if !p.IsPoint() {
+		t.Errorf("Expected %v to be a point", p)
+	}
+	res := []float64{2, 1, 7, 1.0}
+	testVectorEquals(t, p.Get(), res)
+
+	m = m.Inverse()
+	p = NewPoint(-3, 4, 5)
+	p = m.MultiplyByVec(p)
+	if !p.IsPoint() {
+		t.Errorf("Expected %v to be a point", p)
+	}
+	res = []float64{-8, 7, 3, 1.0}
+	testVectorEquals(t, p.Get(), res)
+
+	v := NewVector(-3, 4, 5)
+	m = TranslationMatrix(5, -3, 2)
+	newV := m.MultiplyByVec(v)
+	testVectorEquals(t, newV.Get(), v.Get())
+}
+
+func TestScalingMatrix(t *testing.T) {
+	m := ScalingMatrix(2, 3, 4)
+	p := NewPoint(-4, 6, 8)
+	p = m.MultiplyByVec(p)
+
+	if !p.IsPoint() {
+		t.Errorf("Expected %v to be a point", p)
+	}
+
+	res := []float64{-8, 18, 32}
+	testVectorEquals(t, p.Get(), res)
+
+	v := NewVector(-4, 6, 8)
+	v = m.MultiplyByVec(v)
+
+	if !v.IsVector() {
+		t.Errorf("Expected %v to be a vector", v)
+	}
+	testVectorEquals(t, v.Get(), res)
+
+	inv := m.Inverse()
+	v = NewVector(-4, 6, 8)
+	v = inv.MultiplyByVec(v)
+
+	if !v.IsVector() {
+		t.Errorf("Expected %v to be a vector", v)
+	}
+	res = []float64{-2, 2, 2}
+	testVectorEquals(t, v.Get(), res)
+}
+
+func TestMatrixRotation(t *testing.T) {
+
+	// X-ROTATION
+
+	p := NewPoint(0, 1, 0)
+	quarter := RotationX(math.Pi / 4)
+	half := RotationX(math.Pi / 2)
+
+	p = quarter.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res := []float64{0, math.Sqrt(2) / 2, math.Sqrt(2) / 2, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	p = NewPoint(0, 1, 0)
+	p = half.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{0, 0, 1, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	// Y - ROTATION
+
+	p = NewPoint(0, 0, 1)
+	quarter = RotationY(math.Pi / 4)
+	half = RotationY(math.Pi / 2)
+
+	p = quarter.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{math.Sqrt(2) / 2, 0, math.Sqrt(2) / 2, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	p = NewPoint(0, 0, 1)
+	p = half.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{1, 0, 0, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	// Z - ROTATION
+
+	p = NewPoint(0, 1, 0)
+	quarter = RotationZ(math.Pi / 4)
+	half = RotationZ(math.Pi / 2)
+
+	p = quarter.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{-math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	p = NewPoint(0, 1, 0)
+	p = half.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{-1, 0, 0, 1}
+	testVectorEquals(t, p.Get(), res)
+}
+
+func TestShearing(t *testing.T) {
+	// =========================== X ========================
+	m := Shearing(1, 0, 0, 0, 0, 0)
+	p := NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res := []float64{5, 3, 4, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	m = Shearing(0, 1, 0, 0, 0, 0)
+	p = NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{6, 3, 4, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	// =========================== y ============================
+
+	m = Shearing(0, 0, 1, 0, 0, 0)
+	p = NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{2, 5, 4, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	m = Shearing(0, 0, 0, 1, 0, 0)
+	p = NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{2, 7, 4, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	// ============================ Z =============================
+
+	m = Shearing(0, 0, 0, 0, 1, 0)
+	p = NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{2, 3, 6, 1}
+	testVectorEquals(t, p.Get(), res)
+
+	m = Shearing(0, 0, 0, 0, 0, 1)
+	p = NewPoint(2, 3, 4)
+	p = m.MultiplyByVec(p)
+	if p == nil {
+		t.Errorf("Something went wrong with matrix algebra")
+		return
+	}
+	res = []float64{2, 3, 7, 1}
+	testVectorEquals(t, p.Get(), res)
 }
 
 func testMatrixEquals(t *testing.T, values [][]float64, expected [][]float64) {
