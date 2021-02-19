@@ -558,6 +558,25 @@ func TestShearing(t *testing.T) {
 	testVectorEquals(t, p.Get(), res)
 }
 
+func TestMatrixTransformationChaining(t *testing.T) {
+	p1 := NewPoint(1, 0, 1)
+	A := RotationX(math.Pi / 2)
+	B := ScalingMatrix(5, 5, 5)
+	C := TranslationMatrix(10, 5, 7)
+
+	p1 = A.MultiplyByVec(p1)
+	p1 = B.MultiplyByVec(p1)
+	p1 = C.MultiplyByVec(p1)
+
+	T := Multiply(C, Multiply(B, A))
+	p := NewPoint(1, 0, 1)
+	p2 := T.MultiplyByVec(p)
+
+	res := []float64{15, 0, 7, 1}
+	testVectorEquals(t, p1.Get(), res)
+	testVectorEquals(t, p2.Get(), res)
+}
+
 func testMatrixEquals(t *testing.T, values [][]float64, expected [][]float64) {
 	for i, _ := range values {
 		for j, _ := range values[i] {

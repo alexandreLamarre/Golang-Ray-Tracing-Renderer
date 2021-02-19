@@ -252,7 +252,6 @@ func TestCrossProduct(t *testing.T) {
 	testVectorEquals(t, cross.Get(), res)
 }
 
-
 func testVectorEquals(t *testing.T, values, results []float64) {
 	for i, v := range results {
 		if !equals(values[i], v) {

@@ -36,11 +36,11 @@ func (r *Ray) Position(t float64) *Vector {
 	return p
 }
 
-func (r *Ray) Transform(m *Matrix) *Ray{
+func (r *Ray) Transform(m *Matrix) *Ray {
 	v := r.Get()
 	origin := v["origin"]
 	direction := v["direction"]
 	origin2 := m.MultiplyByVec(origin)
 	direction2 := m.MultiplyByVec(direction)
-	return &Ray{origin:origin2, direction:direction2}
+	return &Ray{origin: origin2, direction: direction2}
 }

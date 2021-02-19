@@ -5,16 +5,17 @@ import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/datatypes"
 	"math"
 )
+
 //Shape represents a shape interface in 3D space
-type Shape interface{
+type Shape interface {
 	SetTransform(m *algebra.Matrix)
 	NormalAt(point *algebra.Vector) *algebra.Vector //returns the normal at the location "point" on the shape
 }
 
 //Sphere Data type for a 3D sphere
 type Sphere struct {
-	origin *algebra.Vector
-	radius float64
+	origin    *algebra.Vector
+	radius    float64
 	transform *algebra.Matrix
 }
 
@@ -27,27 +28,33 @@ type Intersections struct {
 // NewSphere creates a new Sphere datatype at origin 0,0,0 with unit radius and no ray intersections
 func NewSphere(m *algebra.Matrix) *Sphere {
 	mat := m
-	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4{
+	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		mat = algebra.IdentityMatrix(4)
 	}
 	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0, transform: mat}
 }
 
 //SetTransform sets the Sphere's transformation
-func (s *Sphere) SetTransform(m *algebra.Matrix){
+func (s *Sphere) SetTransform(m *algebra.Matrix) {
 	s.transform = m
 }
 
 //NormalAt returns the normal to the sphere at the location "point"
-func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector{
+func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector {
 	inverseTransform := s.transform.Inverse()
 	sphereBoundary := inverseTransform.MultiplyByVec(point)
-	sphereNormal, err := sphereBoundary.Subtract(algebra.NewPoint(0,0,0))
-	if err != nil{panic(err);return nil}
+	sphereNormal, err := sphereBoundary.Subtract(algebra.NewPoint(0, 0, 0))
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	worldNormal := inverseTransform.Transpose().MultiplyByVec(sphereNormal)
 
 	res, err := worldNormal.Normalize()
-	if err != nil{panic(err);return nil}
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	res = algebra.NewVector(res.Get()[:3]...)
 	return res
 }

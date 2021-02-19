@@ -26,16 +26,16 @@ func TestNewIntersections(t *testing.T) {
 
 func TestSphere_SetTransform(t *testing.T) {
 	s := NewSphere(nil)
-	m := algebra.TranslationMatrix(2,3,4)
+	m := algebra.TranslationMatrix(2, 3, 4)
 	s.SetTransform(m)
 
-	if !s.transform.Equals(m){
+	if !s.transform.Equals(m) {
 		t.Errorf("Expected %v, Got: %v", m, s.transform)
 	}
 
 	s2 := NewSphere(m)
 
-	if !s2.transform.Equals(m){
+	if !s2.transform.Equals(m) {
 		t.Errorf("Expected %v, got: %v", m, s2.transform)
 	}
 }
@@ -43,26 +43,26 @@ func TestSphere_SetTransform(t *testing.T) {
 func TestSphere_NormalAt(t *testing.T) {
 	// x axis
 	s := NewSphere(nil)
-	n := s.NormalAt(algebra.NewPoint(1,0,0))
-	res := []float64{1, 0, 0 ,0}
+	n := s.NormalAt(algebra.NewPoint(1, 0, 0))
+	res := []float64{1, 0, 0, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//y axis
 	s = NewSphere(nil)
-	n = s.NormalAt(algebra.NewPoint(0,1,0))
-	res = []float64{0, 1, 0 ,0}
+	n = s.NormalAt(algebra.NewPoint(0, 1, 0))
+	res = []float64{0, 1, 0, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//z axis
 	s = NewSphere(nil)
-	n = s.NormalAt(algebra.NewPoint(0,0,1))
-	res = []float64{0, 0, 1 ,0}
+	n = s.NormalAt(algebra.NewPoint(0, 0, 1))
+	res = []float64{0, 0, 1, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//non-axial point
 	s = NewSphere(nil)
-	n = s.NormalAt(algebra.NewPoint(math.Sqrt(3)/3,math.Sqrt(3)/3,math.Sqrt(3)/3))
-	res = []float64{math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3 ,0}
+	n = s.NormalAt(algebra.NewPoint(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	res = []float64{math.Sqrt(3) / 3, math.Sqrt(3) / 3, math.Sqrt(3) / 3, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//on a translated sphere
@@ -171,36 +171,35 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray %v to not hit sphere %v, %f", r.Get(), s.origin, s.radius)
 	}
 
-
 	// scaled sphere ray test
-	r = algebra.NewRay(0,0,-5,0,0,1)
-	s2 := NewSphere(algebra.ScalingMatrix(2,2,2))
+	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
+	s2 := NewSphere(algebra.ScalingMatrix(2, 2, 2))
 	err = is.Intersect(s2, r)
-	if err != nil{
+	if err != nil {
 		t.Errorf("%s", err)
 		return
 	}
-	if is.Count(s2, r) != 2{
+	if is.Count(s2, r) != 2 {
 		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count(s2, r))
 	}
 
 	v = is.GetIntersections(s2, r)
-	if v[0] != 3.0{
+	if v[0] != 3.0 {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 3.0, v[0])
 	}
-	if v[1] != 7.0{
+	if v[1] != 7.0 {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 7.0, v[1])
 	}
 
 	//translated sphere ray test
 
 	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
-	s3 := NewSphere(algebra.TranslationMatrix(5,0,0))
+	s3 := NewSphere(algebra.TranslationMatrix(5, 0, 0))
 	err = is.Intersect(s3, r)
-	if err != nil{
+	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if is.Count(s3, r) != 0{
+	if is.Count(s3, r) != 0 {
 		t.Errorf("Expected %d number of intersections, Got: %d", 0, is.Count(s3, r))
 	}
 }

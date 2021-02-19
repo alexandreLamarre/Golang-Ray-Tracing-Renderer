@@ -38,11 +38,11 @@ func TestRay_Position(t *testing.T) {
 }
 
 func TestRay_Transform(t *testing.T) {
-	r := NewRay(1,2,3,0,1,0)
-	m := TranslationMatrix(3,4,5)
+	r := NewRay(1, 2, 3, 0, 1, 0)
+	m := TranslationMatrix(3, 4, 5)
 	r2 := r.Transform(m)
 
-	v:= r2.Get()
+	v := r2.Get()
 	origin := []float64{4, 6, 8, 1}
 	testVectorEquals(t, v["origin"].Get(), origin)
 	direction := []float64{0, 1, 0, 0}
