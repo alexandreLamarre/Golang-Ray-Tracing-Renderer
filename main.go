@@ -8,8 +8,11 @@ import (
 
 func main() {
 	fmt.Println("Golang ray tracer V 0.1")
-	err := examples.CreateProjectileExample()
-
+	//err := examples.CreateProjectileExample()
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	err := examples.CreateSphere3DExample()
 	if err != nil {
 		log.Println(err)
 	}
