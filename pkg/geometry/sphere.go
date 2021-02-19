@@ -2,6 +2,7 @@ package geometry
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/datatypes"
 	"math"
 )
@@ -9,6 +10,7 @@ import (
 //Shape represents a shape interface in 3D space
 type Shape interface {
 	SetTransform(m *algebra.Matrix)
+	SetMaterial(m *canvas.Material)
 	NormalAt(point *algebra.Vector) *algebra.Vector //returns the normal at the location "point" on the shape
 }
 
@@ -17,6 +19,7 @@ type Sphere struct {
 	origin    *algebra.Vector
 	radius    float64
 	transform *algebra.Matrix
+	material *canvas.Material
 }
 
 //Intersections data type keeps track of t values of the intersections of rays with a sphere
@@ -31,12 +34,20 @@ func NewSphere(m *algebra.Matrix) *Sphere {
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		mat = algebra.IdentityMatrix(4)
 	}
-	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0, transform: mat}
+	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0,
+		transform: mat, material: canvas.NewDefaultMaterial()}
 }
+
+// Sphere interface Shape Methods
 
 //SetTransform sets the Sphere's transformation
 func (s *Sphere) SetTransform(m *algebra.Matrix) {
 	s.transform = m
+}
+
+//SetMaterial sets the Sphere's material
+func (s *Sphere) SetMaterial(m *canvas.Material){
+	s.material = m
 }
 
 //NormalAt returns the normal to the sphere at the location "point"
@@ -59,7 +70,7 @@ func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector {
 	return res
 }
 
-// NewIntersection creates a new intersection data type
+//NewIntersections creates a new intersection data type
 func NewIntersections() *Intersections {
 	hits := make(map[Shape]map[*algebra.Ray]*datatypes.MinHeap)
 	ref := make(map[Shape]map[*algebra.Ray]*datatypes.MinHeap)

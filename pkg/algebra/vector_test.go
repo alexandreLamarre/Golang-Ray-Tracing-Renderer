@@ -252,6 +252,28 @@ func TestCrossProduct(t *testing.T) {
 	testVectorEquals(t, cross.Get(), res)
 }
 
+func TestVector_Reflect(t *testing.T) {
+	v := NewVector(1, -1, 0)
+	n := NewVector(0, 1, 0)
+	r := v.Reflect(n)
+	if r == nil{
+		t.Errorf("Something went wrong with vector algebra")
+		return
+	}
+	res := []float64{1,1,0,0}
+	testVectorEquals(t, r.Get(), res)
+
+	v = NewVector(0, -1, 0)
+	n = NewVector(math.Sqrt(2)/2, math.Sqrt(2)/2, 0)
+	r = v.Reflect(n)
+	if r == nil{
+		t.Errorf("Something went wrong with vector algebra")
+		return
+	}
+	res = []float64{1,0,0,0}
+	testVectorEquals(t, r.Get(), res)
+}
+
 func testVectorEquals(t *testing.T, values, results []float64) {
 	for i, v := range results {
 		if !equals(values[i], v) {

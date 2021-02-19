@@ -1,5 +1,6 @@
 package canvas
 
+//Color is an RGB 3-tuple of floats
 type Color [3]float64
 
 //Add adds two colors together to return a new Color

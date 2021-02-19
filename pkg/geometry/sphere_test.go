@@ -2,6 +2,7 @@ package geometry
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"math"
 	"testing"
 )
@@ -38,6 +39,26 @@ func TestSphere_SetTransform(t *testing.T) {
 	if !s2.transform.Equals(m) {
 		t.Errorf("Expected %v, got: %v", m, s2.transform)
 	}
+}
+
+func TestSphere_SetMaterial(t *testing.T) {
+	s := NewSphere(nil)
+	m := s.material
+	d := canvas.NewDefaultMaterial()
+	testColorEquals(t,m.Color, d.Color)
+	assertEquals(t, m.Ambient, d.Ambient)
+	assertEquals(t, m.Diffuse, d.Diffuse)
+	assertEquals(t, m.Specular, d.Specular)
+	assertEquals(t, m.Shininess, m.Shininess)
+
+	newMaterial := canvas.NewMaterial(&canvas.Color{1,0,0}, 1, 1,1 ,1)
+	s.SetMaterial(newMaterial)
+	m = s.material
+	testColorEquals(t,m.Color, newMaterial.Color)
+	assertEquals(t, m.Ambient, newMaterial.Ambient)
+	assertEquals(t, m.Diffuse, newMaterial.Diffuse)
+	assertEquals(t, m.Specular, newMaterial.Specular)
+	assertEquals(t, m.Shininess, newMaterial.Shininess)
 }
 
 func TestSphere_NormalAt(t *testing.T) {
@@ -205,6 +226,9 @@ func TestSphere_Intersect(t *testing.T) {
 }
 
 func testVectorEquals(t *testing.T, values, results []float64) {
+	if len(values) != len(results){
+		t.Errorf("Mimatched lengths: Expected %d, got: %d", len(results), len(values))
+	}
 	for i, v := range results {
 		if !equals(values[i], v) {
 			t.Errorf("Expected %g, Got: %g", v, values[i])
@@ -212,7 +236,25 @@ func testVectorEquals(t *testing.T, values, results []float64) {
 	}
 }
 
+func testColorEquals(t *testing.T, values, results *canvas.Color) {
+	if len(values) != len(results){
+		t.Errorf("Mimatched lengths: Expected %d, got: %d", len(results), len(values))
+	}
+	for i, v := range results {
+		if !equals(values[i], v) {
+			t.Errorf("Expected %g, Got: %g", v, values[i])
+		}
+	}
+}
+
+
 func equals(a, b float64) bool {
 	EPSILON := 0.00001
 	return math.Abs(a-b) < EPSILON
+}
+
+func assertEquals(t *testing.T, got, expected float64){
+	if got != expected{
+		t.Errorf("Expected %f, Got: %f", expected, got)
+	}
 }

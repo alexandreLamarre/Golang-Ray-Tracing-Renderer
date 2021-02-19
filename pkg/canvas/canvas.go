@@ -4,11 +4,13 @@ import (
 	"strconv"
 )
 
+//Canvas Represents a canvas of pixels (colors) of size width X height
 type Canvas struct {
 	Width, Height int
 	Pixels        [][]*Color
 }
 
+//NewCanvas returns a new Canvas with given width and height
 func NewCanvas(width, height int) *Canvas {
 	pixels := make([][]*Color, 0, 0)
 	for i := 0; i < height; i++ {
@@ -23,6 +25,7 @@ func NewCanvas(width, height int) *Canvas {
 	return &Canvas{Width: width, Height: height, Pixels: pixels}
 }
 
+//WritePixel writes a color to a given pixel
 func (c *Canvas) WritePixel(width, height int, color *Color) {
 	c.Pixels[height][width] = color
 }
