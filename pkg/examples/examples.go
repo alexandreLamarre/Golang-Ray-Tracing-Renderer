@@ -5,8 +5,69 @@ import (
 	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry"
 	"os"
 )
+
+func CreateSphere3DExample() error {
+
+	rayOrigin := []float64{0,0,-5}
+
+	wallZ := 10.0
+	wallSize := 7.0
+
+	canvasPixels := 400
+	pixelSize := wallSize/float64(canvasPixels)
+	half := wallSize/2
+
+	c := canvas.NewCanvas(canvasPixels, canvasPixels)
+	color := &canvas.Color{1, 0, 0}
+
+	s := geometry.NewSphere(nil)
+    m := canvas.NewDefaultMaterial()
+    m.Color = &canvas.Color{1, 0.2, 1}
+    s.SetMaterial(m)
+    light := canvas.NewPointLight(&canvas.Color{1,1,1}, algebra.NewPoint(-10, 10, -10))
+	for y:= 0; y < canvasPixels -1; y++{
+		worldY := half- pixelSize*float64(y)
+		for x := 0; x < canvasPixels -1; x++{
+			worldX := -half+pixelSize*float64(x)
+
+			position := algebra.NewPoint(worldX, worldY, wallZ)
+			direction, err := position.Subtract(algebra.NewPoint(rayOrigin...))
+			if err != nil{
+				return err
+			}
+			direction, err = direction.Normalize()
+			if err != nil{
+				return err
+			}
+			vals := append(rayOrigin, direction.Get()...)
+			r := algebra.NewRay(vals...)
+			is := geometry.NewIntersections()
+			err = is.Intersect(s, r)
+			if err != nil{
+				return err
+			}
+			hit := is.Hit(s,r)
+			if hit != nil{
+				p := r.Position(hit.T)
+				n := hit.Object.NormalAt(p)
+				eye := r.Get()["direction"].Negate()
+				color = canvas.Lighting(s.GetMaterial(), light, p, eye, n)
+				c.WritePixel(x,y,color)
+			}
+		}
+	}
+	stringRepr := c.ToPpmHeader(255) + c.ToPpmBody(255)
+
+	err := writeToFile(stringRepr, "sphere")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 
 func CreateProjectileExample() error {
 	c := canvas.NewCanvas(900, 550)

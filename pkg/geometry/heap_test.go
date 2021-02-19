@@ -1,8 +1,6 @@
-package datatypes
+package geometry
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestMinHeap(t *testing.T) {
 
@@ -10,46 +8,48 @@ func TestMinHeap(t *testing.T) {
 	if len(h.container) != 0 {
 		t.Errorf("invalid starting size of heap")
 	}
-
-	h.Push(5)
+	s := NewSphere(nil)
+	i1 := NewIntersection(s, 5)
+	i2 := NewIntersection(s, 3)
+	i3 := NewIntersection(s, 7)
+	i4 := NewIntersection(s, 8)
+	i5 := NewIntersection(s, 1)
+	h.Push(i1)
 
 	if len(h.container) != 1 {
 		t.Errorf("invalid size of heap %d, expected: %d", len(h.container), 1)
 	}
 
-	if h.GetMin() != 5.0 {
+	if h.GetMin().T != 5.0 {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), 5.0)
 	}
 
-	h.Push(3)
-	h.Push(7)
-	h.Push(8)
-	h.Push(1)
+	h.Push(i2)
+	h.Push(i3)
+	h.Push(i4)
+	h.Push(i5)
 
 	if len(h.container) != 5 {
 		t.Errorf("invalid size of heap %d, expected: %d", len(h.container), 5)
 	}
-	if h.GetMin() != 1.0 {
+	if h.GetMin().T != 1.0 {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), 1.0)
 	}
 
-	v := h.Get()
-	res := []float64{1, 3, 7, 8, 5}
-	testSliceEquals(t, v, res)
+	i6 :=NewIntersection(s, -1)
+	i7 :=NewIntersection(s, 1)
+	i8 :=NewIntersection(s, 3)
+	i9 :=NewIntersection(s, 4)
 
-	h.PushAll(-1, 1, 3, 4)
+	h.PushAll(i6, i7, i8, i9)
 
 	if len(h.container) != 9 {
 		t.Errorf("invalid size of heap %d, expected: %d", len(h.container), 9)
 	}
 
-	if h.GetMin() != -1.0 {
+	if h.GetMin().T != -1.0 {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), -1.0)
 	}
-
-	res = []float64{-1, 1, 1, 4, 5, 3, 7, 3, 8}
-
-	testSliceEquals(t, h.Get(), res)
 }
 
 func testSliceEquals(t *testing.T, values []float64, expected []float64) {

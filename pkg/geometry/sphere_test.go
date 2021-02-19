@@ -20,7 +20,7 @@ func TestNewSphere(t *testing.T) {
 
 func TestNewIntersections(t *testing.T) {
 	is := NewIntersections()
-	if len(is.hits) != 0 {
+	if len(is.hits.Get()) != 0 {
 		t.Errorf("Expected size of default intersections to be 0")
 	}
 }
@@ -110,26 +110,27 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	if is.Count(s, r) != 2 {
-		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count(s, r))
+	if is.Count() != 2 {
+		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count())
 	}
 
 	v := is.GetIntersections(s, r)
-	if !equals(v[0], 5.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[0])
+	if !equals(v[0].T, 5.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[0].T)
 	}
-	if !equals(v[1], 5.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[0])
+	if !equals(v[1].T, 5.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[1].T)
 	}
 
-	val, success := is.Hit(s, r)
+	hit := is.Hit(s, r)
 
-	if !success {
+	if hit == nil {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
+		return
 	}
 
-	if val != 5.0 {
-		t.Errorf("Expected hit value to be %f, Got : %f", 5.0, val)
+	if hit.T != 5.0 {
+		t.Errorf("Expected hit value to be %f, Got : %f", 5.0, hit.T)
 	}
 
 	//misses sphere
@@ -139,8 +140,8 @@ func TestSphere_Intersect(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if is.Count(s, r) != 0 {
-		t.Errorf("Expected %d intersections, got : %d", 0, is.Count(s, r))
+	if is.Count() != 0 {
+		t.Errorf("Expected %d intersections, got : %d", 0, is.Count())
 	}
 
 	// ray inside a sphere
@@ -149,25 +150,26 @@ func TestSphere_Intersect(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if is.Count(s, r) != 2 {
-		t.Errorf("Expected %d intersections, got: %d", 2, is.Count(s, r))
+	if is.Count() != 2 {
+		t.Errorf("Expected %d intersections, got: %d", 2, is.Count())
 	}
 	v = is.GetIntersections(s, r)
-	if !equals(v[0], -1.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", -1.0, v[0])
+	if !equals(v[0].T, -1.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", -1.0, v[0].T)
 	}
-	if !equals(v[1], 1.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", 1.0, v[1])
+	if !equals(v[1].T, 1.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", 1.0, v[1].T)
 	}
 
-	val, success = is.Hit(s, r)
+	hit = is.Hit(s, r)
 
-	if !success {
+	if hit == nil {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
+		return
 	}
 
-	if val != 1.0 {
-		t.Errorf("Expected hit value to be %f, Got : %f", 1.0, val)
+	if hit.T != 1.0 {
+		t.Errorf("Expected hit value to be %f, Got : %f", 1.0, hit.T)
 	}
 
 	// sphere behind ray
@@ -179,20 +181,22 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 	v = is.GetIntersections(s, r)
-	if !equals(v[0], -6.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", -6.0, v[0])
+	if !equals(v[0].T, -6.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", -6.0, v[0].T)
 	}
-	if !equals(v[1], -4.0) {
-		t.Errorf("Expected ray to intersect at %f, Got: %f", -4.0, v[1])
+	if !equals(v[1].T, -4.0) {
+		t.Errorf("Expected ray to intersect at %f, Got: %f", -4.0, v[1].T)
 	}
 
-	val, success = is.Hit(s, r)
+	hit = is.Hit(s, r)
 
-	if success {
+	if hit != nil {
 		t.Errorf("Expected ray %v to not hit sphere %v, %f", r.Get(), s.origin, s.radius)
+		return
 	}
 
 	// scaled sphere ray test
+	is = NewIntersections()
 	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
 	s2 := NewSphere(algebra.ScalingMatrix(2, 2, 2))
 	err = is.Intersect(s2, r)
@@ -200,28 +204,28 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("%s", err)
 		return
 	}
-	if is.Count(s2, r) != 2 {
-		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count(s2, r))
+	if is.Count() != 2 {
+		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count())
 	}
 
 	v = is.GetIntersections(s2, r)
-	if v[0] != 3.0 {
+	if v[0].T != 3.0 {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 3.0, v[0])
 	}
-	if v[1] != 7.0 {
+	if v[1].T != 7.0 {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 7.0, v[1])
 	}
 
 	//translated sphere ray test
-
+	is = NewIntersections()
 	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
 	s3 := NewSphere(algebra.TranslationMatrix(5, 0, 0))
 	err = is.Intersect(s3, r)
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	if is.Count(s3, r) != 0 {
-		t.Errorf("Expected %d number of intersections, Got: %d", 0, is.Count(s3, r))
+	if is.Count() != 0 {
+		t.Errorf("Expected %d number of intersections, Got: %d", 0, is.Count())
 	}
 }
 
