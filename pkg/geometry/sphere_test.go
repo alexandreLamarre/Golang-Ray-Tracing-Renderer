@@ -45,16 +45,16 @@ func TestSphere_SetMaterial(t *testing.T) {
 	s := NewSphere(nil)
 	m := s.material
 	d := canvas.NewDefaultMaterial()
-	testColorEquals(t,m.Color, d.Color)
+	testColorEquals(t, m.Color, d.Color)
 	assertEquals(t, m.Ambient, d.Ambient)
 	assertEquals(t, m.Diffuse, d.Diffuse)
 	assertEquals(t, m.Specular, d.Specular)
 	assertEquals(t, m.Shininess, m.Shininess)
 
-	newMaterial := canvas.NewMaterial(&canvas.Color{1,0,0}, 1, 1,1 ,1)
+	newMaterial := canvas.NewMaterial(&canvas.Color{1, 0, 0}, 1, 1, 1, 1)
 	s.SetMaterial(newMaterial)
 	m = s.material
-	testColorEquals(t,m.Color, newMaterial.Color)
+	testColorEquals(t, m.Color, newMaterial.Color)
 	assertEquals(t, m.Ambient, newMaterial.Ambient)
 	assertEquals(t, m.Diffuse, newMaterial.Diffuse)
 	assertEquals(t, m.Specular, newMaterial.Specular)
@@ -226,7 +226,7 @@ func TestSphere_Intersect(t *testing.T) {
 }
 
 func testVectorEquals(t *testing.T, values, results []float64) {
-	if len(values) != len(results){
+	if len(values) != len(results) {
 		t.Errorf("Mimatched lengths: Expected %d, got: %d", len(results), len(values))
 	}
 	for i, v := range results {
@@ -237,7 +237,7 @@ func testVectorEquals(t *testing.T, values, results []float64) {
 }
 
 func testColorEquals(t *testing.T, values, results *canvas.Color) {
-	if len(values) != len(results){
+	if len(values) != len(results) {
 		t.Errorf("Mimatched lengths: Expected %d, got: %d", len(results), len(values))
 	}
 	for i, v := range results {
@@ -247,14 +247,13 @@ func testColorEquals(t *testing.T, values, results *canvas.Color) {
 	}
 }
 
-
 func equals(a, b float64) bool {
 	EPSILON := 0.00001
 	return math.Abs(a-b) < EPSILON
 }
 
-func assertEquals(t *testing.T, got, expected float64){
-	if got != expected{
+func assertEquals(t *testing.T, got, expected float64) {
+	if got != expected {
 		t.Errorf("Expected %f, Got: %f", expected, got)
 	}
 }

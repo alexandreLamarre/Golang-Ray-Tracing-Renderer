@@ -19,7 +19,7 @@ type Sphere struct {
 	origin    *algebra.Vector
 	radius    float64
 	transform *algebra.Matrix
-	material *canvas.Material
+	material  *canvas.Material
 }
 
 //Intersections data type keeps track of t values of the intersections of rays with a sphere
@@ -46,7 +46,7 @@ func (s *Sphere) SetTransform(m *algebra.Matrix) {
 }
 
 //SetMaterial sets the Sphere's material
-func (s *Sphere) SetMaterial(m *canvas.Material){
+func (s *Sphere) SetMaterial(m *canvas.Material) {
 	s.material = m
 }
 

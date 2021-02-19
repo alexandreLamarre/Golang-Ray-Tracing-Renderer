@@ -7,32 +7,31 @@ import (
 )
 
 func TestNewPointLight(t *testing.T) {
-	l := NewPointLight(&Color{1,1,1}, algebra.NewVector(0,0,0))
+	l := NewPointLight(&Color{1, 1, 1}, algebra.NewVector(0, 0, 0))
 
-	testRealVectorEquals(t, l.Position.Get(), []float64{0,0,0,0})
-	testVectorEquals(t, l.Intensity, &Color{1,1,1})
+	testRealVectorEquals(t, l.Position.Get(), []float64{0, 0, 0, 0})
+	testVectorEquals(t, l.Intensity, &Color{1, 1, 1})
 }
 
-func testRealVectorEquals(t *testing.T, vector []float64, expected []float64){
-	if len(vector) != len(expected){
+func testRealVectorEquals(t *testing.T, vector []float64, expected []float64) {
+	if len(vector) != len(expected) {
 		t.Errorf("Mismatched vector lengths, Expected : %d, Got: %d", len(expected), len(vector))
 	}
 
-	for i := 0 ; i < len(vector); i++{
-		if !equals(vector[i], expected[i]){
+	for i := 0; i < len(vector); i++ {
+		if !equals(vector[i], expected[i]) {
 			t.Errorf("Expected value at %d : %f, Got: %f", i, expected[i], vector[i])
 		}
 	}
 }
 
 func TestLighting(t *testing.T) {
-	p := algebra.NewPoint(0,0,0)
+	p := algebra.NewPoint(0, 0, 0)
 	m := NewDefaultMaterial()
 
-
-	eyeVector := algebra.NewVector(0,0,-1)
-	normalVector := algebra.NewVector(0,0,-1)
-	light := NewPointLight(&Color{1,1,1}, algebra.NewPoint(0,0,-10))
+	eyeVector := algebra.NewVector(0, 0, -1)
+	normalVector := algebra.NewVector(0, 0, -1)
+	light := NewPointLight(&Color{1, 1, 1}, algebra.NewPoint(0, 0, -10))
 
 	color := Lighting(m, light, p, eyeVector, normalVector)
 	testVectorEquals(t, color, &Color{1.9, 1.9, 1.9})
@@ -42,7 +41,7 @@ func TestLighting(t *testing.T) {
 	color = Lighting(m, light, p, eyeVector, normalVector)
 	testVectorEquals(t, color, &Color{1.0, 1.0, 1.0})
 
-	eyeVector = algebra.NewVector(0 , 0 , -1)
+	eyeVector = algebra.NewVector(0, 0, -1)
 	normalVector = algebra.NewVector(0, 0, -1)
 	light = NewPointLight(&Color{1.0, 1.0, 1.0}, algebra.NewPoint(0, 10, -10))
 
@@ -53,9 +52,9 @@ func TestLighting(t *testing.T) {
 	color = Lighting(m, light, p, eyeVector, normalVector)
 	testVectorEquals(t, color, &Color{1.6364, 1.6364, 1.6364})
 
-	eyeVector = algebra.NewVector(0,0,-1)
+	eyeVector = algebra.NewVector(0, 0, -1)
 	normalVector = algebra.NewVector(0, 0, -1)
-	light = NewPointLight(&Color{1,1,1}, algebra.NewPoint(0,0,10))
+	light = NewPointLight(&Color{1, 1, 1}, algebra.NewPoint(0, 0, 10))
 
 	color = Lighting(m, light, p, eyeVector, normalVector)
 	testVectorEquals(t, color, &Color{0.1, 0.1, 0.1})

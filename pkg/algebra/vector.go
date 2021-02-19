@@ -174,11 +174,17 @@ func CrossProduct(v1 *Vector, v2 *Vector) (*Vector, error) {
 	return NewVector(a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]), nil
 }
 
-func (v *Vector) Reflect(normal *Vector) *Vector{
-	dot, err :=DotProduct(v,normal)
-	if err != nil {panic(err); return nil}
-	dot = 2*dot
+func (v *Vector) Reflect(normal *Vector) *Vector {
+	dot, err := DotProduct(v, normal)
+	if err != nil {
+		panic(err)
+		return nil
+	}
+	dot = 2 * dot
 	reflect, err := v.Subtract(normal.MultScalar(dot))
-	if err != nil{panic(err); return nil}
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	return reflect
 }
