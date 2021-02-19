@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewSphere(t *testing.T) {
-	s := NewSphere()
+	s := NewSphere(nil)
 	origin := []float64{0, 0, 0, 1}
 	testVectorEquals(t, s.origin.Get(), origin)
 	radius := 1.0
@@ -24,10 +24,64 @@ func TestNewIntersections(t *testing.T) {
 	}
 }
 
+func TestSphere_SetTransform(t *testing.T) {
+	s := NewSphere(nil)
+	m := algebra.TranslationMatrix(2,3,4)
+	s.SetTransform(m)
+
+	if !s.transform.Equals(m){
+		t.Errorf("Expected %v, Got: %v", m, s.transform)
+	}
+
+	s2 := NewSphere(m)
+
+	if !s2.transform.Equals(m){
+		t.Errorf("Expected %v, got: %v", m, s2.transform)
+	}
+}
+
+func TestSphere_NormalAt(t *testing.T) {
+	// x axis
+	s := NewSphere(nil)
+	n := s.NormalAt(algebra.NewPoint(1,0,0))
+	res := []float64{1, 0, 0 ,0}
+	testVectorEquals(t, n.Get(), res)
+
+	//y axis
+	s = NewSphere(nil)
+	n = s.NormalAt(algebra.NewPoint(0,1,0))
+	res = []float64{0, 1, 0 ,0}
+	testVectorEquals(t, n.Get(), res)
+
+	//z axis
+	s = NewSphere(nil)
+	n = s.NormalAt(algebra.NewPoint(0,0,1))
+	res = []float64{0, 0, 1 ,0}
+	testVectorEquals(t, n.Get(), res)
+
+	//non-axial point
+	s = NewSphere(nil)
+	n = s.NormalAt(algebra.NewPoint(math.Sqrt(3)/3,math.Sqrt(3)/3,math.Sqrt(3)/3))
+	res = []float64{math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3 ,0}
+	testVectorEquals(t, n.Get(), res)
+
+	//on a translated sphere
+	s = NewSphere(algebra.TranslationMatrix(0, 1, 0))
+	n = s.NormalAt(algebra.NewPoint(0, 1.70711, -0.70711))
+	res = []float64{0.0, 0.70711, -0.70711, 0.0}
+	testVectorEquals(t, n.Get(), res)
+
+	//on a transformed sphere
+	transform := algebra.Multiply(algebra.ScalingMatrix(1, 0.5, 1), algebra.RotationZ(math.Pi/5))
+	s = NewSphere(transform)
+	n = s.NormalAt(algebra.NewPoint(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
+	res = []float64{0, 0.97014, -0.24254}
+}
+
 func TestSphere_Intersect(t *testing.T) {
 	//intersect at tangent
 	is := NewIntersections()
-	s := NewSphere()
+	s := NewSphere(nil)
 	r := algebra.NewRay(0, 1, -5, 0, 0, 1)
 	err := is.Intersect(s, r)
 
@@ -47,9 +101,9 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[0])
 	}
 
-	val, sucess := is.Hit(s, r)
+	val, success := is.Hit(s, r)
 
-	if !sucess {
+	if !success {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
 	}
 
@@ -85,9 +139,9 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 1.0, v[1])
 	}
 
-	val, sucess = is.Hit(s, r)
+	val, success = is.Hit(s, r)
 
-	if !sucess {
+	if !success {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
 	}
 
@@ -111,12 +165,44 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", -4.0, v[1])
 	}
 
-	val, sucess = is.Hit(s, r)
+	val, success = is.Hit(s, r)
 
-	if sucess {
+	if success {
 		t.Errorf("Expected ray %v to not hit sphere %v, %f", r.Get(), s.origin, s.radius)
 	}
 
+
+	// scaled sphere ray test
+	r = algebra.NewRay(0,0,-5,0,0,1)
+	s2 := NewSphere(algebra.ScalingMatrix(2,2,2))
+	err = is.Intersect(s2, r)
+	if err != nil{
+		t.Errorf("%s", err)
+		return
+	}
+	if is.Count(s2, r) != 2{
+		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count(s2, r))
+	}
+
+	v = is.GetIntersections(s2, r)
+	if v[0] != 3.0{
+		t.Errorf("Expected ray to intersect at %f, Got: %f", 3.0, v[0])
+	}
+	if v[1] != 7.0{
+		t.Errorf("Expected ray to intersect at %f, Got: %f", 7.0, v[1])
+	}
+
+	//translated sphere ray test
+
+	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
+	s3 := NewSphere(algebra.TranslationMatrix(5,0,0))
+	err = is.Intersect(s3, r)
+	if err != nil{
+		t.Errorf("%s", err)
+	}
+	if is.Count(s3, r) != 0{
+		t.Errorf("Expected %d number of intersections, Got: %d", 0, is.Count(s3, r))
+	}
 }
 
 func testVectorEquals(t *testing.T, values, results []float64) {

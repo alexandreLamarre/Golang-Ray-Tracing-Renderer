@@ -5,34 +5,64 @@ import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/datatypes"
 	"math"
 )
+//Shape represents a shape interface in 3D space
+type Shape interface{
+	SetTransform(m *algebra.Matrix)
+	NormalAt(point *algebra.Vector) *algebra.Vector //returns the normal at the location "point" on the shape
+}
 
 //Sphere Data type for a 3D sphere
 type Sphere struct {
 	origin *algebra.Vector
 	radius float64
+	transform *algebra.Matrix
 }
 
 //Intersections data type keeps track of t values of the intersections of rays with a sphere
 type Intersections struct {
-	hits map[interface{}]map[*algebra.Ray]*datatypes.MinHeap // hits on contours of objects
-	ref  map[interface{}]map[*algebra.Ray]*datatypes.MinHeap // used in ray reflections/refractions
+	hits map[Shape]map[*algebra.Ray]*datatypes.MinHeap // hits on contours of objects
+	ref  map[Shape]map[*algebra.Ray]*datatypes.MinHeap // used in ray reflections/refractions
 }
 
 // NewSphere creates a new Sphere datatype at origin 0,0,0 with unit radius and no ray intersections
-func NewSphere() *Sphere {
-	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0}
+func NewSphere(m *algebra.Matrix) *Sphere {
+	mat := m
+	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4{
+		mat = algebra.IdentityMatrix(4)
+	}
+	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0, transform: mat}
+}
+
+//SetTransform sets the Sphere's transformation
+func (s *Sphere) SetTransform(m *algebra.Matrix){
+	s.transform = m
+}
+
+//NormalAt returns the normal to the sphere at the location "point"
+func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector{
+	inverseTransform := s.transform.Inverse()
+	sphereBoundary := inverseTransform.MultiplyByVec(point)
+	sphereNormal, err := sphereBoundary.Subtract(algebra.NewPoint(0,0,0))
+	if err != nil{panic(err);return nil}
+	worldNormal := inverseTransform.Transpose().MultiplyByVec(sphereNormal)
+
+	res, err := worldNormal.Normalize()
+	if err != nil{panic(err);return nil}
+	res = algebra.NewVector(res.Get()[:3]...)
+	return res
 }
 
 // NewIntersection creates a new intersection data type
 func NewIntersections() *Intersections {
-	hits := make(map[interface{}]map[*algebra.Ray]*datatypes.MinHeap)
-	ref := make(map[interface{}]map[*algebra.Ray]*datatypes.MinHeap)
+	hits := make(map[Shape]map[*algebra.Ray]*datatypes.MinHeap)
+	ref := make(map[Shape]map[*algebra.Ray]*datatypes.MinHeap)
 	return &Intersections{hits: hits, ref: ref}
 }
 
 //Intersect Updates intersections of a Sphere with the given algebra.Ray
 func (intersections *Intersections) Intersect(s *Sphere, r *algebra.Ray) error {
-	got := r.Get()
+	r2 := r.Transform(s.transform.Inverse())
+	got := r2.Get()
 	origin := got["origin"]
 	direction := got["direction"]
 	sphereToRay, err := origin.Subtract(s.origin)
@@ -96,7 +126,7 @@ func (intersections *Intersections) Intersect(s *Sphere, r *algebra.Ray) error {
 }
 
 //Count returns the number of intersections of a given algebra.Ray with the Sphere
-func (intersections *Intersections) Count(s *Sphere, r *algebra.Ray) int {
+func (intersections *Intersections) Count(s Shape, r *algebra.Ray) int {
 	var numHits int
 	var numRef int
 	if intersections.hits[s] == nil || intersections.hits[s][r] == nil {
@@ -114,7 +144,7 @@ func (intersections *Intersections) Count(s *Sphere, r *algebra.Ray) int {
 }
 
 //GetIntersections returns the slice of values that intersect with the Sphere for the give algebra.Ray
-func (intersections *Intersections) GetIntersections(s *Sphere, r *algebra.Ray) []float64 {
+func (intersections *Intersections) GetIntersections(s Shape, r *algebra.Ray) []float64 {
 	var hitHeap []float64
 	var refHeap []float64
 	if intersections.hits[s] == nil || intersections.hits[s][r] == nil {
@@ -130,7 +160,8 @@ func (intersections *Intersections) GetIntersections(s *Sphere, r *algebra.Ray) 
 	return append(refHeap, hitHeap...)
 }
 
-func (intersections *Intersections) Hit(s *Sphere, r *algebra.Ray) (float64, bool) {
+//Hit returns the minimum positive value of a ray intersecting the given object
+func (intersections *Intersections) Hit(s Shape, r *algebra.Ray) (float64, bool) {
 	if intersections.hits[s] == nil || intersections.hits[s][r] == nil {
 		return 0.0, false
 	} else {
