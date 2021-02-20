@@ -378,6 +378,25 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) *Matrix {
 	return m
 }
 
+func ViewTransform(fromX, fromY, fromZ, toX, toY, toZ, upX, upY, upZ float64) *Matrix{
+	forward, err := NewVector(toX-fromX, toY -fromY, toZ- fromZ).Normalize()
+	if err != nil{panic(err); return nil}
+	upn, err := NewVector(upX, upY, upZ).Normalize()
+	if err != nil{panic(err); return nil}
+	left, err := CrossProduct(forward, upn)
+	trueUp, err := CrossProduct(left, forward)
+	matValues := make([]float64, 0, 0)
+	matValues = append(matValues, left.Get()...)
+	matValues = append(matValues, trueUp.Get()...)
+	matValues = append(matValues, forward.Negate().Get()...)
+	matValues = append(matValues, 0, 0, 0, 1)
+	m, err := NewMatrix(4,4,matValues...)
+	if err != nil{panic(err); return nil}
+	m = Multiply(m, TranslationMatrix(-fromX, -fromY, -fromZ))
+	return m
+}
+
+
 //stack datatype helper for matrix functions/methods
 type stack []float64
 
