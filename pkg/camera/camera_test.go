@@ -36,13 +36,18 @@ func TestNewCamera(t *testing.T) {
 
 func TestCamera_RayForPixel(t *testing.T) {
 	c := NewDefaultCamera(201, 101, math.Pi/2)
-	r := c.RayForPixel(50, 100)
+	r := c.RayForPixel(100, 50)
 	testVectorEquals(t, r.Get()["origin"].Get(), []float64{0, 0, 0, 1})
 	testVectorEquals(t, r.Get()["direction"].Get(), []float64{0, 0, -1, 0})
 
 	r = c.RayForPixel(0, 0)
 	testVectorEquals(t, r.Get()["origin"].Get(), []float64{0, 0, 0, 1})
 	testVectorEquals(t, r.Get()["direction"].Get(), []float64{0.66519, 0.33259, -0.66851})
+
+	c.transform = algebra.Multiply(algebra.RotationY(math.Pi/4), algebra.TranslationMatrix(0, -2, 5))
+	r = c.RayForPixel(100, 50)
+	testVectorEquals(t, r.Get()["origin"].Get(), []float64{0, 2, -5})
+	testVectorEquals(t, r.Get()["direction"].Get(), []float64{math.Sqrt(2)/2, 0, - math.Sqrt(2)/2})
 }
 
 func TestCamera_Render(t *testing.T) {

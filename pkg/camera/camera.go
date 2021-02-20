@@ -32,7 +32,7 @@ func NewDefaultCamera(hSize, vSize, fov float64) *Camera {
 		halfWidth = halfView * aspect
 		halfHeight = halfView
 	}
-	pixelSize := halfWidth * 2 / float64(hSize)
+	pixelSize := (halfWidth * 2) / hSize
 	return &Camera{hSize: hSize, vSize: vSize, fov: fov,
 		halfWidth:  halfWidth,
 		halfHeight: halfHeight,
@@ -56,7 +56,7 @@ func NewCamera(hSize, vSize, fov float64, transform *algebra.Matrix) (*Camera, e
 		halfWidth = halfView * aspect
 		halfHeight = halfView
 	}
-	pixelSize := halfWidth * 2 / hSize
+	pixelSize := (halfWidth * 2) / hSize
 	return &Camera{hSize: hSize, vSize: vSize, fov: fov,
 		halfWidth:  halfWidth,
 		halfHeight: halfHeight,
@@ -65,8 +65,8 @@ func NewCamera(hSize, vSize, fov float64, transform *algebra.Matrix) (*Camera, e
 }
 
 func (c Camera) RayForPixel(px, py float64) *algebra.Ray {
-	yOffset := (px + 0.5) * c.pixelSize
-	xOffset := (py + 0.5) * c.pixelSize
+	xOffset := (px + 0.5) * c.pixelSize
+	yOffset := (py + 0.5) * c.pixelSize
 
 	worldX := c.halfWidth - xOffset
 	worldY := c.halfHeight - yOffset

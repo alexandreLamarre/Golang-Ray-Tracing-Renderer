@@ -12,7 +12,11 @@ func main() {
 	//if err != nil {
 	//	log.Println(err)
 	//}
-	err := examples.CreateSphere3DExample()
+	//err := examples.CreateSphere3DExample()
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	err := examples.CreateSimpleScene()
 	if err != nil {
 		log.Println(err)
 	}
