@@ -25,7 +25,7 @@ func NewSphere(m *algebra.Matrix) *Sphere {
 
 // Sphere interface Shape Methods
 
-func (s *Sphere) GetPosition() *algebra.Vector{
+func (s *Sphere) GetPosition() *algebra.Vector {
 	return s.origin
 }
 
@@ -34,7 +34,7 @@ func (s *Sphere) SetTransform(m *algebra.Matrix) {
 	s.transform = m
 }
 
-func (s *Sphere) GetTransform() *algebra.Matrix{
+func (s *Sphere) GetTransform() *algebra.Matrix {
 	return s.transform
 }
 
@@ -44,7 +44,7 @@ func (s *Sphere) SetMaterial(m *canvas.Material) {
 }
 
 //GetMaterial returns the spheres Material
-func (s *Sphere) GetMaterial() *canvas.Material{
+func (s *Sphere) GetMaterial() *canvas.Material {
 	return s.material
 }
 
@@ -67,4 +67,3 @@ func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector {
 	res = algebra.NewVector(res.Get()[:3]...)
 	return res
 }
-

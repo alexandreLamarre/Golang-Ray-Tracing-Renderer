@@ -36,10 +36,10 @@ func TestMinHeap(t *testing.T) {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), 1.0)
 	}
 
-	i6 :=NewIntersection(s, -1)
-	i7 :=NewIntersection(s, 1)
-	i8 :=NewIntersection(s, 3)
-	i9 :=NewIntersection(s, 4)
+	i6 := NewIntersection(s, -1)
+	i7 := NewIntersection(s, 1)
+	i8 := NewIntersection(s, 3)
+	i9 := NewIntersection(s, 4)
 
 	h.PushAll(i6, i7, i8, i9)
 

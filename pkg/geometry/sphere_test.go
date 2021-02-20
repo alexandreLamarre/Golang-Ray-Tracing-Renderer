@@ -114,7 +114,7 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count())
 	}
 
-	v := is.GetIntersections(s, r)
+	v := is.GetIntersections()
 	if !equals(v[0].T, 5.0) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[0].T)
 	}
@@ -122,7 +122,7 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 5.0, v[1].T)
 	}
 
-	hit := is.Hit(s, r)
+	hit := is.Hit()
 
 	if hit == nil {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
@@ -153,7 +153,7 @@ func TestSphere_Intersect(t *testing.T) {
 	if is.Count() != 2 {
 		t.Errorf("Expected %d intersections, got: %d", 2, is.Count())
 	}
-	v = is.GetIntersections(s, r)
+	v = is.GetIntersections()
 	if !equals(v[0].T, -1.0) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", -1.0, v[0].T)
 	}
@@ -161,7 +161,7 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 1.0, v[1].T)
 	}
 
-	hit = is.Hit(s, r)
+	hit = is.Hit()
 
 	if hit == nil {
 		t.Errorf("Expected ray %v to hit sphere %v, %f", r.Get(), s.origin, s.radius)
@@ -180,7 +180,7 @@ func TestSphere_Intersect(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	v = is.GetIntersections(s, r)
+	v = is.GetIntersections()
 	if !equals(v[0].T, -6.0) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", -6.0, v[0].T)
 	}
@@ -188,7 +188,7 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", -4.0, v[1].T)
 	}
 
-	hit = is.Hit(s, r)
+	hit = is.Hit()
 
 	if hit != nil {
 		t.Errorf("Expected ray %v to not hit sphere %v, %f", r.Get(), s.origin, s.radius)
@@ -208,7 +208,7 @@ func TestSphere_Intersect(t *testing.T) {
 		t.Errorf("Expected %d number of intersections, Got: %d", 2, is.Count())
 	}
 
-	v = is.GetIntersections(s2, r)
+	v = is.GetIntersections()
 	if v[0].T != 3.0 {
 		t.Errorf("Expected ray to intersect at %f, Got: %f", 3.0, v[0])
 	}
