@@ -96,6 +96,33 @@ func TestWorld_ShadeHit(t *testing.T) {
 	if !equals(c.Blue(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Blue())
 	}
+
+	//shadow test
+	lights := make([]*canvas.PointLight, 0 , 0)
+	l := canvas.NewPointLight(&canvas.Color{1,1,1}, algebra.NewPoint(0, 0, -10))
+	lights = append(lights, l)
+	objs := make([]Shape, 0, 0)
+	s1 := NewSphere(nil)
+	s2 := NewSphere(algebra.TranslationMatrix(0,0, 10))
+	objs = append(objs, s1, s2)
+
+	w = &World{Lights: lights, Objects: objs}
+	ray := algebra.NewRay(0,0,5,0,0,1)
+	i = NewIntersection(s, 4)
+	comps = PrepareComputations(i, ray)
+	c = w.ShadeHit(*comps)
+	res = 0.1
+	if !equals(c.Red(), res){
+		t.Errorf("Expected %f, Got %f", res, c.Red())
+	}
+	if !equals(c.Green(), res){
+		t.Errorf("Expected %f, Got %f", res, c.Green())
+	}
+	if !equals(c.Blue(), res){
+		t.Errorf("Expected %f, Got %f", res, c.Blue())
+	}
+
+
 }
 
 func TestWorld_ColorAt(t *testing.T) {
@@ -143,4 +170,31 @@ func TestWorld_ColorAt(t *testing.T) {
 		}
 	}
 
+}
+
+func TestWorld_PointIsShadowed(t *testing.T) {
+	w := NewDefaultWorld()
+	p := algebra.NewPoint(0, 10, 0)
+	res := w.PointIsShadowed(p)
+	if res{
+		t.Errorf("Expected point %v to not be shadowed", p)
+	}
+
+	p = algebra.NewPoint(10, -10, 10)
+	res = w.PointIsShadowed(p)
+	if !res{
+		t.Errorf("Expected point %v to be shadowed", p)
+	}
+
+	p = algebra.NewPoint(-20, 20, -20)
+	res = w.PointIsShadowed(p)
+	if res{
+		t.Errorf("Expected point %v to not be shadowed", p)
+	}
+
+	p = algebra.NewPoint(-2, 2, -2)
+	res = w.PointIsShadowed(p)
+	if res{
+		t.Errorf("Expected point %v to not be shadowed", p)
+	}
 }
