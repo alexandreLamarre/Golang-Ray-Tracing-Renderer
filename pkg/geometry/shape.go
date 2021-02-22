@@ -12,7 +12,7 @@ type Shape interface {
 	GetTransform() *algebra.Matrix
 	SetMaterial(m *canvas.Material)
 	GetMaterial() *canvas.Material
-	LocalIntersect(r *algebra.Ray) (float64,float64, bool)
+	LocalIntersect(r *algebra.Ray) ([]float64, bool)
 	LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error)
 }
 

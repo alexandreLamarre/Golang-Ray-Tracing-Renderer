@@ -33,22 +33,17 @@ func (intersections *Intersections) Intersect(s Shape, r *algebra.Ray) error {
 	m := s.GetTransform()
 	r2 := r.Transform(m.Inverse())
 
-	t1, t2, intersected := s.LocalIntersect(r2)
+	ts, intersected := s.LocalIntersect(r2)
 	if !intersected{
 		return nil
 	}
-	i1 := NewIntersection(s, t1)
-	i2 := NewIntersection(s, t2)
-
-	if t1 >= 0 {
-		intersections.hits.Push(i1)
-	} else {
-		intersections.ref.Push(i1)
-	}
-	if t2 >= 0 {
-		intersections.hits.Push(i2)
-	} else {
-		intersections.ref.Push(i2)
+	for i := 0; i < len(ts); i ++{
+		is := NewIntersection(s, ts[i])
+		if ts[i] >= 0 {
+			intersections.hits.Push(is)
+		} else {
+			intersections.ref.Push(is)
+		}
 	}
 	return nil
 }

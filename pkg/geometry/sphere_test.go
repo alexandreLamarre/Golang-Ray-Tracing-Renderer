@@ -1,6 +1,7 @@
 package geometry
 
 import (
+	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"math"
@@ -231,6 +232,7 @@ func TestSphere_Intersect(t *testing.T) {
 
 func testVectorEquals(t *testing.T, values, results []float64) {
 	if len(values) != len(results) {
+		fmt.Println(values, results)
 		t.Errorf("Mimatched lengths: Expected %d, got: %d", len(results), len(values))
 	}
 	for i, v := range results {

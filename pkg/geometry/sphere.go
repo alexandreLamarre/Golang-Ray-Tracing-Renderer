@@ -57,7 +57,7 @@ func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {
 	return sphereNormal, err
 }
 
-func (s *Sphere) LocalIntersect(r *algebra.Ray) (float64, float64, bool){
+func (s *Sphere) LocalIntersect(r *algebra.Ray) ([]float64, bool){
 	got := r.Get()
 	origin := got["origin"]
 	direction := got["direction"]
@@ -88,10 +88,10 @@ func (s *Sphere) LocalIntersect(r *algebra.Ray) (float64, float64, bool){
 	discriminant := math.Pow(b, 2) - (4 * a * c)
 
 	if discriminant < 0 { // No rays intersect the sphere
-		 return 0, 0, false
+		 return []float64{}, false
 	}
 
 	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
 	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
-	return t1, t2, true
+	return []float64{t1, t2}, true
 }
