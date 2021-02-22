@@ -18,7 +18,7 @@ func NewPointLight(color *Color, position *algebra.Vector) *PointLight {
 
 //Lighting computes the lighting from the PointLight onto the Material at the illuminatedPoint with its normal Vector
 // from the point of view of the eye vector
-func Lighting(material *Material, light *PointLight, illuminatedPoint, eyeVector, normalVector *algebra.Vector) *Color {
+func Lighting(material *Material, light *PointLight, illuminatedPoint, eyeVector, normalVector *algebra.Vector, inShadow bool) *Color {
 
 	effectiveColor := Multiply(material.Color, light.Intensity)
 
@@ -34,6 +34,11 @@ func Lighting(material *Material, light *PointLight, illuminatedPoint, eyeVector
 	}
 
 	ambient := effectiveColor.ScalarMult(material.Ambient)
+
+	if inShadow{
+		return ambient
+	}
+
 	lightDotNormal, err := algebra.DotProduct(lightVector, normalVector)
 	if err != nil {
 		panic(err)

@@ -123,7 +123,7 @@ func CreateSphere3DExample() error {
 				p := r.Position(hit.T)
 				n := hit.Object.NormalAt(p)
 				eye := r.Get()["direction"].Negate()
-				color = canvas.Lighting(s.GetMaterial(), light, p, eye, n)
+				color = canvas.Lighting(s.GetMaterial(), light, p, eye, n, false)
 				c.WritePixel(x, y, color)
 			}
 		}

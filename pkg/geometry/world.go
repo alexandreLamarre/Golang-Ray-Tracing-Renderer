@@ -45,8 +45,9 @@ func (w *World) Intersect(r *algebra.Ray) *Intersections {
 
 func (w World) ShadeHit(comps Comps) *canvas.Color {
 	color := &canvas.Color{0, 0, 0}
+	inShadow := w.PointIsShadowed(comps.OverPoint)
 	for _, l := range w.Lights {
-		lightingColor := canvas.Lighting(comps.Object.GetMaterial(), l, comps.Point, comps.Eye, comps.Normal)
+		lightingColor := canvas.Lighting(comps.Object.GetMaterial(), l, comps.Point, comps.Eye, comps.Normal, inShadow)
 		color = color.Add(lightingColor)
 	}
 	return color
@@ -62,11 +63,36 @@ func (w World) ColorAt(ray *algebra.Ray) *canvas.Color {
 	}
 }
 
+func (w World) PointIsShadowed(p *algebra.Vector) bool{
+	for i := 0; i < len(w.Lights); i++{
+		v, err := w.Lights[i].Position.Subtract(p)
+		if err != nil{
+			panic(err)
+			return false
+		}
+
+		dist := v.Magnitude()
+		direction, err := v.Normalize()
+		if err != nil{
+			panic(err)
+			return false
+		}
+		res := append(p.Get()[:3], direction.Get()[:3]...)
+		r := algebra.NewRay(res...)
+		is := w.Intersect(r)
+		if h:=is.Hit(); h != nil && h.T < dist{
+				return true
+		}
+	}
+	return false
+}
+
 //Comps manages the precomputed state of the necessary vectors for lighting
 type Comps struct {
 	T      float64
 	Object Shape
 	Point  *algebra.Vector
+	OverPoint *algebra.Vector
 	Eye    *algebra.Vector
 	Normal *algebra.Vector
 	Inside bool
@@ -85,5 +111,11 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray) *Comps {
 	} else {
 		c.Inside = false
 	}
+	EPSILON := 0.00001
+	overPoint,err := c.Point.Add(c.Normal.MultScalar(EPSILON))
+	if err != nil{
+		panic(err)
+	}
+	c.OverPoint = overPoint
 	return c
 }

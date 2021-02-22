@@ -33,29 +33,29 @@ func TestLighting(t *testing.T) {
 	normalVector := algebra.NewVector(0, 0, -1)
 	light := NewPointLight(&Color{1, 1, 1}, algebra.NewPoint(0, 0, -10))
 
-	color := Lighting(m, light, p, eyeVector, normalVector)
+	color := Lighting(m, light, p, eyeVector, normalVector, false)
 	testVectorEquals(t, color, &Color{1.9, 1.9, 1.9})
 
 	eyeVector = algebra.NewVector(0, math.Sqrt(2)/2, math.Sqrt(2)/2)
 
-	color = Lighting(m, light, p, eyeVector, normalVector)
+	color = Lighting(m, light, p, eyeVector, normalVector, false)
 	testVectorEquals(t, color, &Color{1.0, 1.0, 1.0})
 
 	eyeVector = algebra.NewVector(0, 0, -1)
 	normalVector = algebra.NewVector(0, 0, -1)
 	light = NewPointLight(&Color{1.0, 1.0, 1.0}, algebra.NewPoint(0, 10, -10))
 
-	color = Lighting(m, light, p, eyeVector, normalVector)
+	color = Lighting(m, light, p, eyeVector, normalVector, false)
 	testVectorEquals(t, color, &Color{0.7364, 0.7634})
 
 	eyeVector = algebra.NewVector(0, -math.Sqrt(2)/2, -math.Sqrt(2)/2)
-	color = Lighting(m, light, p, eyeVector, normalVector)
+	color = Lighting(m, light, p, eyeVector, normalVector, false)
 	testVectorEquals(t, color, &Color{1.6364, 1.6364, 1.6364})
 
 	eyeVector = algebra.NewVector(0, 0, -1)
 	normalVector = algebra.NewVector(0, 0, -1)
 	light = NewPointLight(&Color{1, 1, 1}, algebra.NewPoint(0, 0, 10))
 
-	color = Lighting(m, light, p, eyeVector, normalVector)
+	color = Lighting(m, light, p, eyeVector, normalVector, false)
 	testVectorEquals(t, color, &Color{0.1, 0.1, 0.1})
 }
