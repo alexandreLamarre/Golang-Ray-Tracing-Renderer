@@ -3,6 +3,7 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"math"
 )
 
 //Sphere Data type for a 3D sphere
@@ -49,21 +50,48 @@ func (s *Sphere) GetMaterial() *canvas.Material {
 }
 
 //NormalAt returns the normal to the sphere at the location "point"
-func (s *Sphere) NormalAt(point *algebra.Vector) *algebra.Vector {
-	inverseTransform := s.transform.Inverse()
-	sphereBoundary := inverseTransform.MultiplyByVec(point)
-	sphereNormal, err := sphereBoundary.Subtract(algebra.NewPoint(0, 0, 0))
-	if err != nil {
-		panic(err)
-		return nil
-	}
-	worldNormal := inverseTransform.Transpose().MultiplyByVec(sphereNormal)
+func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {
 
-	res, err := worldNormal.Normalize()
+	sphereNormal, err := point.Subtract(algebra.NewPoint(0, 0, 0))
+
+	return sphereNormal, err
+}
+
+func (s *Sphere) LocalIntersect(r *algebra.Ray) (float64, float64, bool){
+	got := r.Get()
+	origin := got["origin"]
+	direction := got["direction"]
+	sphereToRay, err := origin.Subtract(s.GetPosition())
 	if err != nil {
 		panic(err)
-		return nil
 	}
-	res = algebra.NewVector(res.Get()[:3]...)
-	return res
+
+	a, err := algebra.DotProduct(direction, direction)
+	if err != nil {
+		panic(err)
+	}
+	if a == 0 {
+		panic(algebra.ZeroDivide(0))
+	}
+
+	b, err := algebra.DotProduct(direction, sphereToRay)
+	if err != nil {
+		panic(err)
+	}
+	b = 2 * b
+
+	c, err := algebra.DotProduct(sphereToRay, sphereToRay)
+	if err != nil {
+		panic(err)
+	}
+	c = c - 1
+	discriminant := math.Pow(b, 2) - (4 * a * c)
+
+	if discriminant < 0 { // No rays intersect the sphere
+		 return 0, 0, false
+	}
+
+	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
+	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
+	return t1, t2, true
 }

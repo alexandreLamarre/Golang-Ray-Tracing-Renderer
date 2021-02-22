@@ -101,7 +101,7 @@ type Comps struct {
 func PrepareComputations(intersection *Intersection, ray *algebra.Ray) *Comps {
 	position := ray.Position(intersection.T)
 	c := &Comps{T: intersection.T, Object: intersection.Object, Point: position,
-		Eye: ray.Get()["direction"].Negate(), Normal: intersection.Object.NormalAt(position)}
+		Eye: ray.Get()["direction"].Negate(), Normal: NormalAt(intersection.Object,position)}
 
 	if d, err := algebra.DotProduct(c.Normal, c.Eye); err != nil {
 		panic(err)

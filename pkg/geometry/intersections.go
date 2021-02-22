@@ -2,7 +2,6 @@ package geometry
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
-	"math"
 )
 
 //Intersections data type keeps track of t values of the intersections of rays with a sphere
@@ -33,42 +32,11 @@ func NewIntersections() *Intersections {
 func (intersections *Intersections) Intersect(s Shape, r *algebra.Ray) error {
 	m := s.GetTransform()
 	r2 := r.Transform(m.Inverse())
-	got := r2.Get()
-	origin := got["origin"]
-	direction := got["direction"]
-	sphereToRay, err := origin.Subtract(s.GetPosition())
-	if err != nil {
-		return err
-	}
 
-	a, err := algebra.DotProduct(direction, direction)
-	if err != nil {
-		return err
-	}
-	if a == 0 {
-		return algebra.ZeroDivide(0)
-	}
-
-	b, err := algebra.DotProduct(direction, sphereToRay)
-	if err != nil {
-		return err
-	}
-	b = 2 * b
-
-	c, err := algebra.DotProduct(sphereToRay, sphereToRay)
-	if err != nil {
-		return err
-	}
-	c = c - 1
-	discriminant := math.Pow(b, 2) - (4 * a * c)
-
-	if discriminant < 0 { // No rays intersect the sphere
+	t1, t2, intersected := s.LocalIntersect(r2)
+	if !intersected{
 		return nil
 	}
-
-	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
-	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
-
 	i1 := NewIntersection(s, t1)
 	i2 := NewIntersection(s, t2)
 
