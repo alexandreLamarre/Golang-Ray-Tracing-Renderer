@@ -38,5 +38,5 @@ func NormalAt(s Shape, point *algebra.Vector) *algebra.Vector {
 func PatternAtObject(s Shape, pattern *canvas.Pattern, worldPoint *algebra.Vector) *canvas.Color{
 	objectPoint := s.GetTransform().Inverse().MultiplyByVec(worldPoint)
 	patternPoint := pattern.Transform.Inverse().MultiplyByVec(objectPoint)
-	return pattern.GetPattern(patternPoint)
+	return pattern.GetColor(patternPoint)
 }
