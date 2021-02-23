@@ -85,9 +85,12 @@ func TestPlane_LocalIntersect(t *testing.T) {
 
 func TestPlane_LocalNormalAt(t *testing.T) {
 	p := NewPlane(nil)
-	n1 := p.LocalNormalAt(algebra.NewPoint(0,0,0))
-	n2 := p.LocalNormalAt(algebra.NewPoint(10, 0, -10))
-	n3 := p.LocalNormalAt(algebra.NewPoint(-5, 0, 150))
+	n1, err := p.LocalNormalAt(algebra.NewPoint(0,0,0))
+	if err != nil{ t.Errorf("%s", err); return}
+	n2, err := p.LocalNormalAt(algebra.NewPoint(10, 0, -10))
+	if err != nil{ t.Errorf("%s", err); return}
+	n3, err := p.LocalNormalAt(algebra.NewPoint(-5, 0, 150))
+	if err != nil{ t.Errorf("%s", err); return}
 
 	testVectorEquals(t, n1.Get(), []float64{0, 1, 0, 0})
 	testVectorEquals(t, n2.Get(), []float64{0, 1, 0, 0})

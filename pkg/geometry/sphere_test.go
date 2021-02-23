@@ -230,6 +230,29 @@ func TestSphere_Intersect(t *testing.T) {
 	}
 }
 
+
+func TestPatternAtObject(t *testing.T) {
+	white := &canvas.Color{1,1,1}
+	black := &canvas.Color{0,0,0}
+	obj := NewSphere(algebra.ScalingMatrix(2,2,2))
+	pattern := canvas.StripePattern(white,black)
+	c := PatternAtObject(obj, pattern, algebra.NewPoint(1.5, 0.0, 0.0))
+	testColorEquals(t, c, white)
+
+	obj = NewSphere(nil)
+	pattern = canvas.StripePattern(white, black)
+	pattern.SetTransform(algebra.ScalingMatrix(2,2,2))
+	c = PatternAtObject(obj, pattern, algebra.NewPoint(1.5, 0, 0))
+	testColorEquals(t, c, white)
+
+	obj = NewSphere(algebra.ScalingMatrix(2,2,2))
+	pattern = canvas.StripePattern(white, black)
+	pattern.SetTransform(algebra.TranslationMatrix(0.5, 0, 0))
+	c = PatternAtObject(obj, pattern, algebra.NewPoint(2.5, 0, 0))
+	testColorEquals(t, c, white)
+
+}
+
 func testVectorEquals(t *testing.T, values, results []float64) {
 	if len(values) != len(results) {
 		fmt.Println(values, results)

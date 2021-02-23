@@ -47,7 +47,14 @@ func (w World) ShadeHit(comps Comps) *canvas.Color {
 	color := &canvas.Color{0, 0, 0}
 	inShadow := w.PointIsShadowed(comps.OverPoint)
 	for _, l := range w.Lights {
-		lightingColor := canvas.Lighting(comps.Object.GetMaterial(), l, comps.Point, comps.Eye, comps.Normal, inShadow)
+		pattern := comps.Object.GetMaterial().Pattern
+		var patternColor *canvas.Color
+		if pattern != nil{
+			patternColor = PatternAtObject(comps.Object, pattern, comps.Point)
+		} else {
+			patternColor = nil
+		}
+		lightingColor := canvas.Lighting(comps.Object.GetMaterial(), patternColor, l, comps.Point, comps.Eye, comps.Normal, inShadow)
 		color = color.Add(lightingColor)
 	}
 	return color

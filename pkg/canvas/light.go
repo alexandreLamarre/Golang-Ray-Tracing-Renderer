@@ -18,9 +18,15 @@ func NewPointLight(color *Color, position *algebra.Vector) *PointLight {
 
 //Lighting computes the lighting from the PointLight onto the Material at the illuminatedPoint with its normal Vector
 // from the point of view of the eye vector
-func Lighting(material *Material, light *PointLight, illuminatedPoint, eyeVector, normalVector *algebra.Vector, inShadow bool) *Color {
+func Lighting(material *Material, patternColor *Color, light *PointLight, illuminatedPoint, eyeVector, normalVector *algebra.Vector, inShadow bool) *Color {
+	var color *Color
+	if patternColor!= nil{
+		color = patternColor
+	} else {
+		color = material.Color
+	}
 
-	effectiveColor := Multiply(material.Color, light.Intensity)
+	effectiveColor := Multiply(color, light.Intensity)
 
 	lightVector, err := light.Position.Subtract(illuminatedPoint)
 	if err != nil {
