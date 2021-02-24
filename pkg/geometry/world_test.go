@@ -3,6 +3,7 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"math"
 	"testing"
 )
 
@@ -45,6 +46,13 @@ func TestPrepareComputations(t *testing.T) {
 	if comps.Inside == false {
 		t.Errorf("Expected eye vector to be inside shape")
 	}
+
+	//Test reflection vector
+	plane := NewPlane(nil)
+	r = algebra.NewRay(0,1,-1,0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	i = NewIntersection(plane, math.Sqrt(2))
+	comps = PrepareComputations(i, r)
+	testVectorEquals(t, comps.Reflect.Get(), []float64{0, math.Sqrt(2)/2, math.Sqrt(2)/2, 0.0})
 }
 
 func TestWorld_Intersect(t *testing.T) {
@@ -69,7 +77,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	s := w.Objects[0]
 	i := NewIntersection(s, 4.0)
 	comps := PrepareComputations(i, r)
-	c := w.ShadeHit(*comps)
+	c := w.ShadeHit(*comps, 0)
 	if !equals(c.Red(), 0.38066) {
 		t.Errorf("Expected %f, Got %f", 0.38066, c.Red())
 	}
@@ -85,7 +93,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	s = w.Objects[1]
 	i = NewIntersection(s, 0.5)
 	comps = PrepareComputations(i, r)
-	c = w.ShadeHit(*comps)
+	c = w.ShadeHit(*comps, 0)
 	res := 0.90498
 	if !equals(c.Red(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Red())
@@ -110,7 +118,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	ray := algebra.NewRay(0,0,5,0,0,1)
 	i = NewIntersection(s, 4)
 	comps = PrepareComputations(i, ray)
-	c = w.ShadeHit(*comps)
+	c = w.ShadeHit(*comps, 0)
 	res = 0.1
 	if !equals(c.Red(), res){
 		t.Errorf("Expected %f, Got %f", res, c.Red())
@@ -123,12 +131,23 @@ func TestWorld_ShadeHit(t *testing.T) {
 	}
 
 
+	w = NewDefaultWorld()
+	shape := NewPlane(algebra.TranslationMatrix(0, -1, 0))
+	m := canvas.NewDefaultMaterial()
+	m.Reflective = 0.5
+	shape.SetMaterial(m)
+	w.Objects = append(w.Objects, shape)
+	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	i = NewIntersection(shape, math.Sqrt(2))
+	comps = PrepareComputations(i, r)
+	color := w.ShadeHit(*comps, 1)
+	testColorEquals(t, color, &canvas.Color{0.87677, 0.92436, 0.82918})
 }
 
 func TestWorld_ColorAt(t *testing.T) {
 	w := NewDefaultWorld()
 	r := algebra.NewRay(0, 0, -5, 0, 1, 0)
-	c := w.ColorAt(r)
+	c := w.ColorAt(r, 0)
 	res := 0.0
 	if !equals(c.Red(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Red())
@@ -141,7 +160,7 @@ func TestWorld_ColorAt(t *testing.T) {
 	}
 
 	r = algebra.NewRay(0, 0, -5, 0, 0, 1)
-	c = w.ColorAt(r)
+	c = w.ColorAt(r, 0)
 	if !equals(c.Red(), 0.38066) {
 		t.Errorf("Expected %f, Got %f", 0.38066, c.Red())
 	}
@@ -163,13 +182,56 @@ func TestWorld_ColorAt(t *testing.T) {
 	inner.SetMaterial(mat)
 
 	r = algebra.NewRay(0, 0, 0.75, 0, 0, -1)
-	c = w.ColorAt(r)
+	c = w.ColorAt(r, 0)
 	for i := 0; i < 3; i++ {
 		if !equals(c[i], inner.GetMaterial().Color[i]) {
 			t.Errorf("Expected: %f, Got: %f", c[i], inner.GetMaterial().Color[i])
 		}
 	}
 
+
+	// test that an "infinite recursion" terminates
+	lights := make([]*canvas.PointLight, 0 ,0)
+	light1 := canvas.NewPointLight(&canvas.Color{1,1,1}, algebra.NewPoint(0,0,0))
+	lower := NewPlane(algebra.TranslationMatrix(0, -1, 0))
+	m := canvas.NewDefaultMaterial()
+	m.Reflective = 1.0
+	lower.SetMaterial(m)
+	upper := NewPlane(algebra.TranslationMatrix(0, 1, 0))
+	upper.SetMaterial(m)
+	objs := make([]Shape, 0, 0)
+	objs = append(objs, lower, upper)
+	lights = append(lights, light1)
+	w = &World{Lights: lights, Objects: objs}
+	r = algebra.NewRay(0,0,0, 0, 1, 0)
+	w.ColorAt(r, 10)
+
+
+}
+
+func TestWorld_ReflectedColor(t *testing.T) {
+	w := NewDefaultWorld()
+	r := algebra.NewRay(0,0,0, 0,0,1)
+	shape := w.Objects[1]
+	m := shape.GetMaterial()
+	m.Ambient = 1.0
+	shape.SetMaterial(m)
+	i := NewIntersection(shape, 1)
+	comps := PrepareComputations(i, r)
+	color := w.ReflectedColor(comps, 1)
+	testColorEquals(t, color, &canvas.Color{0,0,0})
+
+	w = NewDefaultWorld()
+	shape = NewPlane(algebra.TranslationMatrix(0, -1, 0))
+	m = canvas.NewDefaultMaterial()
+	m.Reflective = 0.5
+	shape.SetMaterial(m)
+	w.Objects = append(w.Objects, shape)
+	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	i = NewIntersection(shape, math.Sqrt(2))
+	comps = PrepareComputations(i, r)
+	color = w.ReflectedColor(comps, 1)
+	testColorEquals(t, color, &canvas.Color{0.19032, 0.2379, 0.14274})
 }
 
 func TestWorld_PointIsShadowed(t *testing.T) {

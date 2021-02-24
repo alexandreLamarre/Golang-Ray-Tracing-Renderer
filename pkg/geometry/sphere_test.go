@@ -277,7 +277,7 @@ func testColorEquals(t *testing.T, values, results *canvas.Color) {
 }
 
 func equals(a, b float64) bool {
-	EPSILON := 0.00001
+	EPSILON := 0.0001
 	return math.Abs(a-b) < EPSILON
 }
 

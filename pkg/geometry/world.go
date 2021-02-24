@@ -43,7 +43,7 @@ func (w *World) Intersect(r *algebra.Ray) *Intersections {
 	return is
 }
 
-func (w World) ShadeHit(comps Comps) *canvas.Color {
+func (w World) ShadeHit(comps Comps, depth int) *canvas.Color {
 	color := &canvas.Color{0, 0, 0}
 	inShadow := w.PointIsShadowed(comps.OverPoint)
 	for _, l := range w.Lights {
@@ -56,17 +56,20 @@ func (w World) ShadeHit(comps Comps) *canvas.Color {
 		}
 		lightingColor := canvas.Lighting(comps.Object.GetMaterial(), patternColor, l, comps.Point, comps.Eye, comps.Normal, inShadow)
 		color = color.Add(lightingColor)
+
+		reflected := w.ReflectedColor(&comps, depth)
+		color = color.Add(reflected)
 	}
 	return color
 }
 
-func (w World) ColorAt(ray *algebra.Ray) *canvas.Color {
+func (w World) ColorAt(ray *algebra.Ray, depth int) *canvas.Color {
 	intersections := w.Intersect(ray)
 	if h := intersections.Hit(); h == nil {
 		return &canvas.Color{0, 0, 0}
 	} else {
 		c := PrepareComputations(h, ray)
-		return w.ShadeHit(*c)
+		return w.ShadeHit(*c, depth)
 	}
 }
 
@@ -94,6 +97,18 @@ func (w World) PointIsShadowed(p *algebra.Vector) bool{
 	return false
 }
 
+func (w *World) ReflectedColor(comps *Comps, depth int) *canvas.Color {
+	if comps.Object.GetMaterial().Reflective == 0.0 || depth <= 0{
+		return &canvas.Color{0,0,0}
+	}
+	p := []float64{comps.OverPoint.Get()[0], comps.OverPoint.Get()[1], comps.OverPoint.Get()[2]}
+	d := []float64{comps.Reflect.Get()[0], comps.Reflect.Get()[1], comps.Reflect.Get()[2] }
+	res := append(p, d...)
+	reflectRay := algebra.NewRay(res...)
+	color := w.ColorAt(reflectRay, depth -1)
+	return color.ScalarMult(comps.Object.GetMaterial().Reflective)
+}
+
 //Comps manages the precomputed state of the necessary vectors for lighting
 type Comps struct {
 	T      float64
@@ -102,6 +117,7 @@ type Comps struct {
 	OverPoint *algebra.Vector
 	Eye    *algebra.Vector
 	Normal *algebra.Vector
+	Reflect *algebra.Vector
 	Inside bool
 }
 
@@ -124,5 +140,8 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray) *Comps {
 		panic(err)
 	}
 	c.OverPoint = overPoint
+
+	direction := ray.Get()["direction"]
+	c.Reflect = direction.Reflect(c.Normal)
 	return c
 }

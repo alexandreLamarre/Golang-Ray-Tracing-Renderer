@@ -7,6 +7,8 @@ import (
 	"math"
 )
 
+var RECURSIONDEPTH int = 10
+
 //Camera describes a camera object that renders pixels from the setup scene
 type Camera struct {
 	hSize      float64 // horizontal size of picture to be rendered in pixels
@@ -96,7 +98,7 @@ func (c Camera) Render(w *geometry.World) *canvas.Canvas{
 	for y := 0.0; y < c.vSize; y++ {
 		for x := 0.0; x < c.hSize; x++ {
 			ray := c.RayForPixel(x, y)
-			color := w.ColorAt(ray)
+			color := w.ColorAt(ray, RECURSIONDEPTH)
 			image.WritePixel(int(x), int(y), color)
 		}
 	}
