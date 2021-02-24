@@ -16,12 +16,15 @@ func CreateSimpleScene2() error{
 	m := canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0, 1, 0.0}
 	m.Specular = 0
+	m.Ambient = 0.5
+	pat1 := canvas.GradientPattern(&canvas.Color{0, 0, 1}, &canvas.Color{1, 1, 1})
+	m.Pattern = canvas.PerlinNoisePattern(pat1)
 	floor.SetMaterial(m)
 
 
 	wall := geometry.NewPlane(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5), algebra.RotationX(math.Pi/2) ))
 	m = canvas.NewDefaultMaterial()
-	m.Color = &canvas.Color{0.0, 0.1, 1.0}
+	m.Color = &canvas.Color{1.0, 1.0, 1.0}
 	m.Specular = 0
 	wall.SetMaterial(m)
 
@@ -30,7 +33,9 @@ func CreateSimpleScene2() error{
 	middleMat.Color = &canvas.Color{0.1, 1, 0.5}
 	middleMat.Diffuse = 0.7
 	middleMat.Specular = 0.3
-	middleMat.Pattern = canvas.StripePattern(&canvas.Color{1, 0, 0}, &canvas.Color{0,1,0})
+	pat :=  canvas.CheckerPattern(&canvas.Color{1,0,0}, &canvas.Color{0,0,1})
+	pat.SetTransform(algebra.ScalingMatrix(0.25, 0.25, 0.25))
+	middleMat.Pattern = canvas.PerlinNoisePattern(pat)
 	middle.SetMaterial(middleMat)
 
 	right := geometry.NewSphere(
@@ -57,7 +62,7 @@ func CreateSimpleScene2() error{
 	lights = append(lights, canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(-10, 10, -10)))
 	w := &geometry.World{Objects: objs, Lights: lights}
 
-	cam, err := camera2.NewCamera(100, 50, math.Pi/3,
+	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
 		algebra.ViewTransform(0, 1.5, -5,
 			0, 1, 0,
 			0, 1, 0))

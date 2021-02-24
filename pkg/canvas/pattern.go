@@ -2,6 +2,7 @@ package canvas
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/noise"
 	"math"
 )
 
@@ -71,7 +72,7 @@ func NestedPattern(pattern *Pattern, patternA *Pattern, patternB *Pattern) *Patt
 		colorA := patternA.GetColor(p)
 		colorB := patternB.GetColor(p)
 		return pattern.getPattern(p, colorA, colorB)
-	}, Transform: algebra.IdentityMatrix(4)}
+	}, Transform: algebra.Multiply(patternB.Transform, patternA.Transform)}
 }
 
 //BlendedPattern Creates a new blended Pattern from two patterns and a heuristic function blend
@@ -89,9 +90,23 @@ func BlendedPattern(patternA *Pattern, patternB *Pattern, blend func(colorA, col
 			colorFromA := patternA.GetColor(p)
 			colorFromB := patternB.GetColor(p)
 			return blend(colorFromA, colorFromB)
-		}, Transform: algebra.IdentityMatrix(4)}
+		}, Transform: algebra.Multiply(patternA.Transform, patternB.Transform)}
 	}
 }
+
+//Random Noise Patterns
+
+func PerlinNoisePattern(pattern *Pattern) *Pattern{
+	return &Pattern{a: nil, b:nil, getPattern: func(point *algebra.Vector, colorA *Color, colorB *Color) *Color {
+		displacement := noise.Perlin(point.Get()[0], point.Get()[1], point.Get()[2])
+		newPoint, err :=point.Add(algebra.NewPoint(displacement, displacement, displacement))
+		if err != nil{
+			panic(err)
+		}
+		return pattern.getPattern(newPoint, pattern.a, pattern.b )
+	}, Transform: pattern.Transform}
+}
+
 
 //SetTransform sets the transform of the pattern
 func (p *Pattern) SetTransform(m *algebra.Matrix){
@@ -102,11 +117,6 @@ func (p *Pattern) SetTransform(m *algebra.Matrix){
 	}
 }
 
-//Random Noise Patterns
-
-func PerlinNoisePattern(pattern *Pattern) *Pattern{
-	return &Pattern{}
-}
 
 
 

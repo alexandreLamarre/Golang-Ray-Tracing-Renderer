@@ -1,7 +1,9 @@
 package canvas
 
 import (
+	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"math/rand"
 	"testing")
 
 func TestStripePattern(t *testing.T) {
@@ -172,20 +174,22 @@ func  TestBlendedPattern(t *testing.T) {
 }
 
 func TestPerlinNoisePattern(t *testing.T) {
-	//white := &Color{0,0,0}
-	//black := &Color{1,1,1}
-	//for i := 0; i < 100; i++ {
-	//	pattern := PerlinNoisePattern(white, black)
-	//	c := pattern.GetColor(algebra.NewPoint(0, 0, 0))
-	//	t.Logf("%v", c)
-	//	if c.Red() < 0 || c.Red() > 1 {
-	//		t.Errorf("Red color %f out of bounds", c.Red())
-	//	}
-	//	if c.Green() < 0 || c.Green() > 1 {
-	//		t.Errorf("Green color %f out of bounds", c.Green())
-	//	}
-	//	if c.Blue() < 0 || c.Blue() > 1 {
-	//		t.Errorf("Blue color %f out of bounds", c.Blue())
-	//	}
-	//}
+	white := &Color{0,0,0}
+	black := &Color{1,1,1}
+	grad := GradientPattern(white, black)
+	for i := 0; i < 100; i++ {
+		pattern := PerlinNoisePattern(grad)
+		c := pattern.GetColor(algebra.NewPoint(rand.Float64(), rand.Float64(), rand.Float64()))
+		fmt.Println(c.Red())
+		t.Logf("%v", c)
+		if c.Red() < 0 || c.Red() > 1 {
+			t.Errorf("Red color %f out of bounds", c.Red())
+		}
+		if c.Green() < 0 || c.Green() > 1 {
+			t.Errorf("Green color %f out of bounds", c.Green())
+		}
+		if c.Blue() < 0 || c.Blue() > 1 {
+			t.Errorf("Blue color %f out of bounds", c.Blue())
+		}
+	}
 }
