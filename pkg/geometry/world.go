@@ -62,10 +62,16 @@ func (w World) ShadeHit(comps Comps, depth int) *canvas.Color {
 		color = color.Add(lightingColor)
 
 		reflected := w.ReflectedColor(&comps, depth)
-		color = color.Add(reflected)
-
 		refracted := w.RefractedColor(&comps, depth)
-		color = color.Add(refracted)
+		material := comps.Object.GetMaterial()
+		if material.Reflective > 0 && material.Transparency > 0{
+			reflectance := Schlick(&comps)
+			color = color.Add(reflected.ScalarMult(reflectance))
+			color = color.Add(refracted.ScalarMult(1-reflectance))
+		} else{
+			color = color.Add(refracted)
+			color = color.Add(reflected)
+		}
 	}
 	return color
 }
@@ -149,6 +155,29 @@ func (w *World) RefractedColor(comps *Comps, depth int) *canvas.Color{
 	refractRay := algebra.NewRay(res...)
 	color := w.ColorAt(refractRay, depth -1).ScalarMult(comps.Object.GetMaterial().Transparency)
 	return color
+}
+
+//Schlick returns the reflectance at a pre-computed ray intersection based on the Schlick model
+func Schlick(comps *Comps) float64{
+	cos, err := algebra.DotProduct(comps.Eye, comps.Normal)
+	if err != nil{
+		panic(err)
+	}
+
+	if comps.N1 > comps.N2{
+		n := comps.N1/comps.N2
+		sin2T := n * n * (1 -cos*cos)
+		if sin2T > 1.0{
+			return 1.0
+		}
+
+		cosT := math.Sqrt(1.0 - sin2T)
+		cos = cosT
+	}
+
+	r0 := (comps.N1 - comps.N2)/ (comps.N1 + comps.N2)
+	r0 *= r0
+	return r0 + (1 - r0) * math.Pow((1-cos),5)
 }
 
 //Comps manages the precomputed state of the necessary vectors for lighting
@@ -268,4 +297,5 @@ func getSortedIntersections(is *Intersections) []*Intersection{
 	}
 	return res
 }
+
 

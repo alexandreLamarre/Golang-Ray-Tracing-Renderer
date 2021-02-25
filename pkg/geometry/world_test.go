@@ -376,6 +376,68 @@ func TestWorld_RefractedColor(t *testing.T) {
 	testColorEquals(t, color, &canvas.Color{0.93642, 0.68642, 0.68642})
 }
 
+func TestSchlick(t *testing.T) {
+	shape := NewGlassSphere(nil, 1.5)
+	r := algebra.NewRay(0, 0, math.Sqrt(2)/2, 0, 1, 0)
+	xs := NewIntersections()
+	i1 := NewIntersection(shape, -math.Sqrt(2)/2)
+	i2 := NewIntersection(shape, math.Sqrt(2)/2)
+	xs.hits.PushAll(i1, i2)
+	comps := PrepareComputations(i2, r, xs)
+	reflectance := Schlick(comps)
+	if !equals(reflectance, 1.0){
+		t.Errorf("Expected reflectance %f, Got: %f", 1.0, reflectance)
+	}
+
+	r = algebra.NewRay(0, 0, 0, 0, 1, 0)
+	xs = NewIntersections()
+	i1 = NewIntersection(shape, -1)
+	i2 = NewIntersection(shape, 1)
+	xs.hits.PushAll(i1, i2)
+	comps = PrepareComputations(i2, r, xs)
+	reflectance = Schlick(comps)
+	if !equals(reflectance, 0.04){
+		t.Errorf("Expected reflectance %f, Got: %f", 0.04, reflectance)
+	}
+
+	r = algebra.NewRay(0, 0.99, -2, 0, 0, 1)
+	xs = NewIntersections()
+	i1 = NewIntersection(shape, 1.8589)
+	xs.hits.Push(i1)
+	comps = PrepareComputations(i1, r, xs)
+	reflectance = Schlick(comps)
+	if !equals(reflectance, 0.48873){
+		t.Errorf("Expected reflectance %f, Got: %f", 0.48873, reflectance)
+	}
+
+
+	//test Shade Hit augmented with Schlick
+
+	w := NewDefaultWorld()
+	r = algebra.NewRay(0, 0, -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	floor := NewPlane(algebra.TranslationMatrix(0, -1, 0))
+	matf := floor.GetMaterial()
+	matf.Reflective = 0.5
+	matf.Transparency = 0.5
+	matf.RefractiveIndex = 1.5
+	floor.SetMaterial(matf)
+	w.Objects = append(w.Objects, floor)
+
+	ball := NewSphere(algebra.TranslationMatrix(0, -3.5, -0.5))
+	ballf := ball.GetMaterial()
+	ballf.Color = &canvas.Color{1, 0, 0 }
+	ballf.Ambient = 0.5
+	ball.SetMaterial(ballf)
+	w.Objects = append(w.Objects, ball)
+	
+	xs = NewIntersections()
+	i1 = NewIntersection(floor, math.Sqrt(2))
+	xs.hits.Push(i1)
+	comps = PrepareComputations(i1, r, xs)
+	color := w.ShadeHit(*comps, 5)
+	testColorEquals(t, color, &canvas.Color{0.93391, 0.69643, 0.69243})
+}
+
 func TestWorld_PointIsShadowed(t *testing.T) {
 	w := NewDefaultWorld()
 	p := algebra.NewPoint(0, 10, 0)
