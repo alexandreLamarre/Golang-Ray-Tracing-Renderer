@@ -50,6 +50,25 @@ func TestMinHeap(t *testing.T) {
 	if h.GetMin().T != -1.0 {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), -1.0)
 	}
+
+	l := len(h.container)
+	v := h.ExtractMin()
+	if v.T != -1.0{
+		t.Errorf("invalid extracted minimum of heap %f, expected %f", h.GetMin(), -1.0)
+	}
+	if len(h.container) != l -1{
+		t.Errorf("Heap did not shrink in size after extract min")
+	}
+
+	l = len(h.container)
+	v = h.ExtractMin()
+	if v.T != 1.0 {
+		t.Errorf("invalid extracted minimum of heap %f, expected %f", h.GetMin(), 1.0)
+	}
+	if len(h.container) != l -1{
+		t.Errorf("Heap did not shrink in size after extract min")
+	}
+
 }
 
 func testSliceEquals(t *testing.T, values []float64, expected []float64) {

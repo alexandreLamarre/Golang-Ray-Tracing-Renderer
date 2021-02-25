@@ -25,14 +25,25 @@ func (m *MinHeap) PushAll(el ...*Intersection) {
 	}
 }
 
-//Get() returns the underlying array of the heap
+//Get returns the underlying array of the heap
 func (m *MinHeap) Get() []*Intersection {
 	return m.container
 }
 
-//GetMin() returns the min of the MinHeap
+//GetMin returns the min of the MinHeap
 func (m *MinHeap) GetMin() *Intersection {
 	return m.container[0]
+}
+
+//ExtractMin returns the min and extracts it from the container
+func (m *MinHeap) ExtractMin() *Intersection{
+	if len(m.container) == 0 {return nil}
+	min := m.container[0]
+	m.container[0] = m.container[len(m.container) -1]
+	m.container = m.container[:len(m.container) -1]
+	minHeapify(m, 0)
+	return min
+
 }
 
 func heapify(m *MinHeap, i int) {
@@ -46,4 +57,30 @@ func heapify(m *MinHeap, i int) {
 			heapify(m, parent)
 		}
 	}
+}
+
+func minHeapify(m *MinHeap, i int){
+	l := left(i)
+	r := right(i)
+	smallest := i
+	if l < len(m.container) && m.container[l].T < m.container[i].T{
+		smallest = l
+	}
+	if r < len(m.container) && m.container[r].T < m.container[i].T{
+		smallest = r
+	}
+	if smallest != i {
+		temp := m.container[i]
+		m.container[i] = m.container[smallest]
+		m.container[smallest] = temp
+		minHeapify(m, smallest)
+	}
+}
+
+func left(i int) int{
+	return 2 * i + 1
+}
+
+func right(i int) int{
+ 	return 2 * i + 2
 }
