@@ -3,6 +3,8 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"log"
+	"math"
 	"reflect"
 )
 
@@ -44,6 +46,7 @@ func (w *World) Intersect(r *algebra.Ray) *Intersections {
 	return is
 }
 
+//ShadeHit Determines the color at some valid ray intersection (hit)
 func (w World) ShadeHit(comps Comps, depth int) *canvas.Color {
 	color := &canvas.Color{0, 0, 0}
 	inShadow := w.PointIsShadowed(comps.OverPoint)
@@ -60,10 +63,14 @@ func (w World) ShadeHit(comps Comps, depth int) *canvas.Color {
 
 		reflected := w.ReflectedColor(&comps, depth)
 		color = color.Add(reflected)
+
+		refracted := w.RefractedColor(&comps, depth)
+		color = color.Add(refracted)
 	}
 	return color
 }
 
+//ColorAt returns the color where the ray intersects (if at all), with a maximum recursive depth of depth
 func (w World) ColorAt(ray *algebra.Ray, depth int) *canvas.Color {
 	intersections := w.Intersect(ray)
 	if h := intersections.Hit(); h == nil {
@@ -74,6 +81,7 @@ func (w World) ColorAt(ray *algebra.Ray, depth int) *canvas.Color {
 	}
 }
 
+//PointIsShadowed returns whether or not the point in question is in the shadow of some other object
 func (w World) PointIsShadowed(p *algebra.Vector) bool{
 	for i := 0; i < len(w.Lights); i++{
 		v, err := w.Lights[i].Position.Subtract(p)
@@ -98,6 +106,8 @@ func (w World) PointIsShadowed(p *algebra.Vector) bool{
 	return false
 }
 
+//ReflectedColor determines if there is a reflected color being emitted at some ray intersection
+// Takes the pre-computed computations at the ray intersection (struct Comps)
 func (w *World) ReflectedColor(comps *Comps, depth int) *canvas.Color {
 	if comps.Object.GetMaterial().Reflective == 0.0 || depth <= 0{
 		return &canvas.Color{0,0,0}
@@ -108,6 +118,37 @@ func (w *World) ReflectedColor(comps *Comps, depth int) *canvas.Color {
 	reflectRay := algebra.NewRay(res...)
 	color := w.ColorAt(reflectRay, depth -1)
 	return color.ScalarMult(comps.Object.GetMaterial().Reflective)
+}
+
+
+//RefractedColor determines if there is a refracted color being emitted at some ray intersection
+// Takes the pre-computed computations at the ray intersection (struct Comps)
+func (w *World) RefractedColor(comps *Comps, depth int) *canvas.Color{
+	//completely opaque object
+	if comps.Object.GetMaterial().Transparency == 0.0 || depth == 0{
+		return &canvas.Color{0, 0, 0}
+	}
+	refractiveRatio := comps.N1 / comps.N2
+	cosI,err := algebra.DotProduct(comps.Eye, comps.Normal)
+	if err != nil{
+		panic(err)
+	}
+	sin2T := refractiveRatio*refractiveRatio * (1 - cosI * cosI)
+	// Total reflection occurs
+	if sin2T > 1{
+		return &canvas.Color{0, 0, 0}
+	}
+
+	cosT := math.Sqrt(1.0 -sin2T)
+	direction, err := comps.Normal.MultScalar(refractiveRatio*cosI-cosT).Subtract(comps.Eye.MultScalar(refractiveRatio))
+	if err != nil{
+		panic(err)
+	}
+	point := comps.UnderPoint.Get()[:3]
+	res := append(point, direction.Get()[:3]...)
+	refractRay := algebra.NewRay(res...)
+	color := w.ColorAt(refractRay, depth -1).ScalarMult(comps.Object.GetMaterial().Transparency)
+	return color
 }
 
 //Comps manages the precomputed state of the necessary vectors for lighting
@@ -145,20 +186,30 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray, is *Inter
 	}
 	c.OverPoint = overPoint
 
+	underPoint, err := c.Point.Subtract(c.Normal.MultScalar(EPSILON))
+	if err != nil{
+		panic(err)
+	}
+	c.UnderPoint = underPoint
+
 	direction := ray.Get()["direction"]
 	c.Reflect = direction.Reflect(c.Normal)
 	determineRefractiveIndexes(c, intersection, is)
 	return c
 }
 
+
+// Helper functions
+
 func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersections){
-	if is == nil {
+	if is == nil || len(is.hits.Get()) == 0 {
+		log.Print("Warning: no intersections provided, this should only occur during unit testing")
 		comps.N1 = 1.0
 		comps.N2 = 1.0
 		return
 	} // this is only possible if calling the PrepareComputations method directly with nil in testing
 	containers := make([]*Intersection, 0, 0)
-	allIntersections := append(is.ref.Get(), is.hits.Get()...)
+	allIntersections := getSortedIntersections(is)
 
 	for i := 0; i < len(allIntersections); i++{
 		if intersectionEquals(allIntersections[i], hit){
@@ -169,7 +220,7 @@ func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersectio
 			}
 		}
 		if index, found := has(containers, allIntersections[i]); found{
-			containers = append(containers[:index], containers[index+1:]...)
+			containers = append(containers[:index], containers[index+1:]...) //remove object
 		} else{
 			containers = append(containers, allIntersections[i])
 		}
@@ -180,6 +231,7 @@ func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersectio
 				comps.N2 = containers[len(containers) -1].Object.GetMaterial().RefractiveIndex
 			}
 			break
+
 		}
 	}
 }
@@ -199,3 +251,21 @@ func has(container []*Intersection, intersect *Intersection) (int, bool){
 	}
 	return -1, false
 }
+
+func getSortedIntersections(is *Intersections) []*Intersection{
+	res := make([]*Intersection, 0 , 0)
+	ref := is.ref.Copy()
+	hits := is.hits.Copy()
+	intersect := ref.ExtractMin()
+	for intersect != nil{
+		res = append(res, intersect)
+		intersect = ref.ExtractMin()
+	}
+	intersect = hits.ExtractMin()
+	for intersect != nil{
+		res = append(res, intersect)
+		intersect = hits.ExtractMin()
+	}
+	return res
+}
+

@@ -30,6 +30,23 @@ func (m *MinHeap) Get() []*Intersection {
 	return m.container
 }
 
+//Copy returns a copy of the minheap
+func (m *MinHeap) Copy() *MinHeap{
+	return createMinHeap(m.container)
+}
+
+//sets the minheap container to the parameter without checking heap property :only use on arrays already satisfying heap property
+func createMinHeap(input []*Intersection) *MinHeap{
+	h := NewMinHeap()
+	res := make([]*Intersection, 0, 0)
+	for i := 0; i < len(input); i++{
+		in := NewIntersection(input[i].Object, input[i].T)
+		res = append(res, in)
+	}
+	h.container = res
+	return h
+}
+
 //GetMin returns the min of the MinHeap
 func (m *MinHeap) GetMin() *Intersection {
 	return m.container[0]
@@ -63,10 +80,10 @@ func minHeapify(m *MinHeap, i int){
 	l := left(i)
 	r := right(i)
 	smallest := i
-	if l < len(m.container) && m.container[l].T < m.container[i].T{
+	if l < len(m.container) && m.container[l].T < m.container[smallest].T{
 		smallest = l
 	}
-	if r < len(m.container) && m.container[r].T < m.container[i].T{
+	if r < len(m.container) && m.container[r].T < m.container[smallest].T{
 		smallest = r
 	}
 	if smallest != i {

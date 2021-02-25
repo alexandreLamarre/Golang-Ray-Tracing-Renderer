@@ -68,7 +68,22 @@ func TestMinHeap(t *testing.T) {
 	if len(h.container) != l -1{
 		t.Errorf("Heap did not shrink in size after extract min")
 	}
+}
 
+func TestMinHeap_Copy(t *testing.T) {
+	s := NewSphere(nil)
+	h := NewMinHeap()
+	h.Push(NewIntersection(s, 5 ))
+
+	h1 := h.Copy()
+	if h1.GetMin().T != h.GetMin().T{
+		t.Errorf("Expected copies to share the same minimum")
+	}
+
+	h1.Push(NewIntersection(s, 4))
+	if h.GetMin().T == h1.GetMin().T{
+		t.Errorf("Expected copes to not share the same minimum")
+	}
 }
 
 func testSliceEquals(t *testing.T, values []float64, expected []float64) {

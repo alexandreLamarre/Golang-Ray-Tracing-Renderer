@@ -271,6 +271,110 @@ func TestRefractiveComputations(t *testing.T){
 
 }
 
+func TestCompsUnderPoint(t *testing.T){
+	r := algebra.NewRay(0, 0, -5, 0, 0, 1)
+	shape := NewGlassSphere(algebra.TranslationMatrix(0,0, 1), 1.5)
+	i := NewIntersection(shape, 5)
+	xs := NewIntersections()
+	xs.hits.Push(i)
+	comps := PrepareComputations(i, r, xs)
+	EPSILON := 0.00001
+	if !(comps.UnderPoint.Get()[2] > EPSILON/2){// z coord
+		t.Errorf("Unexpected UnderPoint z-coordinate: %f", comps.UnderPoint.Get()[2])
+	}
+	if !(comps.Point.Get()[2] < comps.UnderPoint.Get()[2]){
+		t.Errorf("Unexpected relative positioning of z-intersect with z-underpoint intersect: %f versus %f",
+			comps.Point.Get()[2], comps.UnderPoint.Get()[2])
+	}
+
+}
+
+func TestWorld_RefractedColor(t *testing.T) {
+	w := NewDefaultWorld()
+	shape := w.Objects[0]
+	r := algebra.NewRay(0, 0, -5, 0, 0, 1)
+	xs := NewIntersections()
+	i1 := NewIntersection(shape, 4.0)
+	i2 := NewIntersection(shape, 6.0)
+	xs.hits.PushAll(i1, i2)
+	comps := PrepareComputations(i1, r, xs)
+	c := w.RefractedColor(comps, 5.0)
+	testColorEquals(t, c, &canvas.Color{0,0,0})
+
+	m := shape.GetMaterial()
+	m.Transparency = 0.9
+	w.Objects[0].SetMaterial(m)
+	xs = NewIntersections()
+	i1 = NewIntersection(shape, 4.0)
+	i2 = NewIntersection(shape, 6.0)
+	xs.hits.PushAll(i1, i2)
+	comps = PrepareComputations(i1, r, xs)
+	c = w.RefractedColor(comps, 0.0)
+	testColorEquals(t, c, &canvas.Color{0,0,0})
+
+	// test total internal refraction case
+	w = NewDefaultWorld()
+	mat := w.Objects[0].GetMaterial()
+	mat.Transparency = 1.0
+	mat.RefractiveIndex = 1.5
+	w.Objects[0].SetMaterial(mat)
+	r = algebra.NewRay(0, 0, math.Sqrt(2)/2, 0, 1, 0)
+	xs = NewIntersections()
+	i1 = NewIntersection(w.Objects[0], -math.Sqrt(2)/2)
+	i2 = NewIntersection(w.Objects[0], math.Sqrt(2)/2)
+	xs.ref.Push(i1)
+	xs.hits.Push(i2)
+	comps = PrepareComputations(i2, r, xs)
+	c = w.RefractedColor(comps, 5)
+	testColorEquals(t, c, &canvas.Color{0,0,0})
+
+	//test actual refraction
+
+	w = NewDefaultWorld()
+	mat1 := w.Objects[0].GetMaterial()
+	mat1.Ambient = 1.0
+	mat1.Pattern = canvas.TestPattern()
+	w.Objects[0].SetMaterial(mat1)
+	mat2 := w.Objects[1].GetMaterial()
+	mat2.Transparency = 1.0
+	mat2.RefractiveIndex = 1.5
+	w.Objects[1].SetMaterial(mat2)
+	r = algebra.NewRay(0, 0, 0.1, 0, 1, 0)
+	i1 = NewIntersection(w.Objects[0], -0.9899)
+	i2 = NewIntersection(w.Objects[1], -0.4899)
+	i3 := NewIntersection(w.Objects[1], 0.4899)
+	i4 := NewIntersection(w.Objects[0], 0.9899)
+	is := NewIntersections()
+	is.ref.PushAll(i1, i2)
+	is.hits.PushAll(i3, i4)
+	comps = PrepareComputations(i3, r, is)
+	c = w.RefractedColor(comps, 5)
+	testColorEquals(t, c, &canvas.Color{0, 0.99888, 0.04725})
+
+	//test ShadeHit with the stupid refraction
+	w = NewDefaultWorld()
+	floor := NewPlane(algebra.TranslationMatrix(0, -1, 0))
+	matf := floor.GetMaterial()
+	matf.Transparency = 0.5
+	matf.RefractiveIndex = 1.5
+	floor.SetMaterial(matf)
+	w.Objects = append(w.Objects, floor)
+
+	ball := NewSphere(algebra.TranslationMatrix(0, -3.5, -0.5))
+	matb := ball.GetMaterial()
+	matb.Color = &canvas.Color{1, 0, 0}
+	matb.Ambient = 0.5
+	ball.SetMaterial(matb)
+	w.Objects = append(w.Objects, ball)
+
+	r = algebra.NewRay(0, 0, -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	xs = NewIntersections()
+	i := NewIntersection(floor, math.Sqrt(2))
+	xs.hits.Push(i)
+	comps = PrepareComputations(i, r, xs)
+	color := w.ShadeHit(*comps, 5)
+	testColorEquals(t, color, &canvas.Color{0.93642, 0.68642, 0.68642})
+}
 
 func TestWorld_PointIsShadowed(t *testing.T) {
 	w := NewDefaultWorld()

@@ -19,6 +19,13 @@ func (p *Pattern) GetColor(point *algebra.Vector) *Color{
 	return p.getPattern(point, p.a, p.b)
 }
 
+//TestPattern , used for testing certain functions
+func TestPattern () *Pattern{
+	return &Pattern{a : nil, b:nil, getPattern: func(p *algebra.Vector, colorA *Color, colorB *Color) *Color {
+		return &Color{p.Get()[0], p.Get()[1], p.Get()[2] }
+	}, Transform: algebra.IdentityMatrix(4)}
+}
+
 //StripePattern Creates a new Stripe Pattern in the x coordinate with default identity transformation
 func StripePattern(a *Color, b*Color) *Pattern{
 	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, a *Color, b *Color) *Color{

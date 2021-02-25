@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+func TestTestPattern(t *testing.T) {
+	pattern := TestPattern()
+	c := pattern.GetColor(algebra.NewPoint(0, 0.5, 0.3))
+	testVectorEquals(t, c, &Color{0, 0.5, 0.3})
+}
+
 func TestStripePattern(t *testing.T) {
 	white := &Color{1,1,1}
 	black := &Color{0,0,0}
