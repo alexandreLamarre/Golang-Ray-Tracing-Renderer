@@ -16,7 +16,13 @@ func TestNewSphere(t *testing.T) {
 	if !equals(radius, s.radius) {
 		t.Errorf("Expected radius %f, Got: %f", radius, s.radius)
 	}
+}
 
+func TestNewGlassSphere(t *testing.T) {
+	s := NewGlassSphere(nil, 1.5)
+	testMatrixEquals(t, s.GetTransform().Get(), algebra.IdentityMatrix(4).Get())
+	assertEquals(t, s.GetMaterial().Transparency, 1.0)
+	assertEquals(t, s.GetMaterial().RefractiveIndex, 1.5)
 }
 
 func TestNewIntersections(t *testing.T) {

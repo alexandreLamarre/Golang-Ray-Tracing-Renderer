@@ -13,6 +13,8 @@ func TestNewDefaultMaterial(t *testing.T) {
 	assertEquals(t, m.Specular, 0.9)
 	assertEquals(t, m.Shininess, 200.0)
 	assertEquals(t, m.Reflective, 0.0)
+	assertEquals(t, m.Transparency, 0.0)
+	assertEquals(t, m.RefractiveIndex, 1.0)
 }
 
 func TestNewMaterial(t *testing.T) {

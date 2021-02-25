@@ -3,6 +3,7 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"reflect"
 )
 
 //World manages the world space of the Shape(s) inside of it and the light sources illuminating it
@@ -68,7 +69,7 @@ func (w World) ColorAt(ray *algebra.Ray, depth int) *canvas.Color {
 	if h := intersections.Hit(); h == nil {
 		return &canvas.Color{0, 0, 0}
 	} else {
-		c := PrepareComputations(h, ray)
+		c := PrepareComputations(h, ray, intersections)
 		return w.ShadeHit(*c, depth)
 	}
 }
@@ -115,13 +116,16 @@ type Comps struct {
 	Object Shape
 	Point  *algebra.Vector
 	OverPoint *algebra.Vector
+	UnderPoint *algebra.Vector
+	N1 float64
+	N2 float64
 	Eye    *algebra.Vector
 	Normal *algebra.Vector
 	Reflect *algebra.Vector
 	Inside bool
 }
 
-func PrepareComputations(intersection *Intersection, ray *algebra.Ray) *Comps {
+func PrepareComputations(intersection *Intersection, ray *algebra.Ray, is *Intersections) *Comps {
 	position := ray.Position(intersection.T)
 	c := &Comps{T: intersection.T, Object: intersection.Object, Point: position,
 		Eye: ray.Get()["direction"].Negate(), Normal: NormalAt(intersection.Object,position)}
@@ -143,5 +147,55 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray) *Comps {
 
 	direction := ray.Get()["direction"]
 	c.Reflect = direction.Reflect(c.Normal)
+	determineRefractiveIndexes(c, intersection, is)
 	return c
+}
+
+func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersections){
+	if is == nil {
+		comps.N1 = 1.0
+		comps.N2 = 1.0
+		return
+	} // this is only possible if calling the PrepareComputations method directly with nil in testing
+	containers := make([]*Intersection, 0, 0)
+	allIntersections := append(is.ref.Get(), is.hits.Get()...)
+
+	for i := 0; i < len(allIntersections); i++{
+		if intersectionEquals(allIntersections[i], hit){
+			if len(containers) == 0{
+				comps.N1 = 1.0
+			} else{
+				comps.N1 = containers[len(containers) -1].Object.GetMaterial().RefractiveIndex
+			}
+		}
+		if index, found := has(containers, allIntersections[i]); found{
+			containers = append(containers[:index], containers[index+1:]...)
+		} else{
+			containers = append(containers, allIntersections[i])
+		}
+		if intersectionEquals(allIntersections[i], hit){
+			if len(containers) == 0{
+				comps.N2 = 1.0
+			} else{
+				comps.N2 = containers[len(containers) -1].Object.GetMaterial().RefractiveIndex
+			}
+			break
+		}
+	}
+}
+
+func intersectionEquals(a *Intersection, b *Intersection) bool{
+	if a.T == b.T && reflect.TypeOf(a.Object) == reflect.TypeOf(b.Object) && a.Object == b.Object{
+		return true
+	}
+	return false
+}
+
+func has(container []*Intersection, intersect *Intersection) (int, bool){
+	for i:= 0; i < len(container); i++{
+		if reflect.TypeOf(container[i]) == reflect.TypeOf(intersect) && container[i].Object == intersect.Object{
+			return i, true
+		}
+	}
+	return -1, false
 }

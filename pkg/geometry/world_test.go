@@ -22,7 +22,7 @@ func TestPrepareComputations(t *testing.T) {
 	s := NewSphere(nil)
 	r := algebra.NewRay(0, 0, -5, 0, 0, 1)
 	i := NewIntersection(s, 4.0)
-	comps := PrepareComputations(i, r)
+	comps := PrepareComputations(i, r, nil)
 	assertEquals(t, i.T, comps.T)
 	resPoint := []float64{0, 0, -1, 1}
 	resEye := []float64{0, 0, -1, 0}
@@ -36,7 +36,7 @@ func TestPrepareComputations(t *testing.T) {
 
 	r = algebra.NewRay(0, 0, 0, 0, 0, 1)
 	i = NewIntersection(s, 1.0)
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, nil)
 	resPoint = []float64{0, 0, 1, 1}
 	resEye = []float64{0, 0, -1, 0}
 	resNormal = []float64{0, 0, -1, 0}
@@ -51,7 +51,7 @@ func TestPrepareComputations(t *testing.T) {
 	plane := NewPlane(nil)
 	r = algebra.NewRay(0,1,-1,0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = NewIntersection(plane, math.Sqrt(2))
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, nil)
 	testVectorEquals(t, comps.Reflect.Get(), []float64{0, math.Sqrt(2)/2, math.Sqrt(2)/2, 0.0})
 }
 
@@ -76,7 +76,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	r := algebra.NewRay(0, 0, -5, 0, 0, 1)
 	s := w.Objects[0]
 	i := NewIntersection(s, 4.0)
-	comps := PrepareComputations(i, r)
+	comps := PrepareComputations(i, r, nil)
 	c := w.ShadeHit(*comps, 0)
 	if !equals(c.Red(), 0.38066) {
 		t.Errorf("Expected %f, Got %f", 0.38066, c.Red())
@@ -92,7 +92,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	r = algebra.NewRay(0, 0, 0, 0, 0, 1)
 	s = w.Objects[1]
 	i = NewIntersection(s, 0.5)
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, nil)
 	c = w.ShadeHit(*comps, 0)
 	res := 0.90498
 	if !equals(c.Red(), res) {
@@ -117,7 +117,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	w = &World{Lights: lights, Objects: objs}
 	ray := algebra.NewRay(0,0,5,0,0,1)
 	i = NewIntersection(s, 4)
-	comps = PrepareComputations(i, ray)
+	comps = PrepareComputations(i, ray, nil)
 	c = w.ShadeHit(*comps, 0)
 	res = 0.1
 	if !equals(c.Red(), res){
@@ -139,7 +139,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	w.Objects = append(w.Objects, shape)
 	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = NewIntersection(shape, math.Sqrt(2))
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, nil)
 	color := w.ShadeHit(*comps, 1)
 	testColorEquals(t, color, &canvas.Color{0.87677, 0.92436, 0.82918})
 }
@@ -217,7 +217,7 @@ func TestWorld_ReflectedColor(t *testing.T) {
 	m.Ambient = 1.0
 	shape.SetMaterial(m)
 	i := NewIntersection(shape, 1)
-	comps := PrepareComputations(i, r)
+	comps := PrepareComputations(i, r, nil)
 	color := w.ReflectedColor(comps, 1)
 	testColorEquals(t, color, &canvas.Color{0,0,0})
 
@@ -229,10 +229,48 @@ func TestWorld_ReflectedColor(t *testing.T) {
 	w.Objects = append(w.Objects, shape)
 	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = NewIntersection(shape, math.Sqrt(2))
-	comps = PrepareComputations(i, r)
+	comps = PrepareComputations(i, r, nil)
 	color = w.ReflectedColor(comps, 1)
 	testColorEquals(t, color, &canvas.Color{0.19032, 0.2379, 0.14274})
 }
+
+//Test prepare computations for N1, N2 refractive indexes
+func TestRefractiveComputations(t *testing.T){
+	A := NewGlassSphere(algebra.ScalingMatrix(2,2,2), 1.5)
+	B := NewGlassSphere(algebra.TranslationMatrix(0, 0, -0.25), 2.0)
+	C := NewGlassSphere(algebra.TranslationMatrix(0, 0, 0.25), 2.5)
+	r := algebra.NewRay(0, 0, -4, 0, 0, 1)
+
+	xs := NewIntersections()
+	i1 := NewIntersection(A, 2)
+	i2 := NewIntersection(B, 2.75)
+	i3 := NewIntersection(C, 3.25)
+	i4 := NewIntersection(B, 4.75)
+	i5 := NewIntersection(C, 5.25)
+	i6 := NewIntersection(A, 6)
+	xs.hits.PushAll(i1, i2, i3, i4, i5, i6)
+
+	comps := PrepareComputations(i1, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 1.0, 1.5)
+
+	comps = PrepareComputations(i2, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 1.5, 2.0)
+
+	comps = PrepareComputations(i3, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 2.0, 2.5)
+
+	comps = PrepareComputations(i4, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 2.5, 2.5)
+
+	comps = PrepareComputations(i5, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 2.5, 1.5)
+
+	comps = PrepareComputations(i6, r, xs)
+	testRefractiveIndexes(t, comps.N1, comps.N2, 1.5, 1.0)
+
+
+}
+
 
 func TestWorld_PointIsShadowed(t *testing.T) {
 	w := NewDefaultWorld()
@@ -258,5 +296,11 @@ func TestWorld_PointIsShadowed(t *testing.T) {
 	res = w.PointIsShadowed(p)
 	if res{
 		t.Errorf("Expected point %v to not be shadowed", p)
+	}
+}
+
+func testRefractiveIndexes(t *testing.T, n1, n2, expected1, expected2 float64){
+	if n1 != expected1 || n2 != expected2{
+		t.Errorf("Expected  %f n1, Got: %f . Expected %f n2, Got: %f", expected1, n1, expected2, n2)
 	}
 }

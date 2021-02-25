@@ -24,6 +24,19 @@ func NewSphere(m *algebra.Matrix) *Sphere {
 		transform: mat, material: canvas.NewDefaultMaterial()}
 }
 
+func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere{
+	matrix := m
+	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
+		matrix = algebra.IdentityMatrix(4)
+	}
+	material := canvas.NewDefaultMaterial()
+	material.Transparency = 1.0
+	material.RefractiveIndex = refractiveIndex
+	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0,
+		transform: matrix, material: material}
+}
+
+
 // Sphere interface Shape Methods
 
 func (s *Sphere) GetPosition() *algebra.Vector {
@@ -57,6 +70,7 @@ func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {
 	return sphereNormal, err
 }
 
+//LocalIntersect returns the intersection of a ray with a sphere
 func (s *Sphere) LocalIntersect(r *algebra.Ray) ([]float64, bool){
 	got := r.Get()
 	origin := got["origin"]
