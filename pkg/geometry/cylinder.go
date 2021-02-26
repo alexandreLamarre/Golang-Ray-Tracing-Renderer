@@ -15,7 +15,7 @@ type Cylinder struct{
 	minimum float64 //minimum y-value by default without transformations
 }
 
-//NewCylinder returns a new cylinder Shape
+//NewCylinder returns a new Cylinder Shape
 func NewCylinder(m * algebra.Matrix) *Cylinder{
 	mat := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
@@ -80,7 +80,13 @@ func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 
 
 	if a <= EPSILON && a >= -EPSILON{
-		return []float64{}, false
+		var hit bool
+		if len(xs) == 0{
+			hit = false
+		} else{
+			hit = true
+		}
+		return xs, hit
 	}
 
 	ox := origin.Get()[0]; oy := origin.Get()[1]; oz := origin.Get()[2]
@@ -89,7 +95,13 @@ func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	c := ox*ox + oz * oz -1
 	disc := b*b - 4 * a *c
 	if disc < 0 {
-		return []float64{}, false
+		var hit bool
+		if len(xs) == 0{
+			hit = false
+		} else{
+			hit = true
+		}
+		return xs, hit
 	}
 
 	t0 := (-b- math.Sqrt(disc))/(2*a)
