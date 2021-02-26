@@ -7,13 +7,14 @@ The native renderer runs on CPU cycles, so high resolution scenes may take some 
 
 Examples rendered using this code: 
 
-<detail>
-  <summary> Basic refraction/ reflection</summary>
-  <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/master/examplesnative/basic-reflect-refract.png"/>
-</detail>
-  <summary> Complex(ish) refraction/reflection </summary>
-   <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/master/examplesnative/basic-reflect-refract.png"/>
-</detail>
+<details>
+  <summary> Basic refraction/ reflection (1400 x 1000)</summary>
+  <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/basic%20reflect%20refract.png"/>
+</details>
+<details>
+  <summary> Complex(ish) refraction/reflection (640 x 600) </summary>
+   <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/complex%20reflect%20refract.png"/>
+</details>
 
 ## Table of Contents
 - [Native](#Native)
