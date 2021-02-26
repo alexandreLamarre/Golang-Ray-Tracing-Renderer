@@ -7,7 +7,7 @@ import (
 	"math"
 )
 
-var RECURSIONDEPTH int = 10
+var RECURSIONDEPTH int = 3
 
 //Camera describes a camera object that renders pixels from the setup scene
 type Camera struct {

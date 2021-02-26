@@ -20,19 +20,19 @@ func Perlin(x, y, z float64) float64{
 	u := fade(x)
 	v := fade(y)
 	w := fade(z)
-	A := p[x0] + y0
-	AA := p[A] + z0
-	AB := p[A+1] + z0
-	B := p[x0+1] + y0
-	BA := p[B] + z0
-	BB := p[B+1] + z0
+	A := p[(x0)%512] + y0
+	AA := p[A%512] + z0
+	AB := p[(A+1)%512] + z0
+	B := p[(x0+1)%512] + y0
+	BA := p[B%512] + z0
+	BB := p[(B+1)%512] + z0
 
-	ix0 := interpolate(gradient(p[AB], x, y-1, z), gradient(p[BB], x-1, y-1, z), u)
-	ix1 := interpolate(gradient(p[AA], x, y, z), gradient(p[BA], x-1, y, z), u)
+	ix0 := interpolate(gradient(p[AB%512], x, y-1, z), gradient(p[BB%512], x-1, y-1, z), u)
+	ix1 := interpolate(gradient(p[AA%512], x, y, z), gradient(p[BA%512], x-1, y, z), u)
 	a := interpolate(ix1, ix0, v)
 
-	ix2 := interpolate(gradient(p[AB+1], x, y-1, z-1), gradient(p[BB+1], x-1, y-1, z-1), u)
-	ix3 := interpolate(gradient(p[AA+1], x, y, z-1), gradient(p[BA+1], x-1, y, z-1), u)
+	ix2 := interpolate(gradient(p[(AB+1)%512], x, y-1, z-1), gradient(p[(BB+1)%512], x-1, y-1, z-1), u)
+	ix3 := interpolate(gradient(p[(AA+1)%512], x, y, z-1), gradient(p[(BA+1)%512], x-1, y, z-1), u)
 	b := interpolate(ix3, ix2, v)
 	return interpolate(a, b, w)
 }

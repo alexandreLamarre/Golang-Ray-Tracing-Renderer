@@ -16,7 +16,7 @@ func main() {
 	//if err != nil {
 	//	log.Println(err)
 	//}
-	err := examples.CreateSimpleScene2()
+	err := examples.TestReflectiveScene()
 	if err != nil {
 		log.Println(err)
 	}
