@@ -7,25 +7,25 @@ import (
 )
 
 func TestNewCube(t *testing.T) {
-	cube := NewCube()
+	cube := NewCube(nil)
 	testMatrixEquals(t, cube.transform.Get(), algebra.IdentityMatrix(4).Get())
 	testMaterialEquals(t, cube.material, canvas.NewDefaultMaterial())
 }
 
 func TestCube_GetMaterial(t *testing.T) {
-	cube := NewCube()
+	cube := NewCube(nil)
 	m := cube.GetMaterial()
 	testMaterialEquals(t, m, canvas.NewDefaultMaterial())
 }
 
 func TestCube_GetTransform(t *testing.T) {
-	cube := NewCube()
+	cube := NewCube(nil)
 	m := cube.GetTransform()
 	testMatrixEquals(t, m.Get(), cube.transform.Get())
 }
 
 func TestCube_SetMaterial(t *testing.T) {
-	cube := NewCube()
+	cube := NewCube(nil)
 	m := canvas.NewDefaultMaterial()
 	m.Diffuse = 0.5
 	cube.SetMaterial(m)
@@ -33,14 +33,14 @@ func TestCube_SetMaterial(t *testing.T) {
 }
 
 func TestCube_SetTransform(t *testing.T) {
-	cube := NewCube()
+	cube := NewCube(nil)
 	m := algebra.ScalingMatrix(3,3,3)
 	cube.SetTransform(m)
 	testMatrixEquals(t, m.Get(), cube.transform.Get())
 }
 
 func TestCube_LocalIntersect(t *testing.T) {
-	c := NewCube()
+	c := NewCube(nil)
 
 	rays := []*algebra.Ray{algebra.NewRay(5, 0.5, 0, -1, 0, 0),
 		algebra.NewRay(-5, 0.5, 0, 1, 0, 0),
@@ -98,7 +98,7 @@ func TestCube_LocalIntersect(t *testing.T) {
 }
 
 func TestCube_LocalNormalAt(t *testing.T) {
-	c := NewCube()
+	c := NewCube(nil)
 
 	points := []*algebra.Vector{
 		algebra.NewPoint(1, 0.5, -0.8),

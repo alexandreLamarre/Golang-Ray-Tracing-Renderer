@@ -13,7 +13,8 @@ type Cube struct{
 }
 
 //NewCube returns a new Cube Shape with an identity matrix/ default material
-func NewCube() *Cube{
+func NewCube(m *algebra.Matrix) *Cube{
+
 	return &Cube{transform: algebra.IdentityMatrix(4), material: canvas.NewDefaultMaterial()}
 }
 
@@ -42,7 +43,7 @@ func (c *Cube) SetMaterial(m *canvas.Material){
 	c.material = m
 }
 
-//LocalIntersect returns the itersection values for a ray with a cube
+//LocalIntersect returns the itersection values for a Ray with a Cube
 func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
 	xtmin, xtmax := checkAxis(origin.Get()[0], direction.Get()[0])
