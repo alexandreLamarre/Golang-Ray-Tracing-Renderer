@@ -12,17 +12,19 @@ type Cube struct{
 	material *canvas.Material
 }
 
-
+//NewCube returns a new Cube Shape with an identity matrix/ default material
 func NewCube() *Cube{
 	return &Cube{transform: algebra.IdentityMatrix(4), material: canvas.NewDefaultMaterial()}
 }
 
 // Shape interface functions
 
+//GetTransform Getter for Cube transform, Shape interface method
 func (c *Cube) GetTransform() *algebra.Matrix{
 	return c.transform
 }
 
+//SetTransform Setter for Cube transform, Shape interface method
 func (c *Cube) SetTransform(m *algebra.Matrix){
 	if len(m.Get()) != 4 || len(m.Get()[0]) != 4{
 		panic(algebra.ExpectedDimension(4))
@@ -30,14 +32,17 @@ func (c *Cube) SetTransform(m *algebra.Matrix){
 	c.transform = m
 }
 
+//GetMaterial Getter for Cube material, Shape interface method
 func (c *Cube) GetMaterial() *canvas.Material{
 	return c.material
 }
 
+//SetMaterial Setter for Cube material, Shape interface method
 func (c *Cube) SetMaterial(m *canvas.Material){
 	c.material = m
 }
 
+//LocalIntersect returns the itersection values for a ray with a cube
 func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
 	xtmin, xtmax := checkAxis(origin.Get()[0], direction.Get()[0])
@@ -54,6 +59,7 @@ func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	return []float64{tmin, tmax}, true
 }
 
+//LocalNormalAt returns the normal at a ray intersection point
 func (c *Cube) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
 	maxc := max(math.Abs(p.Get()[0]), math.Abs(p.Get()[1]), math.Abs(p.Get()[2]))
 
@@ -65,7 +71,7 @@ func (c *Cube) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
 	return algebra.NewVector(0, 0, p.Get()[2]), nil
 }
 
-//helpers
+//helpers for cube methods
 func checkAxis(origin, direction float64) (float64, float64){
 	tminNumerator := -1 -origin
 	tmaxNumerator := 1 - origin
