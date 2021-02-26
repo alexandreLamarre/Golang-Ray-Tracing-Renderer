@@ -6,6 +6,8 @@ import (
 	"math"
 )
 
+var PATTERNOFFSET float64 = 500
+
 //Pattern represents a pattern of colors
 type Pattern struct{
 	a *Color
@@ -58,9 +60,9 @@ func RingPattern(a *Color, b*Color) *Pattern{
 //CheckerPattern Creates a new Checker Pattern as cubes that expand in every direction
 func CheckerPattern(a *Color, b *Color) *Pattern{
 	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, colorA *Color, colorB *Color) *Color{
-		px := math.Floor(math.Abs(p.Get()[0]+ 500))
-		py := math.Floor(math.Abs(p.Get()[1] + 500))
-		pz := math.Floor(math.Abs(p.Get()[2] + 500))
+		px := math.Floor(math.Abs(p.Get()[0]+ PATTERNOFFSET))
+		py := math.Floor(math.Abs(p.Get()[1] + PATTERNOFFSET))
+		pz := math.Floor(math.Abs(p.Get()[2] + PATTERNOFFSET))
 		if int(px + py + pz)%2 == 0{
 			return colorA
 		} else {
@@ -108,8 +110,11 @@ func BlendedPattern(patternA *Pattern, patternB *Pattern, blend func(colorA, col
 
 func PerlinNoisePattern(pattern *Pattern) *Pattern{
 	return &Pattern{a: nil, b:nil, getPattern: func(point *algebra.Vector, colorA *Color, colorB *Color) *Color {
-		displacement := noise.Perlin(point.Get()[0], point.Get()[1], point.Get()[2])
-		newPoint, err :=point.Add(algebra.NewPoint(displacement, displacement, displacement))
+		displacement := noise.Perlin(point.Get()[0]+PATTERNOFFSET, point.Get()[1]+PATTERNOFFSET, point.Get()[2]+PATTERNOFFSET)
+		newPoint, err :=point.Add(algebra.NewPoint(
+			displacement+PATTERNOFFSET,
+			displacement+PATTERNOFFSET,
+			displacement+PATTERNOFFSET))
 		if err != nil{
 			panic(err)
 		}
