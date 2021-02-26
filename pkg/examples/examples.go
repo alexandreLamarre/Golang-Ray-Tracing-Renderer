@@ -14,7 +14,7 @@ import (
 func TestReflectiveScene() error{
 	white := &canvas.Color{0.9, 0.9, 0.9}
 	black := &canvas.Color{0, 0, 0}
-	cam, err := camera2.NewCamera(640, 400, math.Pi/2,
+	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
 		algebra.ViewTransform(0, 3.0, -15,
 			0, 1, 0,
 			0, 1, 0))
@@ -26,7 +26,6 @@ func TestReflectiveScene() error{
 	floor := geometry.NewPlane(algebra.TranslationMatrix(0, -1, 0))
 	m := canvas.NewDefaultMaterial()
 	pat := canvas.CheckerPattern(white, black)
-	pat.SetTransform(algebra.ScalingMatrix(4,4,4))
 	m.Pattern = pat
 	m.Reflective = 0.5
 	m.Specular = 0
@@ -62,32 +61,48 @@ func TestReflectiveScene() error{
 
 
 func CreateSimpleReflectiveScene() error{
-	floor := geometry.NewPlane(algebra.RotationX(math.Pi/2))
+	floor := geometry.NewPlane(nil)
 	m := canvas.NewDefaultMaterial()
-	m.Color = &canvas.Color{0.9, 0.9, 0.9}
+	m.Color = &canvas.Color{0.1, 0.1, 0.3}
 	m.Specular = 0
 	m.Ambient = 0.5
 	m.Reflective = 0.1
-	pat := canvas.RingPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
-	pat.SetTransform(algebra.ScalingMatrix(0.2,0.2,0.2))
+	pat := canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
 	m.Pattern = pat
 	floor.SetMaterial(m)
 
-	wall := geometry.NewPlane(algebra.Multiply(algebra.RotationX(math.Pi/2), algebra.TranslationMatrix(0, 0, 5)))
+	lwall := geometry.NewPlane( algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(-math.Pi/4),algebra.RotationX(math.Pi/2))))
 	m = canvas.NewDefaultMaterial()
+	m.Color = &canvas.Color{0.1, 0.1, 0.3}
+	m.Specular = 0.0
+	m.Reflective = 0.9
+	m.RefractiveIndex = 1.5
+	m.Transparency = 0.9
+	m.Diffuse = 0.4
+	//pat = canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
+	//pat.SetTransform(algebra.TranslationMatrix(10,10,10))
+	//m.Pattern = pat
+	lwall.SetMaterial(m)
+
+	rwall := geometry.NewPlane( algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(math.Pi/4),algebra.RotationX(math.Pi/2))))
+	m = canvas.NewDefaultMaterial()
+	//pat = canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
+	//pat.SetTransform(algebra.TranslationMatrix(10,10,10))
 	m.Color = &canvas.Color{1.0, 1.0, 1.0}
 	m.Specular = 0.0
-	m.Reflective = 0.1
-	pat = canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
-	pat.SetTransform(algebra.TranslationMatrix(10,10,10))
-	m.Pattern = pat
-	wall.SetMaterial(m)
+	m.Reflective = 0.9
+	m.RefractiveIndex = 1.5
+	m.Transparency = 0.9
+	m.Diffuse = 0.4
+	rwall.SetMaterial(m)
 
 
 	middle := geometry.NewSphere(algebra.Multiply(algebra.TranslationMatrix(0.0,2, -3.0), algebra.ScalingMatrix(2,2,2)))
 	middleMat := canvas.NewDefaultMaterial()
 	middleMat.Color = &canvas.Color{1.0, 1.0, 1.0}
-	middleMat.Diffuse = 0.7
+	middleMat.Diffuse = 0.4
 	middleMat.Specular = 0.3
 	middleMat.RefractiveIndex = 1.5
 	middleMat.Transparency = 1.0
@@ -97,20 +112,20 @@ func CreateSimpleReflectiveScene() error{
 	middle2 := geometry.NewSphere(algebra.TranslationMatrix(0.0,2, -3.0))
 	middleMat2 := canvas.NewDefaultMaterial()
 	middleMat2.Color = &canvas.Color{1.0, 1.0, 1.0}
-	middleMat2.Diffuse = 0.7
+	middleMat2.Diffuse = 0.4
 	middleMat2.Specular = 0.3
-	middleMat2.RefractiveIndex = 1.5
+	middleMat2.RefractiveIndex = 1.0
 	middleMat2.Transparency = 1.0
 	middleMat2.Reflective = 0.9
-	middle2.SetMaterial(middleMat)
+	middle2.SetMaterial(middleMat2)
 
 	objs := make([]geometry.Shape, 0, 0)
-	objs = append(objs,floor, middle, middle2)
+	objs = append(objs,floor, middle, middle2, lwall, rwall)
 	lights := make([]*canvas.PointLight, 0, 0)
 	lights = append(lights, canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(-10, 10, -10)))
 	w := &geometry.World{Objects: objs, Lights: lights}
 
-	cam, err := camera2.NewCamera(200, 100, math.Pi/3,
+	cam, err := camera2.NewCamera(640, 400, math.Pi/3,
 		algebra.ViewTransform(0, 3.0, -15,
 			0, 1, 0,
 			0, 1, 0))
