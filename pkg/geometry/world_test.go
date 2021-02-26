@@ -429,7 +429,7 @@ func TestSchlick(t *testing.T) {
 	ballf.Ambient = 0.5
 	ball.SetMaterial(ballf)
 	w.Objects = append(w.Objects, ball)
-	
+
 	xs = NewIntersections()
 	i1 = NewIntersection(floor, math.Sqrt(2))
 	xs.hits.Push(i1)

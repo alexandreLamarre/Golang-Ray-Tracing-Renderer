@@ -39,29 +39,32 @@ func StripePattern(a *Color, b*Color) *Pattern{
 
 //GradientPattern creates a new Gradient Pattern for two colors using linear interpolation in the x coordinate by default
 func GradientPattern(a *Color, b*Color) *Pattern{
-	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, a *Color, b *Color) *Color{
-		return a.Add(b.Subtract(a).ScalarMult(p.Get()[0] -math.Floor(p.Get()[0])))
+	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, colorA *Color, colorB *Color) *Color{
+		return colorA.Add(colorB.Subtract(colorA).ScalarMult(p.Get()[0] -math.Floor(p.Get()[0])))
 	}, Transform: algebra.IdentityMatrix(4)}
 }
 
 //RingPattern Creates a new Ring Pattern as rings that expand in the x-z directions by default
 func RingPattern(a *Color, b*Color) *Pattern{
-	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, a *Color, b *Color) *Color{
+	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, colorA *Color, colorB *Color) *Color{
 		if int(math.Floor(math.Sqrt(math.Pow(p.Get()[0],2) + math.Pow(p.Get()[2],2)))) % 2 == 0{
-			return a
+			return colorA
 		} else {
-			return b
+			return colorB
 		}
 	}, Transform: algebra.IdentityMatrix(4)}
 }
 
 //CheckerPattern Creates a new Checker Pattern as cubes that expand in every direction
 func CheckerPattern(a *Color, b *Color) *Pattern{
-	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, a *Color, b *Color) *Color{
-		if int(math.Floor(p.Get()[0]) + math.Floor(p.Get()[1]) + math.Floor(p.Get()[2]))%2 == 0{
-			return a
+	return &Pattern{a :a, b:b, getPattern: func(p *algebra.Vector, colorA *Color, colorB *Color) *Color{
+		px := math.Floor(math.Abs(p.Get()[0]+ 500))
+		py := math.Floor(math.Abs(p.Get()[1] + 500))
+		pz := math.Floor(math.Abs(p.Get()[2] + 500))
+		if int(px + py + pz)%2 == 0{
+			return colorA
 		} else {
-			return b
+			return colorB
 		}
 	}, Transform: algebra.IdentityMatrix(4)}
 }

@@ -208,7 +208,7 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray, is *Inter
 	} else {
 		c.Inside = false
 	}
-	EPSILON := 0.00001
+	EPSILON := 0.0001
 	overPoint,err := c.Point.Add(c.Normal.MultScalar(EPSILON))
 	if err != nil{
 		panic(err)
