@@ -109,6 +109,18 @@ func testMaterialEquals(t *testing.T, m *canvas.Material, expected *canvas.Mater
 		t.Errorf("mismatched shininess")
 	}
 
+	if m .RefractiveIndex != expected.RefractiveIndex{
+		t.Errorf("mismatched refractive index")
+	}
+
+	if m.Reflective != expected.Reflective{
+		t.Errorf("mismtached reflective")
+	}
+
+	if m.Transparency != expected.Transparency{
+		t.Errorf("mismtached transparency")
+	}
+
 	if m.Ambient != expected.Ambient{
 		t.Errorf("mismatched ambient")
 	}

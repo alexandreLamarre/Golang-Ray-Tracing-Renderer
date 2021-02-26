@@ -1,0 +1,113 @@
+package geometry
+
+import (
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"math"
+)
+
+//Cube defines a 3d cube Shape
+type Cube struct{
+	transform *algebra.Matrix
+	material *canvas.Material
+}
+
+
+func NewCube() *Cube{
+	return &Cube{transform: algebra.IdentityMatrix(4), material: canvas.NewDefaultMaterial()}
+}
+
+// Shape interface functions
+
+func (c *Cube) GetTransform() *algebra.Matrix{
+	return c.transform
+}
+
+func (c *Cube) SetTransform(m *algebra.Matrix){
+	if len(m.Get()) != 4 || len(m.Get()[0]) != 4{
+		panic(algebra.ExpectedDimension(4))
+	}
+	c.transform = m
+}
+
+func (c *Cube) GetMaterial() *canvas.Material{
+	return c.material
+}
+
+func (c *Cube) SetMaterial(m *canvas.Material){
+	c.material = m
+}
+
+func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
+	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
+	xtmin, xtmax := checkAxis(origin.Get()[0], direction.Get()[0])
+	ytmin, ytmax := checkAxis(origin.Get()[1], direction.Get()[1])
+	ztmin, ztmax := checkAxis(origin.Get()[2], direction.Get()[2])
+
+	tmin := max(xtmin, ytmin, ztmin)
+	tmax := min(xtmax, ytmax, ztmax)
+
+	if tmin > tmax{
+		return []float64{}, false
+	}
+
+	return []float64{tmin, tmax}, true
+}
+
+func (c *Cube) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
+	maxc := max(math.Abs(p.Get()[0]), math.Abs(p.Get()[1]), math.Abs(p.Get()[2]))
+
+	if maxc == math.Abs(p.Get()[0]){
+		return algebra.NewVector(p.Get()[0], 0, 0), nil
+	} else if maxc == math.Abs(p.Get()[1]){
+		return algebra.NewVector(0, p.Get()[1], 0), nil
+	}
+	return algebra.NewVector(0, 0, p.Get()[2]), nil
+}
+
+//helpers
+func checkAxis(origin, direction float64) (float64, float64){
+	tminNumerator := -1 -origin
+	tmaxNumerator := 1 - origin
+
+	var tmin float64
+	var tmax float64
+	EPSILON := 0.0001
+	if math.Abs(direction) >= EPSILON{
+		tmin = tminNumerator/direction
+		tmax = tmaxNumerator/direction
+	} else{
+		tmin = tminNumerator * math.Inf(1)
+		tmax = tmaxNumerator * math.Inf(1)
+	}
+
+	if tmin > tmax {
+		temp := tmin
+		tmin = tmax
+		tmax = temp
+	}
+
+	return tmin, tmax
+}
+
+func max(values ...float64) float64{
+	if len(values) == 1{
+		return values[0]
+	}
+	maxVal := math.Inf(-1)
+	for i:= 0; i < len(values); i++{
+		maxVal = math.Max(values[i], maxVal)
+	}
+	return maxVal
+}
+
+func min(values ...float64) float64{
+	if len(values) == 1{
+		return values[0]
+	}
+	minVal := math.Inf(1)
+	for i:= 0; i < len(values); i++{
+		minVal = math.Min(values[i], minVal)
+	}
+	return minVal
+}
