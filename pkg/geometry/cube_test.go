@@ -84,10 +84,10 @@ func TestCube_LocalIntersect(t *testing.T) {
 		if len(xs) != 2{
 			t.Errorf("Expected %d intersections, got: %d", 2, len(xs))
 		}
-		if !equals(xs[0], positions[i][0]){
+		if !equals(xs[0].T, positions[i][0]){
 			t.Errorf("Expected %f, got %f", positions[i][0], xs[0])
 		}
-		if !equals(xs[1], positions[i][1]){
+		if !equals(xs[1].T, positions[i][1]){
 			t.Errorf("Expected %f, got %f", positions[i][1], xs[1])
 		}
 

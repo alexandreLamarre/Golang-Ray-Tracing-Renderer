@@ -88,7 +88,7 @@ func TestPlane_LocalIntersect(t *testing.T) {
 	if len(xs) != 1{
 		t.Errorf("Invalid number of intersections")
 	}
-	if xs[0] != 1.0{
+	if xs[0].T != 1.0{
 		t.Errorf("Expected 1.0, Got : %f", xs[0])
 	}
 
@@ -97,7 +97,7 @@ func TestPlane_LocalIntersect(t *testing.T) {
 	if len(xs) != 1{
 		t.Errorf("Invalid number of intersections")
 	}
-	if xs[0] != 1.0{
+	if xs[0].T != 1.0{
 		t.Errorf("Expected 1.0, Got : %f", xs[0])
 	}
 

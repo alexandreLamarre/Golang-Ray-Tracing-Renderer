@@ -77,7 +77,7 @@ func(cone *Cone) GetParent() Shape{
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cylinder
-func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
+func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 	direction := ray.Get()["direction"]
 	origin := ray.Get()["origin"]
 	dx := direction.Get()[0]; dy := direction.Get()[1]; dz:= direction.Get()[2]
@@ -90,13 +90,13 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 
 	disc := b*b - 4 * a *c
 
-	xs := make([]float64, 0, 0)
+	xs := make([]*Intersection, 0, 0)
 	xs = cone.intersectCaps(ray, xs)
 
 	EPSILON := 0.00001
 	if a <= EPSILON && a >= -EPSILON{
 		if (b >= EPSILON || b <= -EPSILON) && len(xs) == 0{
-			xs = append(xs, -c/(2*b))
+			xs = append(xs, NewIntersection(cone, -c/(2*b)))
 			return xs, true
 		}
 
@@ -125,12 +125,12 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 
 	y0 := oy + t0 * dy
 	if cone.minimum < y0 && cone.maximum > y0{
-		xs = append(xs, t0)
+		xs = append(xs, NewIntersection(cone, t0))
 	}
 
 	y1 := oy + t1* dy
 	if cone.minimum < y1 && cone.maximum > y1{
-		xs = append(xs, t1)
+		xs = append(xs, NewIntersection(cone,t1))
 	}
 
 	var hit bool
@@ -163,7 +163,7 @@ func (cone *Cone) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
 
 //cone helpers
 
-func (cone *Cone) intersectCaps(ray *algebra.Ray, xs []float64) []float64{
+func (cone *Cone) intersectCaps(ray *algebra.Ray, xs []*Intersection) []*Intersection{
 	origin := ray.Get()["origin"]
 	direction := ray.Get()["direction"]
 	oy := origin.Get()[1]; dy := direction.Get()[1]
@@ -174,12 +174,12 @@ func (cone *Cone) intersectCaps(ray *algebra.Ray, xs []float64) []float64{
 
 	t := (cone.minimum -oy)/dy
 	if checkCap(ray , t){
-		xs = append(xs , t)
+		xs = append(xs , NewIntersection(cone,t))
 	}
 
 	t = (cone.maximum - oy)/dy
 	if checkCap(ray, t){
-		xs = append(xs, t)
+		xs = append(xs, NewIntersection(cone,t))
 	}
 	return xs
 }

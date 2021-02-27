@@ -77,7 +77,7 @@ func(cyl *Cylinder) GetParent() Shape{
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cylinder
-func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
+func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 	direction := ray.Get()["direction"]
 	origin := ray.Get()["origin"]
 	dx := direction.Get()[0]; dy := direction.Get()[1]; dz:= direction.Get()[2]
@@ -85,7 +85,7 @@ func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	EPSILON := 0.00001
 
 
-	xs := make([]float64, 0, 0)
+	xs := make([]*Intersection, 0, 0)
 
 	xs = cyl.intersectCaps(ray, xs)
 
@@ -121,12 +121,12 @@ func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 
 	y0 := oy + t0 * dy
 	if cyl.minimum < y0 && cyl.maximum > y0{
-		xs = append(xs, t0)
+		xs = append(xs, NewIntersection(cyl,t0))
 	}
 
 	y1 := oy + t1* dy
 	if cyl.minimum < y1 && cyl.maximum > y1{
-		xs = append(xs, t1)
+		xs = append(xs, NewIntersection(cyl,t1))
 	}
 
 	var hit bool
@@ -162,7 +162,7 @@ func checkCap(ray *algebra.Ray, t float64) bool{
 	return (x*x + z*z) <= 1
 }
 
-func (cyl *Cylinder) intersectCaps(ray *algebra.Ray, xs []float64) []float64{
+func (cyl *Cylinder) intersectCaps(ray *algebra.Ray, xs []*Intersection) []*Intersection{
 	origin := ray.Get()["origin"]
 	direction := ray.Get()["direction"]
 	oy := origin.Get()[1]; dy := direction.Get()[1]
@@ -173,12 +173,12 @@ func (cyl *Cylinder) intersectCaps(ray *algebra.Ray, xs []float64) []float64{
 
 	t := (cyl.minimum -oy)/dy
 	if checkCap(ray , t){
-		xs = append(xs , t)
+		xs = append(xs , NewIntersection(cyl,t))
 	}
 
 	t = (cyl.maximum - oy)/dy
 	if checkCap(ray, t){
-		xs = append(xs, t)
+		xs = append(xs, NewIntersection(cyl,t))
 	}
 	return xs
 }

@@ -123,11 +123,11 @@ func TestCone_LocalIntersect(t *testing.T) {
 		if len(xs) != 2{
 			t.Errorf("Expected %d hits, got: %d", 2, len(xs))
 		}
-		if !equals(xs[0],positions[i][0]){
+		if !equals(xs[0].T,positions[i][0]){
 			t.Errorf("Expected intersection position: %f, Got: %f", positions[i][0], xs[0])
 		}
 
-		if !equals(xs[1], positions[i][1]){
+		if !equals(xs[1].T, positions[i][1]){
 			t.Errorf("Expected intersection position: %f, Got: %f", positions[i][1], xs[1])
 		}
 	}
@@ -149,7 +149,7 @@ func TestCone_LocalIntersect(t *testing.T) {
 		t.Errorf("Expected %d hits, got: %d", 1, len(xs))
 	}
 
-	if !equals(xs[0], 0.35355){
+	if !equals(xs[0].T, 0.35355){
 		t.Errorf("Expected intersection at %f, Got: %f", 0.35355, xs[0])
 	}
 

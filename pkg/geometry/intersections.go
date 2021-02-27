@@ -38,8 +38,8 @@ func (intersections *Intersections) Intersect(s Shape, r *algebra.Ray) error {
 		return nil
 	}
 	for i := 0; i < len(ts); i ++{
-		is := NewIntersection(s, ts[i])
-		if ts[i] >= 0 {
+		is := ts[i]
+		if ts[i].T >= 0 {
 			intersections.hits.Push(is)
 		} else {
 			intersections.ref.Push(is)

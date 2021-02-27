@@ -58,7 +58,7 @@ func(c *Cube) GetParent() Shape{
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cube
-func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
+func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
 	xtmin, xtmax := checkAxis(origin.Get()[0], direction.Get()[0])
 	ytmin, ytmax := checkAxis(origin.Get()[1], direction.Get()[1])
@@ -68,10 +68,10 @@ func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	tmax := min(xtmax, ytmax, ztmax)
 
 	if tmin > tmax{
-		return []float64{}, false
+		return []*Intersection{}, false
 	}
 
-	return []float64{tmin, tmax}, true
+	return []*Intersection{NewIntersection(c,tmin), NewIntersection(c,tmax)}, true
 }
 
 //LocalNormalAt returns the normal at a ray intersection point

@@ -13,7 +13,7 @@ type Shape interface {
 	GetMaterial() *canvas.Material
 	SetParent(s Shape)
 	GetParent() Shape
-	LocalIntersect(r *algebra.Ray) ([]float64, bool)
+	LocalIntersect(r *algebra.Ray) ([]*Intersection, bool)
 	LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error)
 }
 

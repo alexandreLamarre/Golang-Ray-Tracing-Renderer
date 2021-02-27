@@ -53,14 +53,14 @@ func(p *Plane) GetParent() Shape{
 	return p.parent
 }
 
-func (p *Plane) LocalIntersect(r *algebra.Ray) ([]float64, bool) {
+func (p *Plane) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool) {
 	EPSILON := 0.00001
 	if math.Abs(r.Get()["direction"].Get()[1]) < EPSILON {
-		return []float64{}, false // ray direction is parallel
+		return []*Intersection{}, false // ray direction is parallel
 	}
 
 	t := -r.Get()["origin"].Get()[1]/r.Get()["direction"].Get()[1]
-	return []float64{t}, true
+	return []*Intersection{NewIntersection(p,t)}, true
 }
 
 func (p *Plane) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error){
