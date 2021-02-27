@@ -88,14 +88,14 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 	b := (2 * ox * dx) - (2 * oy * dy) + (2 * oz * dz)
 	c := (ox*ox) - (oy * oy) + (oz * oz)
 
-
+	disc := b*b - 4 * a *c
 
 	xs := make([]float64, 0, 0)
 	xs = cone.intersectCaps(ray, xs)
 
 	EPSILON := 0.00001
 	if a <= EPSILON && a >= -EPSILON{
-		if !(b <= EPSILON && b >= -EPSILON){
+		if (b >= EPSILON || b <= -EPSILON) && len(xs) == 0{
 			xs = append(xs, -c/(2*b))
 			return xs, true
 		}
@@ -109,7 +109,6 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 		return xs, hit
 	}
 
-	disc := b*b - 4 * a *c
 	if disc < 0 {
 		var hit bool
 		if len(xs) == 0{
@@ -148,16 +147,17 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]float64, bool){
 func (cone *Cone) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
 	x := p.Get()[0]; y := p.Get()[1]; z := p.Get()[2]
 	dist := x*x + z * z
+	y = math.Sqrt(dist)
+	if p.Get()[1] > 0 {
+		y = -y
+	}
 	EPSILON:= 0.001
 	if dist < 1 && y >= cone.maximum - EPSILON{
 		return algebra.NewVector(0, 1, 0), nil
 	} else if dist < 1 && y <= cone.minimum + EPSILON{
 		return algebra.NewVector(0, -1, 0), nil
 	}
-	y = math.Sqrt(dist)
-	if p.Get()[1] > 0 {
-		y = -y
-	}
+
 	return algebra.NewVector(x, y, z), nil
 }
 

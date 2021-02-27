@@ -2,6 +2,7 @@ package geometry
 
 
 import (
+	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"math"
@@ -165,8 +166,8 @@ func TestCone_LocalIntersect(t *testing.T) {
 
 	rays = []*algebra.Ray{
 		algebra.NewRay(0, 0, -5, norm.Get()[0], norm.Get()[1], norm.Get()[2]),
-		algebra.NewRay(0, 0, -0.25, norm.Get()[0], norm.Get()[1], norm.Get()[2]),
-		algebra.NewRay(0, 0, -0.25, norm.Get()[0], norm.Get()[1], norm.Get()[2]),
+		algebra.NewRay(0, 0, -0.25, norm2.Get()[0], norm2.Get()[1], norm2.Get()[2]),
+		algebra.NewRay(0, 0, -0.25, norm3.Get()[0], norm3.Get()[1], norm3.Get()[2]),
 	}
 
 	for i := 0; i < len(rays); i++{
@@ -187,6 +188,9 @@ func TestCone_LocalIntersect(t *testing.T) {
 			}
 			if i == 1 && len(xs) != 2{
 				t.Errorf("Expected %d hits, got: %d", 2, len(xs))
+				for _, v := range xs{
+					fmt.Println(v)
+				}
 			}
 			if i ==2 && len(xs) != 4{
 				t.Errorf("Expected %d hits, got: %d", 4, len(xs))
