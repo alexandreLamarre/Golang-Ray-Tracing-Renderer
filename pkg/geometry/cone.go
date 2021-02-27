@@ -8,6 +8,7 @@ import (
 
 //Cone defines a default Cone Shape
 type Cone struct{
+	parent Shape
 	closed bool //determines if the cone is hollow or has caps on the ends
 	transform *algebra.Matrix
 	material *canvas.Material
@@ -22,7 +23,7 @@ func NewCone(m *algebra.Matrix) *Cone{
 		mat = algebra.IdentityMatrix(4)
 	}
 	return &Cone{transform: mat, material: canvas.NewDefaultMaterial(),
-		maximum: math.Inf(1), minimum: math.Inf(-1), closed: false}
+		maximum: math.Inf(1), minimum: math.Inf(-1), closed: false, parent: nil}
 }
 
 //SetMinimum Setter for cylinder minimum y-truncation
@@ -63,6 +64,16 @@ func (cone *Cone) SetTransform(m *algebra.Matrix){
 //SetMaterial Setter for Cylinder Shape material
 func (cone *Cone) SetMaterial(m *canvas.Material){
 	cone.material = m
+}
+
+//SetParent Setter for parent shape
+func(cone *Cone) SetParent(shape Shape){
+	cone.parent = shape
+}
+
+//GetParent Getter for parent shape
+func(cone *Cone) GetParent() Shape{
+	return cone.parent
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cylinder

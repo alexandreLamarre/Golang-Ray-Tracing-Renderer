@@ -24,6 +24,13 @@ func TestCube_GetTransform(t *testing.T) {
 	testMatrixEquals(t, m.Get(), cube.transform.Get())
 }
 
+func TestCube_GetParent(t *testing.T) {
+	cube := NewCube(nil)
+	if cube.GetParent() != nil{
+		t.Errorf("Expected cube to have no parent Shapes")
+	}
+}
+
 func TestCube_SetMaterial(t *testing.T) {
 	cube := NewCube(nil)
 	m := canvas.NewDefaultMaterial()
@@ -37,6 +44,15 @@ func TestCube_SetTransform(t *testing.T) {
 	m := algebra.ScalingMatrix(3,3,3)
 	cube.SetTransform(m)
 	testMatrixEquals(t, m.Get(), cube.transform.Get())
+}
+
+func TestCube_SetParent(t *testing.T) {
+	c1 := NewCube(nil)
+	c2 := NewCube(nil)
+	c1.SetParent(c2)
+	if c1.GetParent() == nil{
+		t.Errorf("Expected Cube to have a parent Shape")
+	}
 }
 
 func TestCube_LocalIntersect(t *testing.T) {

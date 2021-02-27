@@ -7,6 +7,7 @@ import (
 )
 //Plane implements a XZ plane by default
 type Plane struct{
+	parent Shape
 	origin *algebra.Vector
 	direction *algebra.Vector
 	transform *algebra.Matrix
@@ -19,7 +20,7 @@ func NewPlane(m *algebra.Matrix) *Plane{
 		mat = algebra.IdentityMatrix(4)
 	}
 	return &Plane{ origin: algebra.NewPoint(0,0,0), direction: algebra.NewVector(1,0,1),
-		transform: mat, material: canvas.NewDefaultMaterial()}
+		transform: mat, material: canvas.NewDefaultMaterial(), parent: nil}
 }
 
 func (p *Plane) GetPosition() (*algebra.Vector, *algebra.Vector){
@@ -40,6 +41,16 @@ func (p *Plane) GetMaterial() *canvas.Material{
 
 func (p *Plane) SetMaterial(m *canvas.Material) {
 	p.material = m
+}
+
+//SetParent Setter for parent shape
+func(p *Plane) SetParent(shape Shape){
+	p.parent = shape
+}
+
+//GetParent Getter for parent shape
+func(p *Plane) GetParent() Shape{
+	return p.parent
 }
 
 func (p *Plane) LocalIntersect(r *algebra.Ray) ([]float64, bool) {

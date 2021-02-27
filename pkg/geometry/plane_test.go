@@ -29,10 +29,31 @@ func TestPlane_SetMaterial(t *testing.T) {
 	testMaterialEquals(t, p.material, m)
 }
 
+func TestPlane_GetTransform(t *testing.T) {
+	p := NewPlane(nil)
+	testMatrixEquals(t, p.GetTransform().Get(), algebra.IdentityMatrix(4).Get())
+}
+
 func TestPlane_SetTransform(t *testing.T) {
 	p := NewPlane(nil)
 	p.SetTransform(algebra.TranslationMatrix(0, 2, 0))
 	testMatrixEquals(t, p.transform.Get(), algebra.TranslationMatrix(0,2,0).Get())
+}
+
+func TestPlane_GetParent(t *testing.T) {
+	p := NewPlane(nil)
+	if p.GetParent() != nil{
+		t.Errorf("Expected plane to have no Parent Shapes")
+	}
+}
+
+func TestPlane_SetParent(t *testing.T) {
+	p1 := NewPlane(nil)
+	p2 := NewPlane(nil)
+	p1.SetParent(p2)
+	if p1.GetParent() == nil{
+		t.Errorf("Expected plane to have a parent Shape")
+	}
 }
 
 func TestPlane_GetPosition(t *testing.T) {

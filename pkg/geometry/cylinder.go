@@ -8,6 +8,7 @@ import (
 
 //Cylinder defines a default cylinder Shape
 type Cylinder struct{
+	parent Shape
 	closed bool //determines if the cylinder is hollow or has caps on the ends
 	transform *algebra.Matrix
 	material *canvas.Material
@@ -22,7 +23,7 @@ func NewCylinder(m * algebra.Matrix) *Cylinder{
 		mat = algebra.IdentityMatrix(4)
 	}
 	return &Cylinder{transform: mat, material: canvas.NewDefaultMaterial(),
-		maximum: math.Inf(1), minimum: math.Inf(-1), closed: false}
+		maximum: math.Inf(1), minimum: math.Inf(-1), closed: false, parent: nil}
 }
 
 //SetMinimum Setter for cylinder minimum y-truncation
@@ -63,6 +64,16 @@ func (cyl *Cylinder) SetTransform(m *algebra.Matrix){
 //SetMaterial Setter for Cylinder Shape material
 func (cyl *Cylinder) SetMaterial(m *canvas.Material){
 	cyl.material = m
+}
+
+//SetParent Setter for parent shape
+func(cyl *Cylinder) SetParent(shape Shape){
+	cyl.parent = shape
+}
+
+//GetParent Getter for parent shape
+func(cyl *Cylinder) GetParent() Shape{
+	return cyl.parent
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cylinder

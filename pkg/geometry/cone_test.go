@@ -70,6 +70,22 @@ func TestCone_SetTransform(t *testing.T) {
 	testMatrixEquals(t, m.Get(), c.transform.Get())
 }
 
+func TestCone_GetParent(t *testing.T) {
+	c := NewCone(nil)
+	if c.GetParent() != nil{
+		t.Errorf("Expected cone to have no parent Shapes")
+	}
+}
+
+func TestCone_SetParent(t *testing.T) {
+	c1 := NewCone(nil)
+	c2 := NewCone(nil)
+	c1.SetParent(c2)
+	if c1.GetParent() == nil{
+		t.Errorf("Expected cone to have a parent Shape")
+	}
+}
+
 func TestCone_LocalIntersect(t *testing.T) {
 	c := NewCone(nil)
 	norm, err := algebra.NewVector(0, 0, 1).Normalize()

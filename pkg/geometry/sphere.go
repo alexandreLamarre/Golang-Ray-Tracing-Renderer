@@ -8,6 +8,7 @@ import (
 
 //Sphere Data type for a 3D sphere
 type Sphere struct {
+	parent Shape
 	origin    *algebra.Vector
 	radius    float64
 	transform *algebra.Matrix
@@ -21,7 +22,7 @@ func NewSphere(m *algebra.Matrix) *Sphere {
 		mat = algebra.IdentityMatrix(4)
 	}
 	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0,
-		transform: mat, material: canvas.NewDefaultMaterial()}
+		transform: mat, material: canvas.NewDefaultMaterial(), parent: nil}
 }
 
 func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere{
@@ -33,7 +34,7 @@ func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere{
 	material.Transparency = 1.0
 	material.RefractiveIndex = refractiveIndex
 	return &Sphere{origin: algebra.NewPoint(0, 0, 0), radius: 1.0,
-		transform: matrix, material: material}
+		transform: matrix, material: material, parent: nil}
 }
 
 
@@ -61,6 +62,17 @@ func (s *Sphere) SetMaterial(m *canvas.Material) {
 func (s *Sphere) GetMaterial() *canvas.Material {
 	return s.material
 }
+
+//SetParent Setter for parent shape
+func(s *Sphere) SetParent(shape Shape){
+	s.parent = shape
+}
+
+//GetParent Getter for parent shape
+func(s *Sphere) GetParent() Shape{
+	return s.parent
+}
+
 
 //NormalAt returns the normal to the sphere at the location "point"
 func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {

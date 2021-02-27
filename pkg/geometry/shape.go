@@ -11,6 +11,8 @@ type Shape interface {
 	GetTransform() *algebra.Matrix
 	SetMaterial(m *canvas.Material)
 	GetMaterial() *canvas.Material
+	SetParent(s Shape)
+	GetParent() Shape
 	LocalIntersect(r *algebra.Ray) ([]float64, bool)
 	LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error)
 }

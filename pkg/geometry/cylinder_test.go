@@ -69,6 +69,22 @@ func TestCylinder_SetTransform(t *testing.T) {
 	testMatrixEquals(t, m.Get(), c.transform.Get())
 }
 
+func TestCylinder_GetParent(t *testing.T) {
+	c := NewCylinder(nil)
+	if c.GetParent() != nil{
+		t.Errorf("Expected cylinder to have no parent Shapes")
+	}
+}
+
+func TestCylinder_SetParent(t *testing.T) {
+	c1 := NewCylinder(nil)
+	c2 := NewCylinder(nil)
+	c1.SetParent(c2)
+	if c1.GetParent() == nil{
+		t.Errorf("Expected cylinder to have a parent Shape")
+	}
+}
+
 func TestCylinder_LocalIntersect(t *testing.T) {
 	c := NewCylinder(nil)
 	rays := []*algebra.Ray{

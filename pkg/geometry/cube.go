@@ -8,14 +8,18 @@ import (
 
 //Cube defines a 3d cube Shape
 type Cube struct{
+	parent Shape
 	transform *algebra.Matrix
 	material *canvas.Material
 }
 
 //NewCube returns a new Cube Shape with an identity matrix/ default material
 func NewCube(m *algebra.Matrix) *Cube{
-
-	return &Cube{transform: algebra.IdentityMatrix(4), material: canvas.NewDefaultMaterial()}
+	mat := m
+	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
+		mat = algebra.IdentityMatrix(4)
+	}
+	return &Cube{transform: mat, material: canvas.NewDefaultMaterial(), parent: nil}
 }
 
 // Shape interface functions
@@ -41,6 +45,16 @@ func (c *Cube) GetMaterial() *canvas.Material{
 //SetMaterial Setter for Cube material, Shape interface method
 func (c *Cube) SetMaterial(m *canvas.Material){
 	c.material = m
+}
+
+//SetParent Setter for parent shape
+func(c * Cube) SetParent(shape Shape){
+	c.parent = shape
+}
+
+//GetParent Getter for parent shape
+func(c *Cube) GetParent() Shape{
+	return c.parent
 }
 
 //LocalIntersect returns the itersection values for a Ray with a Cube
