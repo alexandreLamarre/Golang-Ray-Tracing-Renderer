@@ -12,6 +12,13 @@ func TestNewCube(t *testing.T) {
 	testMaterialEquals(t, cube.material, canvas.NewDefaultMaterial())
 }
 
+func TestCube_GetBounds(t *testing.T) {
+	cube := NewCube(nil)
+	min, max := cube.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1,-1,-1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, 1,1).Get())
+}
+
 func TestCube_GetMaterial(t *testing.T) {
 	cube := NewCube(nil)
 	m := cube.GetMaterial()

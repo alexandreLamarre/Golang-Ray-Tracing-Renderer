@@ -25,6 +25,13 @@ func TestNewGlassSphere(t *testing.T) {
 	assertEquals(t, s.GetMaterial().RefractiveIndex, 1.5)
 }
 
+func TestSphere_GetBounds(t *testing.T) {
+	s := NewSphere(nil)
+	min, max := s.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1, -1, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, 1, 1).Get())
+}
+
 func TestNewIntersections(t *testing.T) {
 	is := NewIntersections()
 	if len(is.hits.Get()) != 0 {
@@ -300,7 +307,7 @@ func testColorEquals(t *testing.T, values, results *canvas.Color) {
 
 func equals(a, b float64) bool {
 	EPSILON := 0.0001
-	return math.Abs(a-b) < EPSILON
+	return math.Abs(a-b) < EPSILON || (math.IsInf(a, 1) && math.IsInf(b, 1)) || (math.IsInf(a, -1) && math.IsInf(b, -1))
 }
 
 func assertEquals(t *testing.T, got, expected float64) {

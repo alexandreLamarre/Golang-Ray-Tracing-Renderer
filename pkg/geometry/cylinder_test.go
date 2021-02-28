@@ -18,6 +18,19 @@ func TestNewCylinder(t *testing.T) {
 	}
 }
 
+func TestCylinder_GetBounds(t *testing.T) {
+	cyl := NewCylinder(nil)
+	min, max := cyl.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1, cyl.minimum, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, cyl.maximum, 1).Get())
+
+	cyl.SetMinimum(-7)
+	cyl.SetMaximum(-1)
+	min, max = cyl.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1, cyl.minimum, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, cyl.maximum, 1).Get())
+}
+
 func TestCylinder_SetMinimum(t *testing.T) {
 	c := NewCylinder(nil)
 	c.SetMinimum(2)

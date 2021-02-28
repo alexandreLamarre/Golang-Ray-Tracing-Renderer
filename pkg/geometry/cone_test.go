@@ -32,6 +32,19 @@ func TestCone_SetMaximum(t *testing.T) {
 	assertEquals(t, c.maximum, 1)
 }
 
+func TestCone_GetBounds(t *testing.T) {
+	c := NewCone(nil)
+	min, max := c.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1, c.minimum, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, c.maximum, 1).Get())
+
+	c.SetMinimum(-4)
+	c.SetMaximum(3)
+	min, max = c.GetBounds()
+	testVectorEquals(t, min.Get(),algebra.NewPoint(-1, c.minimum, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, c.maximum, 1).Get())
+}
+
 func TestCone_SetClosed(t *testing.T) {
 	c := NewCone(nil)
 	c.SetClosed(true)

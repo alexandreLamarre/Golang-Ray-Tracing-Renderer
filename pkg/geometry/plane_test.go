@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"math"
 	"testing"
 	)
 
@@ -12,6 +13,13 @@ func TestNewPlane(t *testing.T) {
 	testVectorEquals(t, p.origin.Get(), []float64{0,0,0,1})
 	testVectorEquals(t, p.direction.Get(), []float64{1,0,1,0})
 	testMatrixEquals(t, p.transform.Get(), algebra.IdentityMatrix(4).Get())
+}
+
+func TestPlane_GetBounds(t *testing.T) {
+	p := NewPlane(nil)
+	min, max := p.GetBounds()
+	testVectorEquals(t, min.Get(), algebra.NewPoint(math.Inf(-1), 0, math.Inf(-1)).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(math.Inf(1), 0, math.Inf(1)).Get())
 }
 
 func TestPlane_GetMaterial(t *testing.T) {

@@ -73,6 +73,10 @@ func(s *Sphere) GetParent() Shape{
 	return s.parent
 }
 
+//GetBounds Getter for default bounds of this Shape
+func (s *Sphere) GetBounds() (*algebra.Vector, *algebra.Vector){
+	return algebra.NewPoint(-1,-1,-1), algebra.NewPoint(1,1,1)
+}
 
 //NormalAt returns the normal to the sphere at the location "point"
 func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {

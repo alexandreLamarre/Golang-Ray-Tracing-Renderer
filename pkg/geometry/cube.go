@@ -57,6 +57,11 @@ func(c *Cube) GetParent() Shape{
 	return c.parent
 }
 
+//GetBounds Getter for default bounds of this Shape
+func (c *Cube) GetBounds() (*algebra.Vector, *algebra.Vector){
+	return algebra.NewPoint(-1,-1,-1), algebra.NewPoint(1,1,1)
+}
+
 //LocalIntersect returns the itersection values for a Ray with a Cube
 func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
@@ -94,10 +99,10 @@ func checkAxis(origin, direction float64) (float64, float64){
 	var tmin float64
 	var tmax float64
 	EPSILON := 0.0001
-	if math.Abs(direction) >= EPSILON{
+	if math.Abs(direction) >= EPSILON {
 		tmin = tminNumerator/direction
 		tmax = tmaxNumerator/direction
-	} else{
+	} else {
 		tmin = tminNumerator * math.Inf(1)
 		tmax = tmaxNumerator * math.Inf(1)
 	}

@@ -53,6 +53,11 @@ func(p *Plane) GetParent() Shape{
 	return p.parent
 }
 
+//GetBounds Getter for default bounds of this Shape
+func (p *Plane) GetBounds() (*algebra.Vector, *algebra.Vector){
+	return algebra.NewPoint(math.Inf(-1),0,math.Inf(-1)), algebra.NewPoint(math.Inf(1),0,math.Inf(1))
+}
+
 func (p *Plane) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool) {
 	EPSILON := 0.00001
 	if math.Abs(r.Get()["direction"].Get()[1]) < EPSILON {

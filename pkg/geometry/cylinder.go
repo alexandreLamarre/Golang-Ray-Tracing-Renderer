@@ -76,6 +76,11 @@ func(cyl *Cylinder) GetParent() Shape{
 	return cyl.parent
 }
 
+//GetBounds Getter for default bounds of this Shape
+func (cyl *Cylinder) GetBounds() (*algebra.Vector, *algebra.Vector){
+	return algebra.NewPoint(-1,cyl.minimum,-1), algebra.NewPoint(1,cyl.maximum,1)
+}
+
 //LocalIntersect returns the itersection values for a Ray with a Cylinder
 func (cyl *Cylinder) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 	direction := ray.Get()["direction"]
