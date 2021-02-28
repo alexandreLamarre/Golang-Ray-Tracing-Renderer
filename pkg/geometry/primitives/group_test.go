@@ -1,9 +1,8 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
-	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 	"testing"
 )
 
@@ -65,8 +64,8 @@ func TestGroup_SetParent(t *testing.T) {
 
 func TestGroup_AddChild(t *testing.T) {
 	g := NewGroup(nil)
-	s := primitives.NewSphere(nil)
-	s2 := primitives.NewSphere(nil)
+	s := NewSphere(nil)
+	s2 := NewSphere(nil)
 	assertEquals(t, float64(len(g.shapes)), 0)
 	if s.GetParent() != nil || s2.GetParent() != nil{
 		t.Errorf("Expected spheres not part of a group to have no parent")
@@ -102,9 +101,9 @@ func TestGroup_LocalIntersect(t *testing.T) {
 		t.Errorf("Expected %d hits, Got : %d", 0 ,len(xs))
 	}
 
-	s1 := primitives.NewSphere(nil)
-	s2 := primitives.NewSphere(algebra.TranslationMatrix(0, 0, -3))
-	s3 := primitives.NewSphere(algebra.TranslationMatrix(5, 0, 0))
+	s1 := NewSphere(nil)
+	s2 := NewSphere(algebra.TranslationMatrix(0, 0, -3))
+	s3 := NewSphere(algebra.TranslationMatrix(5, 0, 0))
 	testMatrixEquals(t, s3.GetTransform().Get(), algebra.TranslationMatrix(5, 0, 0).Get())
 	g.AddChild(s1)
 	g.AddChild(s2)
@@ -133,11 +132,11 @@ func TestGroup_LocalIntersect(t *testing.T) {
 	}
 
 	g = NewGroup(algebra.ScalingMatrix(2,2,2))
-	s := primitives.NewSphere(algebra.TranslationMatrix(5, 0 , 0))
+	s := NewSphere(algebra.TranslationMatrix(5, 0 , 0))
 	g.AddChild(s)
 	r = algebra.NewRay(10, 0, -10, 0, 0, 1)
 
-	is := primitives.NewIntersections()
+	is := NewIntersections()
 	err := is.Intersect(g, r)
 	if err != nil{
 		t.Errorf("%s", err)

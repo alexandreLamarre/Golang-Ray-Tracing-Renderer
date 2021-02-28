@@ -9,16 +9,16 @@ import (
 
 
 func TestWorldObjectConversion(t *testing.T){
-	g1 := NewGroup(algebra.RotationY(math.Pi/2))
-	g2 := NewGroup(algebra.ScalingMatrix(2, 2, 2))
+	g1 := primitives.NewGroup(algebra.RotationY(math.Pi/2))
+	g2 := primitives.NewGroup(algebra.ScalingMatrix(2, 2, 2))
 	g1.AddChild(g2)
 	s := primitives.NewSphere(algebra.TranslationMatrix(5, 0 , 0))
 	g2.AddChild(s)
 	p := primitives.WorldToObject(s, algebra.NewPoint(-2, 0, -10))
 	testVectorEquals(t, p.Get(), algebra.NewPoint(0,0,-1).Get())
 
-	g1 = NewGroup(algebra.RotationY(math.Pi/2))
-	g2 = NewGroup(algebra.ScalingMatrix(1, 2, 3))
+	g1 = primitives.NewGroup(algebra.RotationY(math.Pi/2))
+	g2 = primitives.NewGroup(algebra.ScalingMatrix(1, 2, 3))
 	g1.AddChild(g2)
 	s = primitives.NewSphere(algebra.TranslationMatrix(5, 0 , 0))
 	g2.AddChild(s)
@@ -28,8 +28,8 @@ func TestWorldObjectConversion(t *testing.T){
 
 func TestNormalAt(t *testing.T) {
 	//Testing normal on a group
-	g1 := NewGroup(algebra.RotationY(math.Pi/2))
-	g2 := NewGroup(algebra.ScalingMatrix(1, 2, 3))
+	g1 := primitives.NewGroup(algebra.RotationY(math.Pi/2))
+	g2 := primitives.NewGroup(algebra.ScalingMatrix(1, 2, 3))
 	g1.AddChild(g2)
 	s := primitives.NewSphere(algebra.TranslationMatrix(5, 0, 0))
 	g2.AddChild(s)

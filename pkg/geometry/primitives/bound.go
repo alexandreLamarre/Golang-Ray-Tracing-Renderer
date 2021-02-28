@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -12,13 +12,13 @@ type Bounds struct{
 }
 
 //NewBounds Initializer for Bounds
-func NewBounds (min, max *algebra.Vector) *Bounds{
+func NewBounds (min, max *algebra.Vector) *Bounds {
 	return &Bounds{minimum: min, maximum: max}
 }
 
 //GetBoundsTransform takes a min,max bounding points of a cube and applies the transform to its vertices
 // Then returns a bounding box of the new min and max
-func GetBoundsTransform(min, max *algebra.Vector, transform *algebra.Matrix) *Bounds{
+func GetBoundsTransform(min, max *algebra.Vector, transform *algebra.Matrix) *Bounds {
 	minX := min.Get()[0]; minY := min.Get()[1]; minZ := min.Get()[2]
 	maxX := max.Get()[0]; maxY := max.Get()[1]; maxZ := max.Get()[2]
 	distX := maxX - minX; distY := maxY - minY; distZ := maxZ - minZ
@@ -90,24 +90,3 @@ func checkCustomAxis(origin, direction, min, max float64) (float64, float64){
 	return tmin, tmax
 }
 
-func max(values ...float64) float64{
-	if len(values) == 1{
-		return values[0]
-	}
-	maxVal := math.Inf(-1)
-	for i:= 0; i < len(values); i++{
-		maxVal = math.Max(values[i], maxVal)
-	}
-	return maxVal
-}
-
-func min(values ...float64) float64{
-	if len(values) == 1{
-		return values[0]
-	}
-	minVal := math.Inf(1)
-	for i:= 0; i < len(values); i++{
-		minVal = math.Min(values[i], minVal)
-	}
-	return minVal
-}

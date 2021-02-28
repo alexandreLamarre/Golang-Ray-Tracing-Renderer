@@ -1,10 +1,9 @@
-package geometry
+package primitives
 
 import (
 	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
-	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 	"math"
 )
 
@@ -16,24 +15,24 @@ func (e GroupNormalError) Error() string{
 
 //Group represents a collection of shapes, a container for related shapes
 type Group struct{
-	parent    primitives.Shape
-	shapes    []primitives.Shape
+	parent    Shape
+	shapes    []Shape
 	transform *algebra.Matrix
 }
 
 //NewGroup initializer for a group struct with a given 4x4 transformation matrix, if the matrix
 // is not 4x4 or nil, set the identity transform
-func NewGroup(m *algebra.Matrix) *Group{
+func NewGroup(m *algebra.Matrix) *Group {
 	mat := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		mat = algebra.IdentityMatrix(4)
 	}
-	emptyShapes := make([]primitives.Shape, 0, 0)
+	emptyShapes := make([]Shape, 0, 0)
 	return &Group{transform: mat, parent: nil, shapes: emptyShapes}
 }
 
 //AddChild adds a new shape to the Group's container
-func (g *Group) AddChild(s primitives.Shape){
+func (g *Group) AddChild(s Shape){
 	s.SetParent(g)
 	g.shapes = append(g.shapes, s)
 }
@@ -64,12 +63,12 @@ func (g *Group) SetTransform(m *algebra.Matrix){
 }
 
 //GetParent Getter for Parent of Shape
-func (g *Group) GetParent() primitives.Shape {
+func (g *Group) GetParent() Shape {
 	return g.parent
 }
 
 //SetParent Setter for Parent of Shape
-func (g *Group) SetParent(shape primitives.Shape){
+func (g *Group) SetParent(shape Shape){
 	g.parent = shape
 }
 
@@ -100,8 +99,8 @@ func (g *Group) GetBounds() (*algebra.Vector, *algebra.Vector){
 }
 
 //LocalIntersect Intersect Implementation for Group Shape
-func (g *Group) LocalIntersect(r *algebra.Ray) ([]*primitives.Intersection, bool){
-	xs := make([]*primitives.Intersection, 0, 0)
+func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
+	xs := make([]*Intersection, 0, 0)
 	var hit bool = false
 
 	// Get the AABB of the group
