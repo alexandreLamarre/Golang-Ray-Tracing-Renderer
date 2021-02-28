@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -8,13 +8,13 @@ import (
 
 //Cube defines a 3d cube Shape
 type Cube struct{
-	parent Shape
+	parent    Shape
 	transform *algebra.Matrix
-	material *canvas.Material
+	material  *canvas.Material
 }
 
 //NewCube returns a new Cube Shape with an identity matrix/ default material
-func NewCube(m *algebra.Matrix) *Cube{
+func NewCube(m *algebra.Matrix) *Cube {
 	mat := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		mat = algebra.IdentityMatrix(4)
@@ -48,12 +48,12 @@ func (c *Cube) SetMaterial(m *canvas.Material){
 }
 
 //SetParent Setter for parent shape
-func(c * Cube) SetParent(shape Shape){
+func(c *Cube) SetParent(shape Shape){
 	c.parent = shape
 }
 
 //GetParent Getter for parent shape
-func(c *Cube) GetParent() Shape{
+func(c *Cube) GetParent() Shape {
 	return c.parent
 }
 

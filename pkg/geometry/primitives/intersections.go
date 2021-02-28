@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -21,11 +21,22 @@ func NewIntersection(s Shape, t float64) *Intersection {
 	return &Intersection{Object: s, T: t}
 }
 
+
 //NewIntersections creates a new intersection data type
 func NewIntersections() *Intersections {
 	hits := NewMinHeap()
 	ref := NewMinHeap()
 	return &Intersections{hits: hits, ref: ref}
+}
+
+//GetHits Getter for hits minheap exported for test purposes.
+func (i *Intersections) GetHits() *MinHeap {
+	return i.hits
+}
+
+//GetRef Getter for ref minheap exported for test purposes
+func (i *Intersections) GetRef() *MinHeap {
+	return i.ref
 }
 
 //Intersect Updates intersections of a Sphere with the given algebra.Ray

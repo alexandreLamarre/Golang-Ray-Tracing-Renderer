@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -8,16 +8,16 @@ import (
 
 //Cone defines a default Cone Shape
 type Cone struct{
-	parent Shape
-	closed bool //determines if the cone is hollow or has caps on the ends
+	parent    Shape
+	closed    bool //determines if the cone is hollow or has caps on the ends
 	transform *algebra.Matrix
-	material *canvas.Material
-	maximum float64 //maximum y-value by default without transformations
-	minimum float64 //minimum y-value by default without transformations
+	material  *canvas.Material
+	maximum   float64 //maximum y-value by default without transformations
+	minimum   float64 //minimum y-value by default without transformations
 }
 
 //NewCone returns a new Cone Shape
-func NewCone(m *algebra.Matrix) *Cone{
+func NewCone(m *algebra.Matrix) *Cone {
 	mat := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		mat = algebra.IdentityMatrix(4)
@@ -72,7 +72,7 @@ func(cone *Cone) SetParent(shape Shape){
 }
 
 //GetParent Getter for parent shape
-func(cone *Cone) GetParent() Shape{
+func(cone *Cone) GetParent() Shape {
 	return cone.parent
 }
 
@@ -168,7 +168,7 @@ func (cone *Cone) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
 
 //cone helpers
 
-func (cone *Cone) intersectCaps(ray *algebra.Ray, xs []*Intersection) []*Intersection{
+func (cone *Cone) intersectCaps(ray *algebra.Ray, xs []*Intersection) []*Intersection {
 	origin := ray.Get()["origin"]
 	direction := ray.Get()["direction"]
 	oy := origin.Get()[1]; dy := direction.Get()[1]

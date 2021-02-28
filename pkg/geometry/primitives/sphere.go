@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -8,7 +8,7 @@ import (
 
 //Sphere Data type for a 3D sphere
 type Sphere struct {
-	parent Shape
+	parent    Shape
 	origin    *algebra.Vector
 	radius    float64
 	transform *algebra.Matrix
@@ -25,7 +25,7 @@ func NewSphere(m *algebra.Matrix) *Sphere {
 		transform: mat, material: canvas.NewDefaultMaterial(), parent: nil}
 }
 
-func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere{
+func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere {
 	matrix := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		matrix = algebra.IdentityMatrix(4)
@@ -69,7 +69,7 @@ func(s *Sphere) SetParent(shape Shape){
 }
 
 //GetParent Getter for parent shape
-func(s *Sphere) GetParent() Shape{
+func(s *Sphere) GetParent() Shape {
 	return s.parent
 }
 

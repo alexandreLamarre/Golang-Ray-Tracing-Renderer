@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
@@ -7,14 +7,14 @@ import (
 )
 //Plane implements a XZ plane by default
 type Plane struct{
-	parent Shape
-	origin *algebra.Vector
+	parent    Shape
+	origin    *algebra.Vector
 	direction *algebra.Vector
 	transform *algebra.Matrix
-	material *canvas.Material
+	material  *canvas.Material
 }
 
-func NewPlane(m *algebra.Matrix) *Plane{
+func NewPlane(m *algebra.Matrix) *Plane {
 	mat := m
 	if m == nil || len(m.Get()) != 4 || len(m.Get()[0]) != 4{
 		mat = algebra.IdentityMatrix(4)
@@ -49,7 +49,7 @@ func(p *Plane) SetParent(shape Shape){
 }
 
 //GetParent Getter for parent shape
-func(p *Plane) GetParent() Shape{
+func(p *Plane) GetParent() Shape {
 	return p.parent
 }
 

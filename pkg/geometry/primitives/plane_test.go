@@ -1,4 +1,4 @@
-package geometry
+package primitives
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"math"
 	"testing"
-	)
+)
 
 func TestNewPlane(t *testing.T) {
 	p := NewPlane(nil)
@@ -126,51 +126,3 @@ func TestPlane_LocalNormalAt(t *testing.T) {
 	testVectorEquals(t, n3.Get(), []float64{0, 1, 0, 0})
 }
 
-func testMaterialEquals(t *testing.T, m *canvas.Material, expected *canvas.Material){
-	if m.Diffuse != expected.Diffuse{
-		t.Errorf("mistmatched diffuse")
-	}
-	if m.Specular != expected.Specular{
-		t.Errorf("mismatched specular")
-	}
-
-	if m.Shininess != expected.Shininess{
-		t.Errorf("mismatched shininess")
-	}
-
-	if m .RefractiveIndex != expected.RefractiveIndex{
-		t.Errorf("mismatched refractive index")
-	}
-
-	if m.Reflective != expected.Reflective{
-		t.Errorf("mismtached reflective")
-	}
-
-	if m.Transparency != expected.Transparency{
-		t.Errorf("mismtached transparency")
-	}
-
-	if m.Ambient != expected.Ambient{
-		t.Errorf("mismatched ambient")
-	}
-	if m.Color.Red() != expected.Color.Red(){
-		t.Errorf("mismatched red colors")
-	}
-	if m.Color.Green() != expected.Color.Green(){
-		t.Errorf("mismatched green colors")
-	}
-	if m.Color.Blue() != expected.Color.Blue(){
-		t.Errorf("mismatched blue colors")
-	}
-
-}
-
-func testMatrixEquals(t *testing.T, values [][]float64, expected [][]float64) {
-	for i, _ := range values {
-		for j, _ := range values[i] {
-			if !equals(values[i][j], expected[i][j]) {
-				t.Errorf("Expected: %f, Got: %f", expected[i][j], values[i][j])
-			}
-		}
-	}
-}

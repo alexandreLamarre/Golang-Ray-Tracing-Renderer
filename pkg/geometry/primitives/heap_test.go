@@ -1,7 +1,6 @@
-package geometry
+package primitives
 
 import (
-	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 	"testing"
 )
 
@@ -11,12 +10,12 @@ func TestMinHeap(t *testing.T) {
 	if len(h.container) != 0 {
 		t.Errorf("invalid starting size of heap")
 	}
-	s := primitives.NewSphere(nil)
-	i1 := primitives.NewIntersection(s, 5)
-	i2 := primitives.NewIntersection(s, 3)
-	i3 := primitives.NewIntersection(s, 7)
-	i4 := primitives.NewIntersection(s, 8)
-	i5 := primitives.NewIntersection(s, 1)
+	s := NewSphere(nil)
+	i1 := NewIntersection(s, 5)
+	i2 := NewIntersection(s, 3)
+	i3 := NewIntersection(s, 7)
+	i4 := NewIntersection(s, 8)
+	i5 := NewIntersection(s, 1)
 	h.Push(i1)
 
 	if len(h.container) != 1 {
@@ -39,10 +38,10 @@ func TestMinHeap(t *testing.T) {
 		t.Errorf("invalid minimum of heap %f, expected %f", h.GetMin(), 1.0)
 	}
 
-	i6 := primitives.NewIntersection(s, -1)
-	i7 := primitives.NewIntersection(s, 1)
-	i8 := primitives.NewIntersection(s, 3)
-	i9 := primitives.NewIntersection(s, 4)
+	i6 := NewIntersection(s, -1)
+	i7 := NewIntersection(s, 1)
+	i8 := NewIntersection(s, 3)
+	i9 := NewIntersection(s, 4)
 
 	h.PushAll(i6, i7, i8, i9)
 
@@ -74,16 +73,16 @@ func TestMinHeap(t *testing.T) {
 }
 
 func TestMinHeap_Copy(t *testing.T) {
-	s := primitives.NewSphere(nil)
+	s := NewSphere(nil)
 	h := NewMinHeap()
-	h.Push(primitives.NewIntersection(s, 5 ))
+	h.Push(NewIntersection(s, 5 ))
 
 	h1 := h.Copy()
 	if h1.GetMin().T != h.GetMin().T{
 		t.Errorf("Expected copies to share the same minimum")
 	}
 
-	h1.Push(primitives.NewIntersection(s, 4))
+	h1.Push(NewIntersection(s, 4))
 	if h.GetMin().T == h1.GetMin().T{
 		t.Errorf("Expected copes to not share the same minimum")
 	}

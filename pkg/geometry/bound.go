@@ -89,3 +89,25 @@ func checkCustomAxis(origin, direction, min, max float64) (float64, float64){
 
 	return tmin, tmax
 }
+
+func max(values ...float64) float64{
+	if len(values) == 1{
+		return values[0]
+	}
+	maxVal := math.Inf(-1)
+	for i:= 0; i < len(values); i++{
+		maxVal = math.Max(values[i], maxVal)
+	}
+	return maxVal
+}
+
+func min(values ...float64) float64{
+	if len(values) == 1{
+		return values[0]
+	}
+	minVal := math.Inf(1)
+	for i:= 0; i < len(values); i++{
+		minVal = math.Min(values[i], minVal)
+	}
+	return minVal
+}

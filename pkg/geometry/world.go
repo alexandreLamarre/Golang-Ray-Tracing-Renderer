@@ -3,6 +3,7 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 	"log"
 	"math"
 	"reflect"
@@ -10,7 +11,7 @@ import (
 
 //World manages the world space of the Shape(s) inside of it and the light sources illuminating it
 type World struct {
-	Objects []Shape
+	Objects []primitives.Shape
 	Lights  []*canvas.PointLight
 }
 
@@ -20,22 +21,22 @@ func NewDefaultWorld() *World {
 	light := canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(-10, 10, -10))
 	lights = append(lights, light)
 
-	objects := make([]Shape, 0, 0)
-	s1 := NewSphere(nil)
+	objects := make([]primitives.Shape, 0, 0)
+	s1 := primitives.NewSphere(nil)
 	m := canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0.8, 1.0, 0.6}
 	m.Diffuse = 0.7
 	m.Specular = 0.2
 	s1.SetMaterial(m)
 
-	s2 := NewSphere(algebra.ScalingMatrix(0.5, 0.5, 0.5))
+	s2 := primitives.NewSphere(algebra.ScalingMatrix(0.5, 0.5, 0.5))
 	objects = append(objects, s1, s2)
 	return &World{Objects: objects, Lights: lights}
 }
 
 //Intersect intersects all objects in the World space with the given ray
-func (w *World) Intersect(r *algebra.Ray) *Intersections {
-	is := NewIntersections()
+func (w *World) Intersect(r *algebra.Ray) *primitives.Intersections {
+	is := primitives.NewIntersections()
 
 	for _, s := range w.Objects {
 		err := is.Intersect(s, r)
@@ -54,7 +55,7 @@ func (w World) ShadeHit(comps Comps, depth int) *canvas.Color {
 		pattern := comps.Object.GetMaterial().Pattern
 		var patternColor *canvas.Color
 		if pattern != nil{
-			patternColor = PatternAtObject(comps.Object, pattern, comps.Point)
+			patternColor = primitives.PatternAtObject(comps.Object, pattern, comps.Point)
 		} else {
 			patternColor = nil
 		}
@@ -182,23 +183,23 @@ func Schlick(comps *Comps) float64{
 
 //Comps manages the precomputed state of the necessary vectors for lighting
 type Comps struct {
-	T      float64
-	Object Shape
-	Point  *algebra.Vector
-	OverPoint *algebra.Vector
+	T          float64
+	Object     primitives.Shape
+	Point      *algebra.Vector
+	OverPoint  *algebra.Vector
 	UnderPoint *algebra.Vector
-	N1 float64
-	N2 float64
-	Eye    *algebra.Vector
-	Normal *algebra.Vector
-	Reflect *algebra.Vector
-	Inside bool
+	N1         float64
+	N2         float64
+	Eye        *algebra.Vector
+	Normal     *algebra.Vector
+	Reflect    *algebra.Vector
+	Inside     bool
 }
 
-func PrepareComputations(intersection *Intersection, ray *algebra.Ray, is *Intersections) *Comps {
+func PrepareComputations(intersection *primitives.Intersection, ray *algebra.Ray, is *primitives.Intersections) *Comps {
 	position := ray.Position(intersection.T)
 	c := &Comps{T: intersection.T, Object: intersection.Object, Point: position,
-		Eye: ray.Get()["direction"].Negate(), Normal: NormalAt(intersection.Object,position)}
+		Eye: ray.Get()["direction"].Negate(), Normal: primitives.NormalAt(intersection.Object,position)}
 
 	if d, err := algebra.DotProduct(c.Normal, c.Eye); err != nil {
 		panic(err)
@@ -230,14 +231,14 @@ func PrepareComputations(intersection *Intersection, ray *algebra.Ray, is *Inter
 
 // Helper functions
 
-func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersections){
-	if is == nil || len(is.hits.Get()) == 0 {
+func determineRefractiveIndexes(comps *Comps, hit *primitives.Intersection, is *primitives.Intersections){
+	if is == nil || len(is.GetHits().Get()) == 0 {
 		log.Print("Warning: no intersections provided, this should only occur during unit testing")
 		comps.N1 = 1.0
 		comps.N2 = 1.0
 		return
 	} // this is only possible if calling the PrepareComputations method directly with nil in testing
-	containers := make([]*Intersection, 0, 0)
+	containers := make([]*primitives.Intersection, 0, 0)
 	allIntersections := getSortedIntersections(is)
 
 	for i := 0; i < len(allIntersections); i++{
@@ -265,14 +266,14 @@ func determineRefractiveIndexes(comps *Comps, hit *Intersection, is *Intersectio
 	}
 }
 
-func intersectionEquals(a *Intersection, b *Intersection) bool{
+func intersectionEquals(a *primitives.Intersection, b *primitives.Intersection) bool{
 	if a.T == b.T && reflect.TypeOf(a.Object) == reflect.TypeOf(b.Object) && a.Object == b.Object{
 		return true
 	}
 	return false
 }
 
-func has(container []*Intersection, intersect *Intersection) (int, bool){
+func has(container []*primitives.Intersection, intersect *primitives.Intersection) (int, bool){
 	for i:= 0; i < len(container); i++{
 		if reflect.TypeOf(container[i]) == reflect.TypeOf(intersect) && container[i].Object == intersect.Object{
 			return i, true
@@ -281,10 +282,10 @@ func has(container []*Intersection, intersect *Intersection) (int, bool){
 	return -1, false
 }
 
-func getSortedIntersections(is *Intersections) []*Intersection{
-	res := make([]*Intersection, 0 , 0)
-	ref := is.ref.Copy()
-	hits := is.hits.Copy()
+func getSortedIntersections(is *primitives.Intersections) []*primitives.Intersection {
+	res := make([]*primitives.Intersection, 0 , 0)
+	ref := is.GetRef().Copy()
+	hits := is.GetHits().Copy()
 	intersect := ref.ExtractMin()
 	for intersect != nil{
 		res = append(res, intersect)
