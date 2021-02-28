@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"math"
 )
 
 type GroupNormalError Group
@@ -71,10 +72,48 @@ func (g *Group) SetParent(shape Shape){
 	g.parent = shape
 }
 
+//GetBounds Getter for default bounds of this Shape
+func (g *Group) GetBounds() (*algebra.Vector, *algebra.Vector){
+	var min *algebra.Vector = nil; var max *algebra.Vector = nil
+	if len(g.shapes) == 0 {
+		return min, max
+	}
+	minX := math.Inf(1); minY := math.Inf(1); minZ := math.Inf(1)
+	maxX := math.Inf(-1); maxY := math.Inf(-1); maxZ := math.Inf(-1)
+
+	for _, shape := range g.shapes{
+		tempMin, tempMax := shape.GetBounds()
+		if tempMin != nil{
+			b := GetBoundsTransform(tempMin, tempMax, shape.GetTransform())
+			tempMin = b.minimum
+			tempMax = b.maximum
+			tempMinX := tempMin.Get()[0]; tempMinY := tempMin.Get()[1]; tempMinZ := tempMin.Get()[2]
+			tempMaxX := tempMax.Get()[0]; tempMaxY := tempMax.Get()[1]; tempMaxZ := tempMax.Get()[2]
+			minX = math.Min(tempMinX, minX); minY = math.Min(tempMinY, minY); minZ = math.Min(tempMinZ, minZ)
+			maxX = math.Max(tempMaxX, maxX); maxY = math.Max(tempMaxY, maxY); maxZ = math.Max(tempMaxZ, maxZ)
+		}
+	}
+	min = algebra.NewPoint(minX, minY, minZ)
+	max = algebra.NewPoint(maxX, maxY, maxZ)
+	return min,max
+}
+
 //LocalIntersect Intersect Implementation for Group Shape
 func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 	xs := make([]*Intersection, 0, 0)
 	var hit bool = false
+
+	// Get the AABB of the group
+	min, max := g.GetBounds()
+
+	if min == nil{
+		return xs, false
+	}
+
+	if GetBoundsTransform(min, max, g.GetTransform()).Intersect(r) == false{
+		return xs, false
+	}
+
 	for _, s := range g.shapes{
 		m := s.GetTransform()
 		ri :=  r.Transform(m.Inverse())

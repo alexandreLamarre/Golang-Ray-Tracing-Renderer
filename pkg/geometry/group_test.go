@@ -15,6 +15,7 @@ func TestNewGroup(t *testing.T) {
 	}
 }
 
+
 func TestGroup_GetMaterial(t *testing.T) {
 	g := NewGroup(nil)
 	if g.GetMaterial() != nil{
@@ -153,5 +154,16 @@ func TestGroup_LocalNormalAt(t *testing.T) {
 
 	if gerr == nil{
 		t.Errorf("Unexpected lack of error or unexpected error from group local normal")
+	}
+}
+
+func TestGroup_GetBounds(t *testing.T) {
+	g := NewGroup(nil)
+	min, max := g.GetBounds()
+	if min != nil{
+		t.Errorf("Unexpected group bounding minimum %v", min)
+	}
+	if max != nil{
+		t.Errorf("Unexpected group bounding maximum %v", max)
 	}
 }
