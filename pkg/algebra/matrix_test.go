@@ -308,6 +308,9 @@ func TestMatrix_Inverse(t *testing.T) {
 	D := Multiply(C, B.Inverse())
 
 	testMatrixEquals(t, D.Get(), A.Get())
+
+	E := A.Multiply(B).Multiply(B.Inverse())
+	testMatrixEquals(t, E.Get(), A.Get())
 }
 
 func TestStack(t *testing.T) {

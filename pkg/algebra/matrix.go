@@ -114,6 +114,41 @@ func Multiply(m1 *Matrix, m2 *Matrix) *Matrix {
 	return mMultiplied
 }
 
+func (m1 *Matrix) Multiply( m2 *Matrix) *Matrix {
+	if getNumCols(m1) != getNumRows(m2) {
+		panic(ExpectedDimension(len(m1.Get()[0])))
+		return nil
+	}
+
+	res := make([]float64, 0, 0)
+	for i := 0; i < getNumRows(m1); i++ {
+		for j := 0; j < getNumCols(m2); j++ {
+			v := 0.0
+			for k := 0; k < getNumRows(m2); k++ {
+				Aik, err := m1.At(k, i)
+				if err != nil {
+					panic(err)
+					return nil
+				}
+				Bkj, err := m2.At(j, k)
+				if err != nil {
+					panic(err)
+					return nil
+				}
+				v += Aik * Bkj
+			}
+			res = append(res, v)
+
+		}
+	}
+	mMultiplied, err := NewMatrix(getNumRows(m1), getNumCols(m2), res...)
+	if err != nil {
+		panic(err)
+		return nil
+	}
+	return mMultiplied
+}
+
 //MultiplyByVec returns left matrix multiplication with the given column vector
 func (m *Matrix) MultiplyByVec(v *Vector) *Vector {
 	if getNumCols(m) != len(v.tuple) {
