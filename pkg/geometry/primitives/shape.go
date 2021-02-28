@@ -3,6 +3,7 @@ package geometry
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 )
 
 //Shape represents a shape interface in 3D space
@@ -14,7 +15,7 @@ type Shape interface {
 	SetParent(s Shape)
 	GetParent() Shape
 	GetBounds() (*algebra.Vector, *algebra.Vector)
-	LocalIntersect(r *algebra.Ray) ([]*Intersection, bool)
+	LocalIntersect(r *algebra.Ray) ([]*primitives.Intersection, bool)
 	LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error)
 }
 

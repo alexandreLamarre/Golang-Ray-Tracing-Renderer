@@ -1,24 +1,26 @@
 package geometry
 
+import "github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
+
 //MinHeap represents a heap data structure
 type MinHeap struct {
-	container []*Intersection
+	container []*primitives.Intersection
 }
 
 //NewMinHeap returns a new empty MinHeap
 func NewMinHeap() *MinHeap {
-	res := make([]*Intersection, 0, 0)
+	res := make([]*primitives.Intersection, 0, 0)
 	return &MinHeap{res}
 }
 
 //Push pushes a new element to the heap and maintain the heap heuristic
-func (m *MinHeap) Push(el *Intersection) {
+func (m *MinHeap) Push(el *primitives.Intersection) {
 	m.container = append(m.container, el)
 	heapify(m, len(m.container)-1)
 }
 
 //PushAll pushes all the elements provided to the heap and maintains the heap heuristic
-func (m *MinHeap) PushAll(el ...*Intersection) {
+func (m *MinHeap) PushAll(el ...*primitives.Intersection) {
 	for i := 0; i < len(el); i++ {
 		m.container = append(m.container, el[i])
 		heapify(m, len(m.container)-1)
@@ -26,7 +28,7 @@ func (m *MinHeap) PushAll(el ...*Intersection) {
 }
 
 //Get returns the underlying array of the heap
-func (m *MinHeap) Get() []*Intersection {
+func (m *MinHeap) Get() []*primitives.Intersection {
 	return m.container
 }
 
@@ -36,11 +38,11 @@ func (m *MinHeap) Copy() *MinHeap{
 }
 
 //sets the minheap container to the parameter without checking heap property :only use on arrays already satisfying heap property
-func createMinHeap(input []*Intersection) *MinHeap{
+func createMinHeap(input []*primitives.Intersection) *MinHeap{
 	h := NewMinHeap()
-	res := make([]*Intersection, 0, 0)
+	res := make([]*primitives.Intersection, 0, 0)
 	for i := 0; i < len(input); i++{
-		in := NewIntersection(input[i].Object, input[i].T)
+		in := primitives.NewIntersection(input[i].Object, input[i].T)
 		res = append(res, in)
 	}
 	h.container = res
@@ -48,12 +50,12 @@ func createMinHeap(input []*Intersection) *MinHeap{
 }
 
 //GetMin returns the min of the MinHeap
-func (m *MinHeap) GetMin() *Intersection {
+func (m *MinHeap) GetMin() *primitives.Intersection {
 	return m.container[0]
 }
 
 //ExtractMin returns the min and extracts it from the container
-func (m *MinHeap) ExtractMin() *Intersection{
+func (m *MinHeap) ExtractMin() *primitives.Intersection {
 	if len(m.container) == 0 {return nil}
 	min := m.container[0]
 	m.container[0] = m.container[len(m.container) -1]
