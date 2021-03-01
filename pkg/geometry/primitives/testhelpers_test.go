@@ -32,7 +32,8 @@ func testColorEquals(t *testing.T, values, results *canvas.Color) {
 
 func equals(a, b float64) bool {
 	EPSILON := 0.0001
-	return math.Abs(a-b) < EPSILON || (math.IsInf(a, 1) && math.IsInf(b, 1)) || (math.IsInf(a, -1) && math.IsInf(b, -1))
+	return math.Abs(a-b) < EPSILON ||
+		(math.IsInf(a, 1) && math.IsInf(b, 1)) || (math.IsInf(a, -1) && math.IsInf(b, -1))
 }
 
 func assertEquals(t *testing.T, got, expected float64) {

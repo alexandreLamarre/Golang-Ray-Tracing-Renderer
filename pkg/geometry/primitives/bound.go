@@ -16,6 +16,11 @@ func NewBounds (min, max *algebra.Vector) *Bounds {
 	return &Bounds{minimum: min, maximum: max}
 }
 
+//Get Getter for Bound Fields
+func (b *Bounds) Get() (*algebra.Vector, *algebra.Vector){
+	return b.minimum, b.maximum
+}
+
 //GetBoundsTransform takes a min,max bounding points of a cube and applies the transform to its vertices
 // Then returns a bounding box of the new min and max
 func GetBoundsTransform(min, max *algebra.Vector, transform *algebra.Matrix) *Bounds {
@@ -45,12 +50,11 @@ func GetBoundsTransform(min, max *algebra.Vector, transform *algebra.Matrix) *Bo
 		           algebra.NewPoint(newMaxX, newMaxY, newMaxZ))
 }
 
-//Intersect Checks ray intersection with a bounding box
+//Intersect Checks ray intersection with a bounding box, ray needs to be transformed by Shape's transform by the shape calling the method
 func (b *Bounds) Intersect(ray *algebra.Ray) bool{
 	origin := ray.Get()["origin"]; direction := ray.Get()["direction"]
 	minX := b.minimum.Get()[0]; minY := b.minimum.Get()[1] ; minZ := b.minimum.Get()[2];
 	maxX := b.maximum.Get()[0]; maxY := b.maximum.Get()[1]; maxZ := b.maximum.Get()[2];
-
 	xtmin, xtmax := checkCustomAxis(origin.Get()[0], direction.Get()[0], minX, maxX)
 	ytmin, ytmax := checkCustomAxis(origin.Get()[1], direction.Get()[1], minY, maxY)
 	ztmin, ztmax := checkCustomAxis(origin.Get()[2], direction.Get()[2], minZ, maxZ)
@@ -77,7 +81,7 @@ func checkCustomAxis(origin, direction, min, max float64) (float64, float64){
 		tmin = tminNumerator/direction
 		tmax = tmaxNumerator/direction
 	} else {
-		tmin = math.Abs(tminNumerator) * math.Inf(-1)
+		tmin = tminNumerator * math.Inf(1)
 		tmax = tmaxNumerator * math.Inf(1)
 	}
 

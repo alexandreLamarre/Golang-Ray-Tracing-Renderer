@@ -31,6 +31,11 @@ func NewGroup(m *algebra.Matrix) *Group {
 	return &Group{transform: mat, parent: nil, shapes: emptyShapes}
 }
 
+//GetShapes Getter for shapes array field of a group
+func (g *Group)GetShapes() []Shape{
+	return g.shapes
+}
+
 //AddChild adds a new shape to the Group's container
 func (g *Group) AddChild(s Shape){
 	s.SetParent(g)
@@ -109,8 +114,7 @@ func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 	if min == nil{
 		return xs, false
 	}
-
-	if GetBoundsTransform(min, max, g.GetTransform()).Intersect(r) == false{
+	if GetBoundsTransform(min, max, g.GetTransform()).Intersect(r.Transform(g.GetTransform())) == false{
 		return xs, false
 	}
 
