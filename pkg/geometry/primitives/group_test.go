@@ -149,7 +149,7 @@ func TestGroup_LocalIntersect(t *testing.T) {
 
 func TestGroup_LocalNormalAt(t *testing.T) {
 	g := NewGroup(nil)
-	_, gerr := g.LocalNormalAt(algebra.NewPoint(0,0,0))
+	_, gerr := g.LocalNormalAt(algebra.NewPoint(0,0,0), nil)
 
 
 	if gerr == nil{

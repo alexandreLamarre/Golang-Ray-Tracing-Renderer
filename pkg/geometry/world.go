@@ -199,7 +199,7 @@ type Comps struct {
 func PrepareComputations(intersection *primitives.Intersection, ray *algebra.Ray, is *primitives.Intersections) *Comps {
 	position := ray.Position(intersection.T)
 	c := &Comps{T: intersection.T, Object: intersection.Object, Point: position,
-		Eye: ray.Get()["direction"].Negate(), Normal: primitives.NormalAt(intersection.Object,position)}
+		Eye: ray.Get()["direction"].Negate(), Normal: primitives.NormalAt(intersection.Object,position, intersection)}
 
 	if d, err := algebra.DotProduct(c.Normal, c.Eye); err != nil {
 		panic(err)

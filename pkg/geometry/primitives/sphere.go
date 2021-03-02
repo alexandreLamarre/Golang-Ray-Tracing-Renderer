@@ -46,6 +46,9 @@ func (s *Sphere) GetPosition() *algebra.Vector {
 
 //SetTransform sets the Sphere's transformation
 func (s *Sphere) SetTransform(m *algebra.Matrix) {
+	if len(m.Get()) != 4 || len(m.Get()[0]) != 4{
+		panic(algebra.ExpectedDimension(4))
+	}
 	s.transform = m
 }
 
@@ -79,7 +82,7 @@ func (s *Sphere) GetBounds() (*algebra.Vector, *algebra.Vector){
 }
 
 //NormalAt returns the normal to the sphere at the location "point"
-func (s *Sphere) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error) {
+func (s *Sphere) LocalNormalAt(point *algebra.Vector, hit *Intersection) (*algebra.Vector, error) {
 
 	sphereNormal, err := point.Subtract(algebra.NewPoint(0, 0, 0))
 

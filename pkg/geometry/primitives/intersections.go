@@ -14,6 +14,13 @@ type Intersections struct {
 type Intersection struct {
 	Object Shape
 	T      float64
+	U, V float64
+}
+
+//SetUV sets the u, v fields for intersections, for normal interpolation on smooth triangles
+func (i *Intersection) SetUV(u , v float64){
+	i.U = u
+	i.V = v
 }
 
 //NewIntersection creates a new intersection of an object with a ray's position value

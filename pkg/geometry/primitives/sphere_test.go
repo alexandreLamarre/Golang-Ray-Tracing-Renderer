@@ -93,38 +93,38 @@ func TestSphere_SetMaterial(t *testing.T) {
 func TestSphere_NormalAt(t *testing.T) {
 	// x axis
 	s := NewSphere(nil)
-	n := NormalAt(s, algebra.NewPoint(1, 0, 0))
+	n := NormalAt(s, algebra.NewPoint(1, 0, 0), nil)
 	res := []float64{1, 0, 0, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//y axis
 	s = NewSphere(nil)
-	n = NormalAt(s, algebra.NewPoint(0, 1, 0))
+	n = NormalAt(s, algebra.NewPoint(0, 1, 0), nil)
 	res = []float64{0, 1, 0, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//z axis
 	s = NewSphere(nil)
-	n = NormalAt(s, algebra.NewPoint(0, 0, 1))
+	n = NormalAt(s, algebra.NewPoint(0, 0, 1), nil)
 	res = []float64{0, 0, 1, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//non-axial point
 	s = NewSphere(nil)
-	n = NormalAt(s, algebra.NewPoint(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	n = NormalAt(s, algebra.NewPoint(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3), nil)
 	res = []float64{math.Sqrt(3) / 3, math.Sqrt(3) / 3, math.Sqrt(3) / 3, 0}
 	testVectorEquals(t, n.Get(), res)
 
 	//on a translated sphere
 	s = NewSphere(algebra.TranslationMatrix(0, 1, 0))
-	n = NormalAt(s, algebra.NewPoint(0, 1.70711, -0.70711))
+	n = NormalAt(s, algebra.NewPoint(0, 1.70711, -0.70711), nil)
 	res = []float64{0.0, 0.70711, -0.70711, 0.0}
 	testVectorEquals(t, n.Get(), res)
 
 	//on a transformed sphere
 	transform := algebra.Multiply(algebra.ScalingMatrix(1, 0.5, 1), algebra.RotationZ(math.Pi/5))
 	s = NewSphere(transform)
-	n = NormalAt(s, algebra.NewPoint(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
+	n = NormalAt(s, algebra.NewPoint(0, math.Sqrt(2)/2, -math.Sqrt(2)/2), nil)
 	res = []float64{0, 0.97014, -0.24254}
 }
 

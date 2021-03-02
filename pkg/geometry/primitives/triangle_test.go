@@ -78,19 +78,19 @@ func TestTriangle_SetParent(t *testing.T) {
 
 func TestTriangle_LocalNormalAt(t *testing.T) {
 	tri := NewTriangle(algebra.NewPoint(0, 1, 0), algebra.NewPoint(-1, 0, 0), algebra.NewPoint(1, 0, 0))
-	n1, err := tri.LocalNormalAt(algebra.NewPoint(0, 0.5, 0))
+	n1, err := tri.LocalNormalAt(algebra.NewPoint(0, 0.5, 0), nil)
 	if err != nil{
 		t.Errorf("%s", err)
 	}
 	testVectorEquals(t, n1.Get(), tri.normal.Get())
 
-	n2, err := tri.LocalNormalAt(algebra.NewPoint(-0.5, 0.75));
+	n2, err := tri.LocalNormalAt(algebra.NewPoint(-0.5, 0.75), nil);
 	if err != nil{
 		t.Errorf("%s", err)
 	}
 	testVectorEquals(t, n2.Get(), tri.normal.Get())
 
-	n3, err := tri.LocalNormalAt(algebra.NewPoint(0.5, 0.25, 0));
+	n3, err := tri.LocalNormalAt(algebra.NewPoint(0.5, 0.25, 0), nil);
 	if err != nil{
 		t.Errorf("%s", err)
 	}

@@ -246,7 +246,7 @@ func TestCylinder_LocalNormalAt(t *testing.T) {
 	}
 
 	for i := 0; i < len(points); i++{
-		n, err := c.LocalNormalAt(points[i])
+		n, err := c.LocalNormalAt(points[i], nil)
 		if err != nil{
 			t.Errorf("%s", err)
 		}
@@ -278,7 +278,7 @@ func TestCylinder_LocalNormalAt(t *testing.T) {
 	}
 
 	for i := 0; i < len(points2); i++{
-		n, err := c.LocalNormalAt(points2[i])
+		n, err := c.LocalNormalAt(points2[i], nil)
 		if err != nil{
 			t.Errorf("%s", err)
 		}

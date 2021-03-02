@@ -149,7 +149,7 @@ func (cone *Cone) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 }
 
 //LocalNormalAt returns the normal at an intersection point of a Cylinder Shape, shape interface method
-func (cone *Cone) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
+func (cone *Cone) LocalNormalAt(p *algebra.Vector, hit *Intersection) (*algebra.Vector, error){
 	x := p.Get()[0]; y := p.Get()[1]; z := p.Get()[2]
 	dist := x*x + z * z
 	y = math.Sqrt(dist)

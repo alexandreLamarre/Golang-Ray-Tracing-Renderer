@@ -33,6 +33,6 @@ func TestNormalAt(t *testing.T) {
 	g1.AddChild(g2)
 	s := primitives.NewSphere(algebra.TranslationMatrix(5, 0, 0))
 	g2.AddChild(s)
-	n := primitives.NormalAt(s, algebra.NewPoint(1.7321, 1.1547, -5.5774))
+	n := primitives.NormalAt(s, algebra.NewPoint(1.7321, 1.1547, -5.5774), nil)
 	testVectorEquals(t, n.Get(), algebra.NewVector(0.2857, 0.4286, -0.8571).Get())
 }

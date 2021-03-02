@@ -146,7 +146,7 @@ func TestCube_LocalNormalAt(t *testing.T) {
 	}
 
 	for i := 0; i < len(points); i++{
-		normal, err := c.LocalNormalAt(points[i])
+		normal, err := c.LocalNormalAt(points[i], nil)
 		if err != nil{
 			t.Errorf("Expected no error to be returned by cube normal")
 		}

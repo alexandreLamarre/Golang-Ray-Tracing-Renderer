@@ -15,14 +15,14 @@ type Shape interface {
 	GetParent() Shape
 	GetBounds() (*algebra.Vector, *algebra.Vector)
 	LocalIntersect(r *algebra.Ray) ([]*Intersection, bool)
-	LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error)
+	LocalNormalAt(p *algebra.Vector, hit *Intersection) (*algebra.Vector, error)
 }
 
 //NormalAt is the super class method to get the normal of an object, LocalNormalAt implements the specifics of
 // the shape subclasses
-func NormalAt(s Shape, point *algebra.Vector) *algebra.Vector {
+func NormalAt(s Shape, point *algebra.Vector, hit *Intersection) *algebra.Vector {
 	localPoint := WorldToObject(s, point)
-	localNormal, err := s.LocalNormalAt(localPoint)
+	localNormal, err := s.LocalNormalAt(localPoint, hit)
 	if err != nil{
 		panic(err)
 	}

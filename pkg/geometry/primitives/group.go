@@ -140,6 +140,6 @@ func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 }
 
 //LocalNormalAt Normal implementation for Group Shape: Only concrete child shapes have a local Normal
-func (g *Group) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
+func (g *Group) LocalNormalAt(p *algebra.Vector, hit *Intersection) (*algebra.Vector, error){
 	return nil, GroupNormalError(*g)
 }

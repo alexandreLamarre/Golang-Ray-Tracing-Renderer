@@ -66,7 +66,6 @@ func (t *Triangle) GetParent() Shape{
 
 //GetBounds return the bounding box for triangle
 func (t *Triangle) GetBounds() (*algebra.Vector, *algebra.Vector){
-	//TODO: implement
 	var xMin = math.Inf(1); var yMin = math.Inf(1); var zMin = math.Inf(1)
 	var xMax = math.Inf(-1); var yMax = math.Inf(-1); var zMax = math.Inf(-1)
 	points := []*algebra.Vector{t.p1, t.p2, t.p3}
@@ -142,6 +141,6 @@ func (t *Triangle) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 }
 
 //LocalNormalAt Normal implementation for a Triangle Shape
-func (t *Triangle) LocalNormalAt( p *algebra.Vector) (*algebra.Vector, error){
+func (t *Triangle) LocalNormalAt( p *algebra.Vector, hit *Intersection) (*algebra.Vector, error){
 	return t.normal, nil
 }

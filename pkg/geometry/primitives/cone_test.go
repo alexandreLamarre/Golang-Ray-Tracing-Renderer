@@ -228,7 +228,7 @@ func TestCone_LocalNormalAt(t *testing.T) {
 	}
 
 	for i := 0; i < len(points); i++{
-		n,err := c.LocalNormalAt(points[i])
+		n,err := c.LocalNormalAt(points[i], nil)
 		if err != nil{
 			t.Errorf("%s", err)
 		}

@@ -80,7 +80,7 @@ func (c *Cube) LocalIntersect(ray *algebra.Ray) ([]*Intersection, bool){
 }
 
 //LocalNormalAt returns the normal at a ray intersection point
-func (c *Cube) LocalNormalAt(p *algebra.Vector) (*algebra.Vector, error){
+func (c *Cube) LocalNormalAt(p *algebra.Vector, intersection *Intersection) (*algebra.Vector, error){
 	maxc := max(math.Abs(p.Get()[0]), math.Abs(p.Get()[1]), math.Abs(p.Get()[2]))
 
 	if maxc == math.Abs(p.Get()[0]){

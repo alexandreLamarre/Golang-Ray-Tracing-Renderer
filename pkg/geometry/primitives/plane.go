@@ -68,6 +68,6 @@ func (p *Plane) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool) {
 	return []*Intersection{NewIntersection(p,t)}, true
 }
 
-func (p *Plane) LocalNormalAt(point *algebra.Vector) (*algebra.Vector, error){
+func (p *Plane) LocalNormalAt(point *algebra.Vector, hit *Intersection) (*algebra.Vector, error){
 	return algebra.NewVector(0, 1, 0), nil
 }
