@@ -55,10 +55,10 @@ func TestMinHeap(t *testing.T) {
 
 	l := len(h.container)
 	v := h.ExtractMin()
-	if v.T != -1.0{
+	if v.T != -1.0 {
 		t.Errorf("invalid extracted minimum of heap %f, expected %f", h.GetMin(), -1.0)
 	}
-	if len(h.container) != l -1{
+	if len(h.container) != l-1 {
 		t.Errorf("Heap did not shrink in size after extract min")
 	}
 
@@ -67,7 +67,7 @@ func TestMinHeap(t *testing.T) {
 	if v.T != 1.0 {
 		t.Errorf("invalid extracted minimum of heap %f, expected %f", h.GetMin(), 1.0)
 	}
-	if len(h.container) != l -1{
+	if len(h.container) != l-1 {
 		t.Errorf("Heap did not shrink in size after extract min")
 	}
 }
@@ -75,15 +75,15 @@ func TestMinHeap(t *testing.T) {
 func TestMinHeap_Copy(t *testing.T) {
 	s := NewSphere(nil)
 	h := NewMinHeap()
-	h.Push(NewIntersection(s, 5 ))
+	h.Push(NewIntersection(s, 5))
 
 	h1 := h.Copy()
-	if h1.GetMin().T != h.GetMin().T{
+	if h1.GetMin().T != h.GetMin().T {
 		t.Errorf("Expected copies to share the same minimum")
 	}
 
 	h1.Push(NewIntersection(s, 4))
-	if h.GetMin().T == h1.GetMin().T{
+	if h.GetMin().T == h1.GetMin().T {
 		t.Errorf("Expected copes to not share the same minimum")
 	}
 }

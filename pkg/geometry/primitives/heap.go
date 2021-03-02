@@ -39,7 +39,7 @@ func (m *MinHeap) Copy() *MinHeap {
 func createMinHeap(input []*Intersection) *MinHeap {
 	h := NewMinHeap()
 	res := make([]*Intersection, 0, 0)
-	for i := 0; i < len(input); i++{
+	for i := 0; i < len(input); i++ {
 		in := NewIntersection(input[i].Object, input[i].T)
 		res = append(res, in)
 	}
@@ -54,10 +54,12 @@ func (m *MinHeap) GetMin() *Intersection {
 
 //ExtractMin returns the min and extracts it from the container
 func (m *MinHeap) ExtractMin() *Intersection {
-	if len(m.container) == 0 {return nil}
+	if len(m.container) == 0 {
+		return nil
+	}
 	min := m.container[0]
-	m.container[0] = m.container[len(m.container) -1]
-	m.container = m.container[:len(m.container) -1]
+	m.container[0] = m.container[len(m.container)-1]
+	m.container = m.container[:len(m.container)-1]
 	minHeapify(m, 0)
 	return min
 
@@ -76,14 +78,14 @@ func heapify(m *MinHeap, i int) {
 	}
 }
 
-func minHeapify(m *MinHeap, i int){
+func minHeapify(m *MinHeap, i int) {
 	l := left(i)
 	r := right(i)
 	smallest := i
-	if l < len(m.container) && m.container[l].T < m.container[smallest].T{
+	if l < len(m.container) && m.container[l].T < m.container[smallest].T {
 		smallest = l
 	}
-	if r < len(m.container) && m.container[r].T < m.container[smallest].T{
+	if r < len(m.container) && m.container[r].T < m.container[smallest].T {
 		smallest = r
 	}
 	if smallest != i {
@@ -94,10 +96,10 @@ func minHeapify(m *MinHeap, i int){
 	}
 }
 
-func left(i int) int{
-	return 2 * i + 1
+func left(i int) int {
+	return 2*i + 1
 }
 
-func right(i int) int{
- 	return 2 * i + 2
+func right(i int) int {
+	return 2*i + 2
 }

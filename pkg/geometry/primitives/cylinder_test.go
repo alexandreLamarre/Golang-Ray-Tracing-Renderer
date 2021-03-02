@@ -5,7 +5,7 @@ import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/canvas"
 	"math"
 	"testing"
-	)
+)
 
 func TestNewCylinder(t *testing.T) {
 	c := NewCylinder(nil)
@@ -46,11 +46,11 @@ func TestCylinder_SetMaximum(t *testing.T) {
 func TestCylinder_SetClosed(t *testing.T) {
 	c := NewCylinder(nil)
 	c.SetClosed(true)
-	if !c.closed{
+	if !c.closed {
 		t.Errorf("Expected cylinder to be closed")
 	}
 	c.SetClosed(false)
-	if c.closed{
+	if c.closed {
 		t.Errorf("Expected cylinder to not be closed")
 	}
 }
@@ -77,14 +77,14 @@ func TestCylinder_SetMaterial(t *testing.T) {
 
 func TestCylinder_SetTransform(t *testing.T) {
 	c := NewCylinder(nil)
-	m := algebra.ScalingMatrix(2,2,2)
+	m := algebra.ScalingMatrix(2, 2, 2)
 	c.SetTransform(m)
 	testMatrixEquals(t, m.Get(), c.transform.Get())
 }
 
 func TestCylinder_GetParent(t *testing.T) {
 	c := NewCylinder(nil)
-	if c.GetParent() != nil{
+	if c.GetParent() != nil {
 		t.Errorf("Expected cylinder to have no parent Shapes")
 	}
 }
@@ -93,7 +93,7 @@ func TestCylinder_SetParent(t *testing.T) {
 	c1 := NewCylinder(nil)
 	c2 := NewCylinder(nil)
 	c1.SetParent(c2)
-	if c1.GetParent() == nil{
+	if c1.GetParent() == nil {
 		t.Errorf("Expected cylinder to have a parent Shape")
 	}
 }
@@ -106,19 +106,19 @@ func TestCylinder_LocalIntersect(t *testing.T) {
 		algebra.NewRay(0, 0, -5, 0.333, 0.333, 0.333),
 	}
 
-	for i := 0; i < len(rays); i++{
+	for i := 0; i < len(rays); i++ {
 		xs, hit := c.LocalIntersect(rays[i])
-		if hit{
+		if hit {
 			t.Errorf("Expected ray %v, %v to not hit the cylinder",
 				rays[i].Get()["origin"], rays[i].Get()["direction"])
 		}
-		if len(xs) != 0{
+		if len(xs) != 0 {
 			t.Errorf("Expected %d hits, got: %d", 0, len(xs))
 		}
 	}
 
 	norm, err := algebra.NewVector(0.1, 1, 1).Normalize()
-	if err != nil{
+	if err != nil {
 		t.Errorf("%s", err)
 	}
 	rays2 := []*algebra.Ray{
@@ -133,23 +133,23 @@ func TestCylinder_LocalIntersect(t *testing.T) {
 		{6.80789, 7.08872},
 	}
 
-	for i:= 0; i < len(rays2); i++{
+	for i := 0; i < len(rays2); i++ {
 		xs, hit := c.LocalIntersect(rays2[i])
 
-		if !hit{
+		if !hit {
 			t.Errorf("Expected ray %v, %v to hit the cylinder",
 				rays2[i].Get()["origin"], rays2[i].Get()["direction"])
 		}
 
-		if len(xs) != 2{
+		if len(xs) != 2 {
 			t.Errorf("Expected %d hits, got: %d", 2, len(xs))
 		}
 
-		if !equals(xs[0].T,positions[i][0]){
+		if !equals(xs[0].T, positions[i][0]) {
 			t.Errorf("Expected intersection position: %f, Got: %f", positions[i][0], xs[0])
 		}
 
-		if !equals(xs[1].T, positions[i][1]){
+		if !equals(xs[1].T, positions[i][1]) {
 			t.Errorf("Expected intersection position: %f, Got: %f", positions[i][1], xs[1])
 		}
 	}
@@ -159,7 +159,7 @@ func TestCylinder_LocalIntersect(t *testing.T) {
 	c.SetMaximum(2)
 	c.SetMinimum(1)
 	norm, err = algebra.NewVector(0.1, 1, 0).Normalize()
-	if err != nil{
+	if err != nil {
 		t.Errorf("%s", err)
 	}
 
@@ -172,24 +172,24 @@ func TestCylinder_LocalIntersect(t *testing.T) {
 		algebra.NewRay(0, 1.5, -2, 0, 0, 1),
 	}
 
-	for i:= 0; i < len(rays3); i++{
+	for i := 0; i < len(rays3); i++ {
 		xs, hit := c.LocalIntersect(rays3[i])
 
-		if i == 5{
-			if !hit{
+		if i == 5 {
+			if !hit {
 				t.Errorf("Expected ray %v, %v to hit the cylinder",
 					rays2[i].Get()["origin"], rays3[i].Get()["direction"])
 			}
 
-			if len(xs) != 2{
+			if len(xs) != 2 {
 				t.Errorf("Expected %d hits, got: %d", 2, len(xs))
 			}
-		} else{
-			if hit{
+		} else {
+			if hit {
 				t.Errorf("Expected ray %v, %v to not hit the cylinder",
 					rays3[i].Get()["origin"], rays3[i].Get()["direction"])
 			}
-			if len(xs) != 0{
+			if len(xs) != 0 {
 				t.Errorf("Expected %d hits, got: %d", 0, len(xs))
 			}
 		}
@@ -214,15 +214,15 @@ func TestCylinder_LocalIntersect(t *testing.T) {
 		algebra.NewRay(0, -1, -2, norm4.Get()[0], norm4.Get()[1], norm4.Get()[2]),
 	}
 
-	for i := 0; i < len(rays4); i++{
+	for i := 0; i < len(rays4); i++ {
 		xs, hit := c.LocalIntersect(rays4[i])
 
-		if !hit{
+		if !hit {
 			t.Errorf("Expected ray %v, %v to hit the cylinder",
 				rays4[i].Get()["origin"], rays4[i].Get()["direction"])
 		}
 
-		if len(xs) != 2{
+		if len(xs) != 2 {
 			t.Errorf("Expected %d hits, got: %d", 2, len(xs))
 		}
 	}
@@ -245,9 +245,9 @@ func TestCylinder_LocalNormalAt(t *testing.T) {
 		algebra.NewVector(-1, 0, 0),
 	}
 
-	for i := 0; i < len(points); i++{
+	for i := 0; i < len(points); i++ {
 		n, err := c.LocalNormalAt(points[i], nil)
-		if err != nil{
+		if err != nil {
 			t.Errorf("%s", err)
 		}
 		testVectorEquals(t, n.Get(), normals[i].Get())
@@ -257,7 +257,6 @@ func TestCylinder_LocalNormalAt(t *testing.T) {
 	c.SetMinimum(1)
 	c.SetMaximum(2)
 	c.SetClosed(true)
-
 
 	points2 := []*algebra.Vector{
 		algebra.NewPoint(0, 1, 0),
@@ -277,9 +276,9 @@ func TestCylinder_LocalNormalAt(t *testing.T) {
 		algebra.NewVector(0, 1, 0),
 	}
 
-	for i := 0; i < len(points2); i++{
+	for i := 0; i < len(points2); i++ {
 		n, err := c.LocalNormalAt(points2[i], nil)
-		if err != nil{
+		if err != nil {
 			t.Errorf("%s", err)
 		}
 		testVectorEquals(t, n.Get(), normals2[i].Get())

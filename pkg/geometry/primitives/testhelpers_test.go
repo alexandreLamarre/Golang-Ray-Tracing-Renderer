@@ -42,40 +42,40 @@ func assertEquals(t *testing.T, got, expected float64) {
 	}
 }
 
-func testMaterialEquals(t *testing.T, m *canvas.Material, expected *canvas.Material){
-	if m.Diffuse != expected.Diffuse{
+func testMaterialEquals(t *testing.T, m *canvas.Material, expected *canvas.Material) {
+	if m.Diffuse != expected.Diffuse {
 		t.Errorf("mistmatched diffuse")
 	}
-	if m.Specular != expected.Specular{
+	if m.Specular != expected.Specular {
 		t.Errorf("mismatched specular")
 	}
 
-	if m.Shininess != expected.Shininess{
+	if m.Shininess != expected.Shininess {
 		t.Errorf("mismatched shininess")
 	}
 
-	if m .RefractiveIndex != expected.RefractiveIndex{
+	if m.RefractiveIndex != expected.RefractiveIndex {
 		t.Errorf("mismatched refractive index")
 	}
 
-	if m.Reflective != expected.Reflective{
+	if m.Reflective != expected.Reflective {
 		t.Errorf("mismtached reflective")
 	}
 
-	if m.Transparency != expected.Transparency{
+	if m.Transparency != expected.Transparency {
 		t.Errorf("mismtached transparency")
 	}
 
-	if m.Ambient != expected.Ambient{
+	if m.Ambient != expected.Ambient {
 		t.Errorf("mismatched ambient")
 	}
-	if m.Color.Red() != expected.Color.Red(){
+	if m.Color.Red() != expected.Color.Red() {
 		t.Errorf("mismatched red colors")
 	}
-	if m.Color.Green() != expected.Color.Green(){
+	if m.Color.Green() != expected.Color.Green() {
 		t.Errorf("mismatched green colors")
 	}
-	if m.Color.Blue() != expected.Color.Blue(){
+	if m.Color.Blue() != expected.Color.Blue() {
 		t.Errorf("mismatched blue colors")
 	}
 

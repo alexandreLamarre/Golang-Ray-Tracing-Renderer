@@ -56,7 +56,7 @@ func TestSphere_SetTransform(t *testing.T) {
 
 func TestSphere_GetParent(t *testing.T) {
 	s := NewSphere(nil)
-	if s.GetParent() != nil{
+	if s.GetParent() != nil {
 		t.Errorf("Expected sphere to have no parent Shapes")
 	}
 }
@@ -65,7 +65,7 @@ func TestSphere_SetParent(t *testing.T) {
 	s1 := NewSphere(nil)
 	s2 := NewSphere(nil)
 	s1.SetParent(s2)
-	if s1.GetParent() == nil{
+	if s1.GetParent() == nil {
 		t.Errorf("Expected sphere to have a parent Shape")
 	}
 }
@@ -258,27 +258,24 @@ func TestSphere_Intersect(t *testing.T) {
 	}
 }
 
-
 func TestPatternAtObject(t *testing.T) {
-	white := &canvas.Color{1,1,1}
-	black := &canvas.Color{0,0,0}
-	obj := NewSphere(algebra.ScalingMatrix(2,2,2))
-	pattern := canvas.StripePattern(white,black)
+	white := &canvas.Color{1, 1, 1}
+	black := &canvas.Color{0, 0, 0}
+	obj := NewSphere(algebra.ScalingMatrix(2, 2, 2))
+	pattern := canvas.StripePattern(white, black)
 	c := PatternAtObject(obj, pattern, algebra.NewPoint(1.5, 0.0, 0.0))
 	testColorEquals(t, c, white)
 
 	obj = NewSphere(nil)
 	pattern = canvas.StripePattern(white, black)
-	pattern.SetTransform(algebra.ScalingMatrix(2,2,2))
+	pattern.SetTransform(algebra.ScalingMatrix(2, 2, 2))
 	c = PatternAtObject(obj, pattern, algebra.NewPoint(1.5, 0, 0))
 	testColorEquals(t, c, white)
 
-	obj = NewSphere(algebra.ScalingMatrix(2,2,2))
+	obj = NewSphere(algebra.ScalingMatrix(2, 2, 2))
 	pattern = canvas.StripePattern(white, black)
 	pattern.SetTransform(algebra.TranslationMatrix(0.5, 0, 0))
 	c = PatternAtObject(obj, pattern, algebra.NewPoint(2.5, 0, 0))
 	testColorEquals(t, c, white)
 
 }
-
-

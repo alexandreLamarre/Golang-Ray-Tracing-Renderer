@@ -37,7 +37,6 @@ func NewGlassSphere(m *algebra.Matrix, refractiveIndex float64) *Sphere {
 		transform: matrix, material: material, parent: nil}
 }
 
-
 // Sphere interface Shape Methods
 
 func (s *Sphere) GetPosition() *algebra.Vector {
@@ -46,7 +45,7 @@ func (s *Sphere) GetPosition() *algebra.Vector {
 
 //SetTransform sets the Sphere's transformation
 func (s *Sphere) SetTransform(m *algebra.Matrix) {
-	if len(m.Get()) != 4 || len(m.Get()[0]) != 4{
+	if len(m.Get()) != 4 || len(m.Get()[0]) != 4 {
 		panic(algebra.ExpectedDimension(4))
 	}
 	s.transform = m
@@ -67,18 +66,18 @@ func (s *Sphere) GetMaterial() *canvas.Material {
 }
 
 //SetParent Setter for parent shape
-func(s *Sphere) SetParent(shape Shape){
+func (s *Sphere) SetParent(shape Shape) {
 	s.parent = shape
 }
 
 //GetParent Getter for parent shape
-func(s *Sphere) GetParent() Shape {
+func (s *Sphere) GetParent() Shape {
 	return s.parent
 }
 
 //GetBounds Getter for default bounds of this Shape
-func (s *Sphere) GetBounds() (*algebra.Vector, *algebra.Vector){
-	return algebra.NewPoint(-1,-1,-1), algebra.NewPoint(1,1,1)
+func (s *Sphere) GetBounds() (*algebra.Vector, *algebra.Vector) {
+	return algebra.NewPoint(-1, -1, -1), algebra.NewPoint(1, 1, 1)
 }
 
 //NormalAt returns the normal to the sphere at the location "point"
@@ -90,7 +89,7 @@ func (s *Sphere) LocalNormalAt(point *algebra.Vector, hit *Intersection) (*algeb
 }
 
 //LocalIntersect returns the intersection of a ray with a sphere
-func (s *Sphere) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
+func (s *Sphere) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool) {
 	got := r.Get()
 	origin := got["origin"]
 	direction := got["direction"]
@@ -121,10 +120,10 @@ func (s *Sphere) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 	discriminant := math.Pow(b, 2) - (4 * a * c)
 
 	if discriminant < 0 { // No rays intersect the sphere
-		 return []*Intersection{}, false
+		return []*Intersection{}, false
 	}
 
 	t1 := (-b - math.Sqrt(discriminant)) / (2 * a)
 	t2 := (-b + math.Sqrt(discriminant)) / (2 * a)
-	return []*Intersection{NewIntersection(s,t1), NewIntersection(s,t2)}, true
+	return []*Intersection{NewIntersection(s, t1), NewIntersection(s, t2)}, true
 }

@@ -2,21 +2,21 @@ package canvas
 
 //Material encapsulates surface color but also lighting parameters of a surface
 type Material struct {
-	Color     *Color
-	Ambient   float64
-	Diffuse   float64
-	Specular  float64
-	Shininess float64
-	Reflective float64
-	Transparency float64
+	Color           *Color
+	Ambient         float64
+	Diffuse         float64
+	Specular        float64
+	Shininess       float64
+	Reflective      float64
+	Transparency    float64
 	RefractiveIndex float64
-	Pattern *Pattern
+	Pattern         *Pattern
 }
 
 //NewDefaultMaterial creates a material with preset default values
 func NewDefaultMaterial() *Material {
 	return &Material{Color: &Color{1, 1, 1}, Ambient: 0.1, Diffuse: 0.9, Specular: 0.9, Shininess: 200,
-		Reflective: 0.0, Transparency: 0.0, RefractiveIndex: 1.0, Pattern : nil}
+		Reflective: 0.0, Transparency: 0.0, RefractiveIndex: 1.0, Pattern: nil}
 }
 
 //NewMaterial creates a new material from the provided parameters

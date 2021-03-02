@@ -92,7 +92,7 @@ func (c Camera) RayForPixel(px, py float64) *algebra.Ray {
 	return algebra.NewRay(res...)
 }
 
-func (c Camera) Render(w *geometry.World) *canvas.Canvas{
+func (c Camera) Render(w *geometry.World) *canvas.Canvas {
 	image := canvas.NewCanvas(int(c.hSize), int(c.vSize))
 
 	for y := 0.0; y < c.vSize; y++ {

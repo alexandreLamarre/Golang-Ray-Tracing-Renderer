@@ -15,15 +15,14 @@ import (
 	"time"
 )
 
-
-func CreateCustomScene(w *geometry.World, name string) error{
+func CreateCustomScene(w *geometry.World, name string) error {
 	log.Println("Rendering scene...")
 	start := time.Now()
 	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
 		algebra.ViewTransform(0, 0, -10,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
@@ -32,10 +31,10 @@ func CreateCustomScene(w *geometry.World, name string) error{
 	elapsed := t.Sub(start)
 	log.Printf("Done (%s)!", elapsed)
 	start = time.Now()
-	log.Println("Writing results to file ./pkg/examples/"+name+".ppm...")
+	log.Println("Writing results to file ./pkg/examples/" + name + ".ppm...")
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, name)
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
@@ -44,7 +43,6 @@ func CreateCustomScene(w *geometry.World, name string) error{
 	log.Printf("Done (%s)!", elapsed)
 	return nil
 }
-
 
 func writeToFile(toWrite, fileName string) error {
 	f, err := os.Create("./pkg/examples/" + fileName + ".ppm")
@@ -66,15 +64,14 @@ func writeToFile(toWrite, fileName string) error {
 	return nil
 }
 
-
-func TestReflectiveScene() error{
+func TestReflectiveScene() error {
 	white := &canvas.Color{0.9, 0.9, 0.9}
 	black := &canvas.Color{0, 0, 0}
 	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
 		algebra.ViewTransform(0, 3.0, -15,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
@@ -90,7 +87,7 @@ func TestReflectiveScene() error{
 	m.Ambient = 1
 	floor.SetMaterial(m)
 
-	s := primitives.NewSphere(algebra.Multiply(algebra.ScalingMatrix(4,4,4), algebra.TranslationMatrix(0.0, 1.2, 0)))
+	s := primitives.NewSphere(algebra.Multiply(algebra.ScalingMatrix(4, 4, 4), algebra.TranslationMatrix(0.0, 1.2, 0)))
 	m = canvas.NewDefaultMaterial()
 	m.Color = white
 	m.RefractiveIndex = 1.5
@@ -108,27 +105,26 @@ func TestReflectiveScene() error{
 	image := cam.Render(w)
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, "reflectiveTestScene")
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	return nil
 }
 
-
-func CreateSimpleReflectiveScene() error{
+func CreateSimpleReflectiveScene() error {
 	floor := primitives.NewPlane(nil)
 	m := canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0.1, 0.1, 0.3}
 	m.Specular = 0
 	m.Ambient = 0.5
 	m.Reflective = 0.1
-	pat := canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
+	pat := canvas.CheckerPattern(&canvas.Color{0, 0, 0}, &canvas.Color{1, 1, 1})
 	m.Pattern = pat
 	floor.SetMaterial(m)
 
-	lwall := primitives.NewPlane( algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
-		algebra.Multiply(algebra.RotationY(-math.Pi/4),algebra.RotationX(math.Pi/2))))
+	lwall := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(-math.Pi/4), algebra.RotationX(math.Pi/2))))
 	m = canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0.1, 0.1, 0.3}
 	m.Specular = 0.0
@@ -141,8 +137,8 @@ func CreateSimpleReflectiveScene() error{
 	//m.Pattern = pat
 	lwall.SetMaterial(m)
 
-	rwall := primitives.NewPlane( algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
-		algebra.Multiply(algebra.RotationY(math.Pi/4),algebra.RotationX(math.Pi/2))))
+	rwall := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(math.Pi/4), algebra.RotationX(math.Pi/2))))
 	m = canvas.NewDefaultMaterial()
 	//pat = canvas.CheckerPattern(&canvas.Color{0,0,0}, &canvas.Color{1,1,1})
 	//pat.SetTransform(algebra.TranslationMatrix(10,10,10))
@@ -154,8 +150,7 @@ func CreateSimpleReflectiveScene() error{
 	m.Diffuse = 0.4
 	rwall.SetMaterial(m)
 
-
-	middle := primitives.NewSphere(algebra.Multiply(algebra.TranslationMatrix(0.0,2, -3.0), algebra.ScalingMatrix(2,2,2)))
+	middle := primitives.NewSphere(algebra.Multiply(algebra.TranslationMatrix(0.0, 2, -3.0), algebra.ScalingMatrix(2, 2, 2)))
 	middleMat := canvas.NewDefaultMaterial()
 	middleMat.Color = &canvas.Color{1.0, 1.0, 1.0}
 	middleMat.Diffuse = 0.4
@@ -165,7 +160,7 @@ func CreateSimpleReflectiveScene() error{
 	middleMat.Reflective = 0.9
 	middle.SetMaterial(middleMat)
 
-	middle2 := primitives.NewSphere(algebra.TranslationMatrix(0.0,2, -3.0))
+	middle2 := primitives.NewSphere(algebra.TranslationMatrix(0.0, 2, -3.0))
 	middleMat2 := canvas.NewDefaultMaterial()
 	middleMat2.Color = &canvas.Color{1.0, 1.0, 1.0}
 	middleMat2.Diffuse = 0.4
@@ -176,7 +171,7 @@ func CreateSimpleReflectiveScene() error{
 	middle2.SetMaterial(middleMat2)
 
 	objs := make([]primitives.Shape, 0, 0)
-	objs = append(objs,floor, middle, middle2, lwall, rwall)
+	objs = append(objs, floor, middle, middle2, lwall, rwall)
 	lights := make([]*canvas.PointLight, 0, 0)
 	lights = append(lights, canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(-10, 10, -10)))
 	w := &geometry.World{Objects: objs, Lights: lights}
@@ -185,7 +180,7 @@ func CreateSimpleReflectiveScene() error{
 		algebra.ViewTransform(0, 3.0, -15,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
@@ -193,24 +188,21 @@ func CreateSimpleReflectiveScene() error{
 	image := cam.Render(w)
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, "reflectiveScene")
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	return nil
 }
 
-
-
-func CreateRefractiveReflectiveScene() error{
+func CreateRefractiveReflectiveScene() error {
 
 	lights := make([]*canvas.PointLight, 0, 0)
 	objs := make([]primitives.Shape, 0, 0)
 
-
 	lights = append(lights, canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(-2.5, 2.5, -4)))
 
-	bottomMirror := primitives.NewPlane(algebra.TranslationMatrix(0,-1, 0))
+	bottomMirror := primitives.NewPlane(algebra.TranslationMatrix(0, -1, 0))
 	matb := bottomMirror.GetMaterial()
 	matb.Diffuse = 0.3
 	matb.Color = &canvas.Color{0.9, 0.9, 0.9}
@@ -228,7 +220,7 @@ func CreateRefractiveReflectiveScene() error{
 	matu.Transparency = 0.9
 	upperMirror.SetMaterial(matu)
 
-	backgroundMirror := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5), algebra.RotationX(math.Pi/2) ))
+	backgroundMirror := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5), algebra.RotationX(math.Pi/2)))
 	matback := backgroundMirror.GetMaterial()
 	matback.Diffuse = 0.3
 	matback.Color = &canvas.Color{0.9, 0.9, 0.9}
@@ -248,7 +240,7 @@ func CreateRefractiveReflectiveScene() error{
 
 	leftMirror := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(-3, 0, 0), algebra.RotationY(math.Pi/2)))
 	matleft := leftMirror.GetMaterial()
-	matleft.Diffuse =0.3
+	matleft.Diffuse = 0.3
 	matleft.Color = &canvas.Color{0.9, 0.9, 0.9}
 	matleft.RefractiveIndex = 1.5
 	matleft.Reflective = 0.9
@@ -257,7 +249,7 @@ func CreateRefractiveReflectiveScene() error{
 
 	rightMirror := primitives.NewPlane(algebra.Multiply(algebra.TranslationMatrix(3, 0, 0), algebra.RotationY(math.Pi/2)))
 	matright := leftMirror.GetMaterial()
-	matright.Diffuse =0.3
+	matright.Diffuse = 0.3
 	matright.Color = &canvas.Color{0.9, 0.9, 0.9}
 	matright.RefractiveIndex = 1.5
 	matright.Reflective = 0.9
@@ -277,7 +269,7 @@ func CreateRefractiveReflectiveScene() error{
 		algebra.ViewTransform(0, 1.0, -3,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
@@ -285,17 +277,16 @@ func CreateRefractiveReflectiveScene() error{
 	image := cam.Render(w)
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, "reflectiveScene2")
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	return nil
 }
 
-
-func CreateSimpleScene2() error{
-	white := &canvas.Color{1,1,1}
-	black := &canvas.Color{0,0,0}
+func CreateSimpleScene2() error {
+	white := &canvas.Color{1, 1, 1}
+	black := &canvas.Color{0, 0, 0}
 	floor := primitives.NewPlane(nil)
 	m := canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0.7, 0.7, 0.7}
@@ -304,8 +295,8 @@ func CreateSimpleScene2() error{
 	m.Pattern = canvas.CheckerPattern(white, black)
 	floor.SetMaterial(m)
 
-	lw := algebra.Multiply(algebra.TranslationMatrix(0,0,5),
-		algebra.Multiply(algebra.RotationY(-math.Pi/4), algebra.RotationX(math.Pi/2) ))
+	lw := algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(-math.Pi/4), algebra.RotationX(math.Pi/2)))
 	leftWall := primitives.NewPlane(lw)
 	m = canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{0.9, 0.9, 0.9}
@@ -314,8 +305,8 @@ func CreateSimpleScene2() error{
 	m.Pattern = pat
 	leftWall.SetMaterial(m)
 
-	rw := algebra.Multiply(algebra.TranslationMatrix(0,0,5),
-		algebra.Multiply(algebra.RotationY(math.Pi/4), algebra.RotationX(math.Pi/2) ))
+	rw := algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
+		algebra.Multiply(algebra.RotationY(math.Pi/4), algebra.RotationX(math.Pi/2)))
 	rightWall := primitives.NewPlane(rw)
 	m = canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{1.0, 1.0, 1.0}
@@ -323,12 +314,12 @@ func CreateSimpleScene2() error{
 	m.Pattern = canvas.CheckerPattern(white, black)
 	rightWall.SetMaterial(m)
 
-	middle := primitives.NewSphere(algebra.TranslationMatrix(-0.5,1, 0.5))
+	middle := primitives.NewSphere(algebra.TranslationMatrix(-0.5, 1, 0.5))
 	middleMat := canvas.NewDefaultMaterial()
 	middleMat.Color = &canvas.Color{0.1, 1, 0.5}
 	middleMat.Diffuse = 0.7
 	middleMat.Specular = 0.3
-	pat =  canvas.CheckerPattern(&canvas.Color{1,0,0}, &canvas.Color{0,0,1})
+	pat = canvas.CheckerPattern(&canvas.Color{1, 0, 0}, &canvas.Color{0, 0, 1})
 	pat.SetTransform(algebra.ScalingMatrix(0.1, 0.1, 0.1))
 	middleMat.Pattern = pat
 	middle.SetMaterial(middleMat)
@@ -343,8 +334,8 @@ func CreateSimpleScene2() error{
 	right.SetMaterial(rightMat)
 
 	left := primitives.NewSphere(
-		algebra.Multiply(algebra.TranslationMatrix(-1.5,0.33,-0.75),
-			algebra.ScalingMatrix(0.33,0.33,0.33)))
+		algebra.Multiply(algebra.TranslationMatrix(-1.5, 0.33, -0.75),
+			algebra.ScalingMatrix(0.33, 0.33, 0.33)))
 	leftMat := canvas.NewDefaultMaterial()
 	leftMat.Color = &canvas.Color{1, 0.8, 0.1}
 	leftMat.Diffuse = 0.7
@@ -361,43 +352,41 @@ func CreateSimpleScene2() error{
 		algebra.ViewTransform(0, 1.5, -10,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	image := cam.Render(w)
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, "simpleScene2")
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	return nil
 }
 
-func CreateSimpleScene() error{
+func CreateSimpleScene() error {
 	floor := primitives.NewSphere(algebra.ScalingMatrix(10, 0.001, 10))
 	m := canvas.NewDefaultMaterial()
 	m.Color = &canvas.Color{1, 0.9, 0.9}
 	m.Specular = 0
 	floor.SetMaterial(m)
 
-	lW := algebra.Multiply(algebra.Multiply(algebra.Multiply(algebra.TranslationMatrix(0,0,5),
+	lW := algebra.Multiply(algebra.Multiply(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
 		algebra.RotationY(-math.Pi/4)), algebra.RotationX(math.Pi/2)), algebra.ScalingMatrix(10, 0.001, 10))
 	leftWall := primitives.NewSphere(lW)
 	leftWall.SetMaterial(floor.GetMaterial())
 
-
-	rW := algebra.Multiply(algebra.Multiply(algebra.Multiply(algebra.TranslationMatrix(0,0,5),
+	rW := algebra.Multiply(algebra.Multiply(algebra.Multiply(algebra.TranslationMatrix(0, 0, 5),
 		algebra.RotationY(math.Pi/4)), algebra.RotationX(math.Pi/2)), algebra.ScalingMatrix(10, 0.01, 10))
 	rightWall := primitives.NewSphere(rW)
 	rightWall.SetMaterial(floor.GetMaterial())
 
-	middle := objects.NewHexagon(algebra.RotationX(-math.Pi/2))
+	middle := objects.NewHexagon(algebra.RotationX(-math.Pi / 2))
 
 	min, max := middle.GetBounds()
 	fmt.Println(primitives.GetBoundsTransform(min, max, middle.GetTransform()).Get())
-
 
 	right := primitives.NewSphere(
 		algebra.Multiply(algebra.TranslationMatrix(1.5, 0.5, -0.5),
@@ -409,8 +398,8 @@ func CreateSimpleScene() error{
 	right.SetMaterial(rightMat)
 
 	left := primitives.NewSphere(
-		algebra.Multiply(algebra.TranslationMatrix(-1.5,0.33,-0.75),
-			algebra.ScalingMatrix(0.33,0.33,0.33)))
+		algebra.Multiply(algebra.TranslationMatrix(-1.5, 0.33, -0.75),
+			algebra.ScalingMatrix(0.33, 0.33, 0.33)))
 	leftMat := canvas.NewDefaultMaterial()
 	leftMat.Color = &canvas.Color{1, 0.8, 0.1}
 	leftMat.Diffuse = 0.7
@@ -427,14 +416,14 @@ func CreateSimpleScene() error{
 		algebra.ViewTransform(0, 0, -10,
 			0, 1, 0,
 			0, 1, 0))
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}
 	image := cam.Render(w)
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, "simpleScene")
-	if err != nil{
+	if err != nil {
 		panic(err)
 		return err
 	}

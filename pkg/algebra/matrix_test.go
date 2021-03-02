@@ -583,14 +583,14 @@ func TestMatrixTransformationChaining(t *testing.T) {
 func TestViewTransform(t *testing.T) {
 	vm := ViewTransform(0, 0, 0, 0, 0, -1, 0, 1, 0)
 	testMatrixEquals(t, vm.Get(), IdentityMatrix(4).Get())
-	vm = ViewTransform(0,0,8,0,0,0,0,1, 0)
+	vm = ViewTransform(0, 0, 8, 0, 0, 0, 0, 1, 0)
 	testMatrixEquals(t, vm.Get(), TranslationMatrix(0, 0, -8).Get())
-	vm = ViewTransform(1,3,2,4,-2,8,1,1,0)
-	res, err := NewMatrix(4,4, -0.50709, 0.50709, 0.67612, -2.36643,
+	vm = ViewTransform(1, 3, 2, 4, -2, 8, 1, 1, 0)
+	res, err := NewMatrix(4, 4, -0.50709, 0.50709, 0.67612, -2.36643,
 		0.76772, 0.60609, 0.12122, -2.82843,
 		-0.35857, 0.59761, -0.71714, 0.0,
 		0, 0, 0, 1.0)
-	if err != nil{
+	if err != nil {
 		t.Errorf("%s", err)
 	}
 	testMatrixEquals(t, vm.Get(), res.Get())

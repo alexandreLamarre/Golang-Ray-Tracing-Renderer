@@ -19,21 +19,21 @@ func main() {
 	flag.Parse()
 
 	log.Println("==================== Golang ray tracer V 0.1 ====================")
-	if *useParser{
-		if *fileNamePtr == "foo"{
+	if *useParser {
+		if *fileNamePtr == "foo" {
 			log.Println("Incorrect -p usage: go run main.go -p parsefile=<string:filepath/filename.obj> export=<string:filename>")
 			return
 		}
 
-		parseObj(*fileNamePtr,*exportPtr)
+		parseObj(*fileNamePtr, *exportPtr)
 
-	} else if *runExample{
+	} else if *runExample {
 		log.Println("This should run an example")
 	}
 }
 
 //parseObj is called on a fileName from the CLI if used with the -p tag
-func parseObj(filePathName string, newName string){
+func parseObj(filePathName string, newName string) {
 	p := parser.ParseObjFile(filePathName)
 	g := p.ToGeometry()
 
@@ -45,14 +45,14 @@ func parseObj(filePathName string, newName string){
 	w.Lights = lights
 	w.Objects = objs
 
-	if newName != ""{
+	if newName != "" {
 		err := examples.CreateCustomScene(w, newName)
-		if err != nil{
+		if err != nil {
 			log.Println(err)
 		}
 	} else {
 		err := examples.CreateCustomScene(w, "example")
-		if err != nil{
+		if err != nil {
 			log.Println(err)
 		}
 	}

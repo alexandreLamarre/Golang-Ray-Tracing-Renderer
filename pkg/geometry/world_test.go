@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestNewDefaultWorld(t *testing.T) {
 	w := NewDefaultWorld()
 	if len(w.Lights) != 1 {
@@ -51,10 +50,10 @@ func TestPrepareComputations(t *testing.T) {
 
 	//Test reflection vector
 	plane := primitives.NewPlane(nil)
-	r = algebra.NewRay(0,1,-1,0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	r = algebra.NewRay(0, 1, -1, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = primitives.NewIntersection(plane, math.Sqrt(2))
 	comps = PrepareComputations(i, r, nil)
-	testVectorEquals(t, comps.Reflect.Get(), []float64{0, math.Sqrt(2)/2, math.Sqrt(2)/2, 0.0})
+	testVectorEquals(t, comps.Reflect.Get(), []float64{0, math.Sqrt(2) / 2, math.Sqrt(2) / 2, 0.0})
 }
 
 func TestWorld_Intersect(t *testing.T) {
@@ -108,30 +107,29 @@ func TestWorld_ShadeHit(t *testing.T) {
 	}
 
 	//shadow test
-	lights := make([]*canvas.PointLight, 0 , 0)
-	l := canvas.NewPointLight(&canvas.Color{1,1,1}, algebra.NewPoint(0, 0, -10))
+	lights := make([]*canvas.PointLight, 0, 0)
+	l := canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(0, 0, -10))
 	lights = append(lights, l)
 	objs := make([]primitives.Shape, 0, 0)
 	s1 := primitives.NewSphere(nil)
-	s2 := primitives.NewSphere(algebra.TranslationMatrix(0,0, 10))
+	s2 := primitives.NewSphere(algebra.TranslationMatrix(0, 0, 10))
 	objs = append(objs, s1, s2)
 
 	w = &World{Lights: lights, Objects: objs}
-	ray := algebra.NewRay(0,0,5,0,0,1)
+	ray := algebra.NewRay(0, 0, 5, 0, 0, 1)
 	i = primitives.NewIntersection(s, 4)
 	comps = PrepareComputations(i, ray, nil)
 	c = w.ShadeHit(*comps, 0)
 	res = 0.1
-	if !equals(c.Red(), res){
+	if !equals(c.Red(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Red())
 	}
-	if !equals(c.Green(), res){
+	if !equals(c.Green(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Green())
 	}
-	if !equals(c.Blue(), res){
+	if !equals(c.Blue(), res) {
 		t.Errorf("Expected %f, Got %f", res, c.Blue())
 	}
-
 
 	w = NewDefaultWorld()
 	shape := primitives.NewPlane(algebra.TranslationMatrix(0, -1, 0))
@@ -139,7 +137,7 @@ func TestWorld_ShadeHit(t *testing.T) {
 	m.Reflective = 0.5
 	shape.SetMaterial(m)
 	w.Objects = append(w.Objects, shape)
-	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	r = algebra.NewRay(0, 0, -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = primitives.NewIntersection(shape, math.Sqrt(2))
 	comps = PrepareComputations(i, r, nil)
 	color := w.ShadeHit(*comps, 1)
@@ -191,10 +189,9 @@ func TestWorld_ColorAt(t *testing.T) {
 		}
 	}
 
-
 	// test that an "infinite recursion" terminates
-	lights := make([]*canvas.PointLight, 0 ,0)
-	light1 := canvas.NewPointLight(&canvas.Color{1,1,1}, algebra.NewPoint(0,0,0))
+	lights := make([]*canvas.PointLight, 0, 0)
+	light1 := canvas.NewPointLight(&canvas.Color{1, 1, 1}, algebra.NewPoint(0, 0, 0))
 	lower := primitives.NewPlane(algebra.TranslationMatrix(0, -1, 0))
 	m := canvas.NewDefaultMaterial()
 	m.Reflective = 1.0
@@ -205,15 +202,14 @@ func TestWorld_ColorAt(t *testing.T) {
 	objs = append(objs, lower, upper)
 	lights = append(lights, light1)
 	w = &World{Lights: lights, Objects: objs}
-	r = algebra.NewRay(0,0,0, 0, 1, 0)
+	r = algebra.NewRay(0, 0, 0, 0, 1, 0)
 	w.ColorAt(r, 10)
-
 
 }
 
 func TestWorld_ReflectedColor(t *testing.T) {
 	w := NewDefaultWorld()
-	r := algebra.NewRay(0,0,0, 0,0,1)
+	r := algebra.NewRay(0, 0, 0, 0, 0, 1)
 	shape := w.Objects[1]
 	m := shape.GetMaterial()
 	m.Ambient = 1.0
@@ -221,7 +217,7 @@ func TestWorld_ReflectedColor(t *testing.T) {
 	i := primitives.NewIntersection(shape, 1)
 	comps := PrepareComputations(i, r, nil)
 	color := w.ReflectedColor(comps, 1)
-	testColorEquals(t, color, &canvas.Color{0,0,0})
+	testColorEquals(t, color, &canvas.Color{0, 0, 0})
 
 	w = NewDefaultWorld()
 	shape = primitives.NewPlane(algebra.TranslationMatrix(0, -1, 0))
@@ -229,7 +225,7 @@ func TestWorld_ReflectedColor(t *testing.T) {
 	m.Reflective = 0.5
 	shape.SetMaterial(m)
 	w.Objects = append(w.Objects, shape)
-	r = algebra.NewRay(0, 0 , -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
+	r = algebra.NewRay(0, 0, -3, 0, -math.Sqrt(2)/2, math.Sqrt(2)/2)
 	i = primitives.NewIntersection(shape, math.Sqrt(2))
 	comps = PrepareComputations(i, r, nil)
 	color = w.ReflectedColor(comps, 1)
@@ -237,8 +233,8 @@ func TestWorld_ReflectedColor(t *testing.T) {
 }
 
 //Test prepare computations for N1, N2 refractive indexes
-func TestRefractiveComputations(t *testing.T){
-	A := primitives.NewGlassSphere(algebra.ScalingMatrix(2,2,2), 1.5)
+func TestRefractiveComputations(t *testing.T) {
+	A := primitives.NewGlassSphere(algebra.ScalingMatrix(2, 2, 2), 1.5)
 	B := primitives.NewGlassSphere(algebra.TranslationMatrix(0, 0, -0.25), 2.0)
 	C := primitives.NewGlassSphere(algebra.TranslationMatrix(0, 0, 0.25), 2.5)
 	r := algebra.NewRay(0, 0, -4, 0, 0, 1)
@@ -270,21 +266,20 @@ func TestRefractiveComputations(t *testing.T){
 	comps = PrepareComputations(i6, r, xs)
 	testRefractiveIndexes(t, comps.N1, comps.N2, 1.5, 1.0)
 
-
 }
 
-func TestCompsUnderPoint(t *testing.T){
+func TestCompsUnderPoint(t *testing.T) {
 	r := algebra.NewRay(0, 0, -5, 0, 0, 1)
-	shape := primitives.NewGlassSphere(algebra.TranslationMatrix(0,0, 1), 1.5)
+	shape := primitives.NewGlassSphere(algebra.TranslationMatrix(0, 0, 1), 1.5)
 	i := primitives.NewIntersection(shape, 5)
 	xs := primitives.NewIntersections()
 	xs.GetHits().Push(i)
 	comps := PrepareComputations(i, r, xs)
 	EPSILON := 0.00001
-	if !(comps.UnderPoint.Get()[2] > EPSILON/2){// z coord
+	if !(comps.UnderPoint.Get()[2] > EPSILON/2) { // z coord
 		t.Errorf("Unexpected UnderPoint z-coordinate: %f", comps.UnderPoint.Get()[2])
 	}
-	if !(comps.Point.Get()[2] < comps.UnderPoint.Get()[2]){
+	if !(comps.Point.Get()[2] < comps.UnderPoint.Get()[2]) {
 		t.Errorf("Unexpected relative positioning of z-intersect with z-underpoint intersect: %f versus %f",
 			comps.Point.Get()[2], comps.UnderPoint.Get()[2])
 	}
@@ -301,7 +296,7 @@ func TestWorld_RefractedColor(t *testing.T) {
 	xs.GetHits().PushAll(i1, i2)
 	comps := PrepareComputations(i1, r, xs)
 	c := w.RefractedColor(comps, 5.0)
-	testColorEquals(t, c, &canvas.Color{0,0,0})
+	testColorEquals(t, c, &canvas.Color{0, 0, 0})
 
 	m := shape.GetMaterial()
 	m.Transparency = 0.9
@@ -312,7 +307,7 @@ func TestWorld_RefractedColor(t *testing.T) {
 	xs.GetHits().PushAll(i1, i2)
 	comps = PrepareComputations(i1, r, xs)
 	c = w.RefractedColor(comps, 0.0)
-	testColorEquals(t, c, &canvas.Color{0,0,0})
+	testColorEquals(t, c, &canvas.Color{0, 0, 0})
 
 	// test total internal refraction case
 	w = NewDefaultWorld()
@@ -328,7 +323,7 @@ func TestWorld_RefractedColor(t *testing.T) {
 	xs.GetHits().Push(i2)
 	comps = PrepareComputations(i2, r, xs)
 	c = w.RefractedColor(comps, 5)
-	testColorEquals(t, c, &canvas.Color{0,0,0})
+	testColorEquals(t, c, &canvas.Color{0, 0, 0})
 
 	//test actual refraction
 
@@ -387,7 +382,7 @@ func TestSchlick(t *testing.T) {
 	xs.GetHits().PushAll(i1, i2)
 	comps := PrepareComputations(i2, r, xs)
 	reflectance := Schlick(comps)
-	if !equals(reflectance, 1.0){
+	if !equals(reflectance, 1.0) {
 		t.Errorf("Expected reflectance %f, Got: %f", 1.0, reflectance)
 	}
 
@@ -398,7 +393,7 @@ func TestSchlick(t *testing.T) {
 	xs.GetHits().PushAll(i1, i2)
 	comps = PrepareComputations(i2, r, xs)
 	reflectance = Schlick(comps)
-	if !equals(reflectance, 0.04){
+	if !equals(reflectance, 0.04) {
 		t.Errorf("Expected reflectance %f, Got: %f", 0.04, reflectance)
 	}
 
@@ -408,10 +403,9 @@ func TestSchlick(t *testing.T) {
 	xs.GetHits().Push(i1)
 	comps = PrepareComputations(i1, r, xs)
 	reflectance = Schlick(comps)
-	if !equals(reflectance, 0.48873){
+	if !equals(reflectance, 0.48873) {
 		t.Errorf("Expected reflectance %f, Got: %f", 0.48873, reflectance)
 	}
-
 
 	//test Shade Hit augmented with Schlick
 
@@ -427,7 +421,7 @@ func TestSchlick(t *testing.T) {
 
 	ball := primitives.NewSphere(algebra.TranslationMatrix(0, -3.5, -0.5))
 	ballf := ball.GetMaterial()
-	ballf.Color = &canvas.Color{1, 0, 0 }
+	ballf.Color = &canvas.Color{1, 0, 0}
 	ballf.Ambient = 0.5
 	ball.SetMaterial(ballf)
 	w.Objects = append(w.Objects, ball)
@@ -444,31 +438,31 @@ func TestWorld_PointIsShadowed(t *testing.T) {
 	w := NewDefaultWorld()
 	p := algebra.NewPoint(0, 10, 0)
 	res := w.PointIsShadowed(p)
-	if res{
+	if res {
 		t.Errorf("Expected point %v to not be shadowed", p)
 	}
 
 	p = algebra.NewPoint(10, -10, 10)
 	res = w.PointIsShadowed(p)
-	if !res{
+	if !res {
 		t.Errorf("Expected point %v to be shadowed", p)
 	}
 
 	p = algebra.NewPoint(-20, 20, -20)
 	res = w.PointIsShadowed(p)
-	if res{
+	if res {
 		t.Errorf("Expected point %v to not be shadowed", p)
 	}
 
 	p = algebra.NewPoint(-2, 2, -2)
 	res = w.PointIsShadowed(p)
-	if res{
+	if res {
 		t.Errorf("Expected point %v to not be shadowed", p)
 	}
 }
 
-func testRefractiveIndexes(t *testing.T, n1, n2, expected1, expected2 float64){
-	if n1 != expected1 || n2 != expected2{
+func testRefractiveIndexes(t *testing.T, n1, n2, expected1, expected2 float64) {
+	if n1 != expected1 || n2 != expected2 {
 		t.Errorf("Expected  %f n1, Got: %f . Expected %f n2, Got: %f", expected1, n1, expected2, n2)
 	}
 }

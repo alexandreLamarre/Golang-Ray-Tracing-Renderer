@@ -14,11 +14,11 @@ type Intersections struct {
 type Intersection struct {
 	Object Shape
 	T      float64
-	U, V float64
+	U, V   float64
 }
 
 //SetUV sets the u, v fields for intersections, for normal interpolation on smooth triangles
-func (i *Intersection) SetUV(u , v float64){
+func (i *Intersection) SetUV(u, v float64) {
 	i.U = u
 	i.V = v
 }
@@ -27,7 +27,6 @@ func (i *Intersection) SetUV(u , v float64){
 func NewIntersection(s Shape, t float64) *Intersection {
 	return &Intersection{Object: s, T: t}
 }
-
 
 //NewIntersections creates a new intersection data type
 func NewIntersections() *Intersections {
@@ -52,10 +51,10 @@ func (intersections *Intersections) Intersect(s Shape, r *algebra.Ray) error {
 	r2 := r.Transform(m.Inverse())
 
 	ts, intersected := s.LocalIntersect(r2)
-	if !intersected{
+	if !intersected {
 		return nil
 	}
-	for i := 0; i < len(ts); i ++{
+	for i := 0; i < len(ts); i++ {
 		is := ts[i]
 		if ts[i].T >= 0 {
 			intersections.hits.Push(is)

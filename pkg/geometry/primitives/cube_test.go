@@ -15,8 +15,8 @@ func TestNewCube(t *testing.T) {
 func TestCube_GetBounds(t *testing.T) {
 	cube := NewCube(nil)
 	min, max := cube.GetBounds()
-	testVectorEquals(t, min.Get(), algebra.NewPoint(-1,-1,-1).Get())
-	testVectorEquals(t, max.Get(), algebra.NewPoint(1, 1,1).Get())
+	testVectorEquals(t, min.Get(), algebra.NewPoint(-1, -1, -1).Get())
+	testVectorEquals(t, max.Get(), algebra.NewPoint(1, 1, 1).Get())
 }
 
 func TestCube_GetMaterial(t *testing.T) {
@@ -33,7 +33,7 @@ func TestCube_GetTransform(t *testing.T) {
 
 func TestCube_GetParent(t *testing.T) {
 	cube := NewCube(nil)
-	if cube.GetParent() != nil{
+	if cube.GetParent() != nil {
 		t.Errorf("Expected cube to have no parent Shapes")
 	}
 }
@@ -48,7 +48,7 @@ func TestCube_SetMaterial(t *testing.T) {
 
 func TestCube_SetTransform(t *testing.T) {
 	cube := NewCube(nil)
-	m := algebra.ScalingMatrix(3,3,3)
+	m := algebra.ScalingMatrix(3, 3, 3)
 	cube.SetTransform(m)
 	testMatrixEquals(t, m.Get(), cube.transform.Get())
 }
@@ -57,7 +57,7 @@ func TestCube_SetParent(t *testing.T) {
 	c1 := NewCube(nil)
 	c2 := NewCube(nil)
 	c1.SetParent(c2)
-	if c1.GetParent() == nil{
+	if c1.GetParent() == nil {
 		t.Errorf("Expected Cube to have a parent Shape")
 	}
 }
@@ -83,18 +83,18 @@ func TestCube_LocalIntersect(t *testing.T) {
 		{-1, 1},
 	}
 
-	for i := 0; i < len(rays); i++{
+	for i := 0; i < len(rays); i++ {
 		xs, hit := c.LocalIntersect(rays[i])
-		if hit != true{
+		if hit != true {
 			t.Errorf("Expected ray %v, %v to hit default cube", rays[i].Get()["origin"], rays[i].Get()["direction"])
 		}
-		if len(xs) != 2{
+		if len(xs) != 2 {
 			t.Errorf("Expected %d intersections, got: %d", 2, len(xs))
 		}
-		if !equals(xs[0].T, positions[i][0]){
+		if !equals(xs[0].T, positions[i][0]) {
 			t.Errorf("Expected %f, got %f", positions[i][0], xs[0])
 		}
-		if !equals(xs[1].T, positions[i][1]){
+		if !equals(xs[1].T, positions[i][1]) {
 			t.Errorf("Expected %f, got %f", positions[i][1], xs[1])
 		}
 
@@ -109,12 +109,12 @@ func TestCube_LocalIntersect(t *testing.T) {
 		algebra.NewRay(0, 2, 2, 0, -1, 0),
 		algebra.NewRay(2, 2, 0, -1, 0, 0)}
 
-	for i := 0; i < len(rays2); i++{
+	for i := 0; i < len(rays2); i++ {
 		xs, hit := c.LocalIntersect(rays2[i])
-		if hit == true{
+		if hit == true {
 			t.Errorf("Expected ray %v, %v to not hit default cube", rays2[i].Get()["origin"], rays2[i].Get()["direction"])
 		}
-		if len(xs) != 0{
+		if len(xs) != 0 {
 			t.Errorf("Expected %d intersections, got: %d", 0, len(xs))
 		}
 	}
@@ -145,9 +145,9 @@ func TestCube_LocalNormalAt(t *testing.T) {
 		algebra.NewVector(-1, 0, 0),
 	}
 
-	for i := 0; i < len(points); i++{
+	for i := 0; i < len(points); i++ {
 		normal, err := c.LocalNormalAt(points[i], nil)
-		if err != nil{
+		if err != nil {
 			t.Errorf("Expected no error to be returned by cube normal")
 		}
 		testVectorEquals(t, normal.Get(), normals[i].Get())

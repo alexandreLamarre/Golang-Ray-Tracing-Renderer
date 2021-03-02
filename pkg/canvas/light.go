@@ -20,7 +20,7 @@ func NewPointLight(color *Color, position *algebra.Vector) *PointLight {
 // from the point of view of the eye vector
 func Lighting(material *Material, patternColor *Color, light *PointLight, illuminatedPoint, eyeVector, normalVector *algebra.Vector, inShadow bool) *Color {
 	var color *Color
-	if patternColor!= nil{
+	if patternColor != nil {
 		color = patternColor
 	} else {
 		color = material.Color
@@ -41,7 +41,7 @@ func Lighting(material *Material, patternColor *Color, light *PointLight, illumi
 
 	ambient := effectiveColor.ScalarMult(material.Ambient)
 
-	if inShadow{
+	if inShadow {
 		return ambient
 	}
 

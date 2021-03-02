@@ -47,26 +47,26 @@ func TestCamera_RayForPixel(t *testing.T) {
 	c.transform = algebra.Multiply(algebra.RotationY(math.Pi/4), algebra.TranslationMatrix(0, -2, 5))
 	r = c.RayForPixel(100, 50)
 	testVectorEquals(t, r.Get()["origin"].Get(), []float64{0, 2, -5})
-	testVectorEquals(t, r.Get()["direction"].Get(), []float64{math.Sqrt(2)/2, 0, - math.Sqrt(2)/2})
+	testVectorEquals(t, r.Get()["direction"].Get(), []float64{math.Sqrt(2) / 2, 0, -math.Sqrt(2) / 2})
 }
 
 func TestCamera_Render(t *testing.T) {
 	w := geometry.NewDefaultWorld()
 	c, err := NewCamera(11, 11, math.Pi/2,
-		algebra.ViewTransform(0,0,-5, 0,0,0, 0, 1, 0))
+		algebra.ViewTransform(0, 0, -5, 0, 0, 0, 0, 1, 0))
 	if err != nil {
 		t.Errorf("%s", err)
 		return
 	}
 	image := c.Render(w)
 	color := image.Pixels[5][5]
-	if !equals(color.Red(), 0.38066){
+	if !equals(color.Red(), 0.38066) {
 		t.Errorf("Incorrect red color %f, wanted %f", color.Red(), 0.38066)
 	}
-	if !equals(color.Green(), 0.47583){
+	if !equals(color.Green(), 0.47583) {
 		t.Errorf("Incorrect green color %f, wanted %f", color.Green(), 0.47583)
 	}
-	if  !equals(color.Blue(), 0.2855){
+	if !equals(color.Blue(), 0.2855) {
 		t.Errorf("Incorrect blue color %f, wanted %f", color.Blue(), 0.2855)
 	}
 }

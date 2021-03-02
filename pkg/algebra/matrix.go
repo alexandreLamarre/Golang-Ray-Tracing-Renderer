@@ -114,7 +114,7 @@ func Multiply(m1 *Matrix, m2 *Matrix) *Matrix {
 	return mMultiplied
 }
 
-func (m1 *Matrix) Multiply( m2 *Matrix) *Matrix {
+func (m1 *Matrix) Multiply(m2 *Matrix) *Matrix {
 	if getNumCols(m1) != getNumRows(m2) {
 		panic(ExpectedDimension(len(m1.Get()[0])))
 		return nil
@@ -413,11 +413,17 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) *Matrix {
 	return m
 }
 
-func ViewTransform(fromX, fromY, fromZ, toX, toY, toZ, upX, upY, upZ float64) *Matrix{
-	forward, err := NewVector(toX-fromX, toY -fromY, toZ- fromZ).Normalize()
-	if err != nil{panic(err); return nil}
+func ViewTransform(fromX, fromY, fromZ, toX, toY, toZ, upX, upY, upZ float64) *Matrix {
+	forward, err := NewVector(toX-fromX, toY-fromY, toZ-fromZ).Normalize()
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	upn, err := NewVector(upX, upY, upZ).Normalize()
-	if err != nil{panic(err); return nil}
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	left, err := CrossProduct(forward, upn)
 	trueUp, err := CrossProduct(left, forward)
 	matValues := make([]float64, 0, 0)
@@ -425,12 +431,14 @@ func ViewTransform(fromX, fromY, fromZ, toX, toY, toZ, upX, upY, upZ float64) *M
 	matValues = append(matValues, trueUp.Get()...)
 	matValues = append(matValues, forward.Negate().Get()...)
 	matValues = append(matValues, 0, 0, 0, 1)
-	m, err := NewMatrix(4,4,matValues...)
-	if err != nil{panic(err); return nil}
+	m, err := NewMatrix(4, 4, matValues...)
+	if err != nil {
+		panic(err)
+		return nil
+	}
 	m = Multiply(m, TranslationMatrix(-fromX, -fromY, -fromZ))
 	return m
 }
-
 
 //stack datatype helper for matrix functions/methods
 type stack []float64
