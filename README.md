@@ -1,7 +1,7 @@
 # Golang-Ray-Tracing-Renderer
-<!--
+
 [![GoReportCard example](https://goreportcard.com/badge/github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer)](https://goreportcard.com/report/github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer)
--->
+
 
 A native (no external libraries) golang 3D ray tracing renderer, that implements Ray intersection via the [Phong-Reflection Model](https://en.wikipedia.org/wiki/Phong_reflection_model), Recursive Shape grouping with [AABB optimizations](https://en.wikipedia.org/wiki/Bounding_volume) and [Constructive Solid Geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), augmented with recursively defined Patterns, [Perlin/Simplex noise algorihthms](https://en.wikipedia.org/wiki/Perlin_noise) (for patterns or triangulated objects), efficient convex-hull/half-edge [Delaunay Triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) implementation and a [LindenMayer-System](https://en.wikipedia.org/wiki/L-system) fractal interface (comes with a [mandelbulb](https://en.wikipedia.org/wiki/Mandelbulb) implementation).
 
@@ -9,7 +9,7 @@ The native renderer runs on CPU cycles, so high resolution scenes may take some 
 
 It renders and writes to .ppm files which can be opened natively on MacOS with preview but require some additional software on Windows/Linux. I recommend using [GIMP](https://www.gimp.org/) to open these files because it is a well-maintained open source Image Manipulation Program.
 
-Examples rendered using this code: 
+**Examples rendered using this code**:
 
 <details>
   <summary> Basic refraction/ reflection (1400 x 1000)</summary>
