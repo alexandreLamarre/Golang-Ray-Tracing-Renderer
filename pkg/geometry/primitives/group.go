@@ -37,6 +37,11 @@ func (g *Group)GetShapes() []Shape{
 	return g.shapes
 }
 
+//NumShapes returns the number of shapes the group contains
+func (g*Group) NumShapes() int{
+	return len(g.GetShapes())
+}
+
 //AddChild adds a new shape to the Group's container
 func (g *Group) AddChild(s Shape){
 	s.SetParent(g)
