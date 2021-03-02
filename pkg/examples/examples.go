@@ -9,12 +9,16 @@ import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/objects"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
+	"log"
 	"math"
 	"os"
+	"time"
 )
 
 
 func CreateCustomScene(w *geometry.World, name string) error{
+	log.Println("Rendering scene...")
+	start := time.Now()
 	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
 		algebra.ViewTransform(0, 0, -10,
 			0, 1, 0,
@@ -24,14 +28,44 @@ func CreateCustomScene(w *geometry.World, name string) error{
 		return err
 	}
 	image := cam.Render(w)
+	t := time.Now()
+	elapsed := t.Sub(start)
+	log.Printf("Done (%s)!", elapsed)
+	start = time.Now()
+	log.Println("Writing results to file ./pkg/examples/"+name+".ppm...")
 	imageToStr := image.ToPpmHeader(255) + image.ToPpmBody(255)
 	err = writeToFile(imageToStr, name)
 	if err != nil{
 		panic(err)
 		return err
 	}
+	t = time.Now()
+	elapsed = t.Sub(start)
+	log.Printf("Done (%s)!", elapsed)
 	return nil
 }
+
+
+func writeToFile(toWrite, fileName string) error {
+	f, err := os.Create("./pkg/examples/" + fileName + ".ppm")
+	if err != nil {
+		return err
+	}
+
+	w := bufio.NewWriter(f)
+
+	n, err := w.WriteString(toWrite)
+	log.Printf("Wrote %d bytes", n)
+	if err != nil {
+		return err
+	}
+	err = f.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 
 func TestReflectiveScene() error{
 	white := &canvas.Color{0.9, 0.9, 0.9}
@@ -367,7 +401,7 @@ func CreateSimpleScene() error{
 
 	right := primitives.NewSphere(
 		algebra.Multiply(algebra.TranslationMatrix(1.5, 0.5, -0.5),
-		algebra.ScalingMatrix(0.5, 0.5, 0.5)))
+			algebra.ScalingMatrix(0.5, 0.5, 0.5)))
 	rightMat := canvas.NewDefaultMaterial()
 	rightMat.Color = &canvas.Color{0.5, 1, 0.1}
 	rightMat.Diffuse = 0.7
@@ -376,7 +410,7 @@ func CreateSimpleScene() error{
 
 	left := primitives.NewSphere(
 		algebra.Multiply(algebra.TranslationMatrix(-1.5,0.33,-0.75),
-		algebra.ScalingMatrix(0.33,0.33,0.33)))
+			algebra.ScalingMatrix(0.33,0.33,0.33)))
 	leftMat := canvas.NewDefaultMaterial()
 	leftMat.Color = &canvas.Color{1, 0.8, 0.1}
 	leftMat.Diffuse = 0.7
@@ -494,26 +528,6 @@ func CreateProjectileExample() error {
 	s += c.ToPpmBody(255)
 
 	err = writeToFile(s, "projectile")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func writeToFile(toWrite, fileName string) error {
-	f, err := os.Create("./pkg/examples/" + fileName + ".ppm")
-	if err != nil {
-		return err
-	}
-
-	w := bufio.NewWriter(f)
-
-	n, err := w.WriteString(toWrite)
-	fmt.Printf("Wrote %d bytes\n", n)
-	if err != nil {
-		return err
-	}
-	err = f.Close()
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
+	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
 	"testing"
 )
 
@@ -55,6 +56,40 @@ func TestParseObjFile(t *testing.T) {
 		t.Errorf("Expected 'SecondGroup' to be a name group in ./trianglegroup_test.obj")
 	}
 
+}
+
+func Test_optimize(t *testing.T){
+	g := primitives.NewGroup(nil)
+
+	for i := 0; i < 9; i++{
+		s :=primitives.NewSphere(nil)
+		g.AddChild(s)
+	}
+	g = optimize(g)
+	if g.NumShapes() != 9{
+		t.Errorf("Expected 9 Shapes, Got : %d", g.NumShapes())
+	}
+	g2 := primitives.NewGroup(nil)
+	for i := 0; i < 99; i++{
+		s := primitives.NewSphere(nil)
+		g2.AddChild(s)
+	}
+
+	g2 = optimize(g2)
+
+	if g2.NumShapes() != 10{
+		t.Errorf("Expected 10 Shapes, Got : %d", g2.NumShapes())
+	}
+
+	g3 := primitives.NewGroup(nil)
+	for i := 0; i < 450; i++{
+		s := primitives.NewSphere(nil)
+		g3.AddChild(s)
+	}
+	g3 = optimize(g3)
+	if g3.NumShapes() != 5{
+		t.Errorf("Expected 5 Shapes, Got : %d", g3.NumShapes())
+	}
 }
 
 func TestParser_ToGeometry(t *testing.T) {
