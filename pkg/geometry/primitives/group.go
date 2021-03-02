@@ -43,7 +43,6 @@ func (g *Group) AddChild(s Shape){
 	g.shapes = append(g.shapes, s)
 	min, max := g.getBounds()
 	g.bounds = [2]*algebra.Vector{min, max}
-	fmt.Println(g.bounds)
 }
 
 //Shape interface methods
@@ -118,7 +117,6 @@ func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 
 	// Get the AABB of the group
 	min, max := g.GetBounds()
-	fmt.Println(min, max)
 
 	if min == nil{
 		return xs, false
