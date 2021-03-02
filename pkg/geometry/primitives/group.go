@@ -18,6 +18,7 @@ type Group struct{
 	parent    Shape
 	shapes    []Shape
 	transform *algebra.Matrix
+	bounds [2]*algebra.Vector
 }
 
 //NewGroup initializer for a group struct with a given 4x4 transformation matrix, if the matrix
@@ -28,7 +29,7 @@ func NewGroup(m *algebra.Matrix) *Group {
 		mat = algebra.IdentityMatrix(4)
 	}
 	emptyShapes := make([]Shape, 0, 0)
-	return &Group{transform: mat, parent: nil, shapes: emptyShapes}
+	return &Group{transform: mat, parent: nil, shapes: emptyShapes, bounds: [2]*algebra.Vector{}}
 }
 
 //GetShapes Getter for shapes array field of a group
@@ -40,6 +41,9 @@ func (g *Group)GetShapes() []Shape{
 func (g *Group) AddChild(s Shape){
 	s.SetParent(g)
 	g.shapes = append(g.shapes, s)
+	min, max := g.getBounds()
+	g.bounds = [2]*algebra.Vector{min, max}
+	fmt.Println(g.bounds)
 }
 
 //Shape interface methods
@@ -77,8 +81,12 @@ func (g *Group) SetParent(shape Shape){
 	g.parent = shape
 }
 
-//GetBounds Getter for default bounds of this Shape
-func (g *Group) GetBounds() (*algebra.Vector, *algebra.Vector){
+func (g *Group) GetBounds()(*algebra.Vector, *algebra.Vector){
+	return g.bounds[0], g.bounds[1]
+}
+
+//getBounds Calculates bounds of this Shape
+func (g *Group) getBounds() (*algebra.Vector, *algebra.Vector){
 	var min *algebra.Vector = nil; var max *algebra.Vector = nil
 	if len(g.shapes) == 0 {
 		return min, max
@@ -110,6 +118,7 @@ func (g *Group) LocalIntersect(r *algebra.Ray) ([]*Intersection, bool){
 
 	// Get the AABB of the group
 	min, max := g.GetBounds()
+	fmt.Println(min, max)
 
 	if min == nil{
 		return xs, false
