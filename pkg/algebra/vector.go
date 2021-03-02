@@ -1,6 +1,11 @@
 package algebra
 
-import "math"
+import (
+	"math"
+)
+
+//EPSILON for testing floating point equality
+var EPSILON float64 = 0.0001
 
 type Vector struct {
 	tuple []float64
@@ -126,6 +131,20 @@ func (v *Vector) Magnitude() float64 {
 
 	}
 	return math.Sqrt(sum)
+}
+
+//Magnitude returns the provided vectors magnitude
+func (v *Vector) Magnitude2() float64 {
+	sum := 0.0
+	for i, val := range v.tuple {
+		if i == len(v.tuple)-1 {
+			continue
+		} else {
+			sum += math.Pow(val, 2)
+		}
+
+	}
+	return sum
 }
 
 //Normalize returns a normalized version of the original vector
