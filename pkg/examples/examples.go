@@ -15,11 +15,11 @@ import (
 	"time"
 )
 
-func CreateCustomScene(w *geometry.World, name string) error {
+func CreateCustomScene(w *geometry.World, name string, rotate bool) error {
 	log.Println("Rendering scene...")
 	start := time.Now()
-	cam, err := camera2.NewCamera(400, 200, math.Pi/3,
-		algebra.ViewTransform(0, 0, -10,
+	cam, err := camera2.NewCamera(1400, 1000, math.Pi/3,
+		algebra.ViewTransform(0, 30, -50,
 			0, 1, 0,
 			0, 1, 0))
 	if err != nil {

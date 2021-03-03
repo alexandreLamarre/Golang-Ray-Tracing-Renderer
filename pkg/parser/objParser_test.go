@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/algebra"
 	"github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/pkg/geometry/primitives"
+	"reflect"
 	"testing"
 )
 
@@ -54,6 +55,28 @@ func TestParseObjFile(t *testing.T) {
 
 	if p.Groups["SecondGroup"] == nil {
 		t.Errorf("Expected 'SecondGroup' to be a name group in ./trianglegroup_test.obj")
+	}
+
+	p = ParseObjFile("./vertexnormal_test.obj")
+	if len(p.Vertices) != 3{
+		t.Errorf("Expected one parsed vertex, got %d", len(p.Vertices))
+	}
+	if len(p.NormalVertices) != 3{
+		t.Errorf("Expected one parsed vertex norml, got %d", len(p.NormalVertices))
+	}
+
+	if len(p.DefaultGroup.GetShapes()) != 1 || reflect.TypeOf(p.DefaultGroup.GetShapes()[0]) != reflect.TypeOf(&primitives.SmoothTriangle{}){
+		t.Errorf("Expected one smooth triangle, got: %d", len(p.DefaultGroup.GetShapes()))
+	}
+
+	p = ParseObjFile("./vertexnormalpolygon_test.obj")
+
+	if len(p.Vertices) != 5 {
+		t.Errorf("Expected to parse 5 vertices from %s, got : %d", "./normalvertexpolygon_test.obj", len(p.Vertices))
+	}
+
+	if len(p.DefaultGroup.GetShapes()) != 3 {
+		t.Errorf("Expected to parse 3 smooth triangles in default group from %s, got : %d", "./normalvertexpolygon_test.obj", len(p.DefaultGroup.GetShapes()))
 	}
 
 }

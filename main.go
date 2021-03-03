@@ -14,6 +14,7 @@ import (
 func main() {
 	useParser := flag.Bool("p", false, "Uses parser on file")
 	fileNamePtr := flag.String("parsefile", "foo", "name of the file to open")
+	useRotate := flag.Bool("r", false, "Rotates the object to have y use depth and z height")
 	exportPtr := flag.String("name", "", "name of the file to export to in pkg/examples")
 	runExample := flag.Bool("e", false, "Runs specified example")
 	flag.Parse()
@@ -25,7 +26,7 @@ func main() {
 			return
 		}
 
-		parseObj(*fileNamePtr, *exportPtr)
+		parseObj(*fileNamePtr, *exportPtr, *useRotate)
 
 	} else if *runExample {
 		log.Println("This should run an example")
@@ -33,9 +34,9 @@ func main() {
 }
 
 //parseObj is called on a fileName from the CLI if used with the -p tag
-func parseObj(filePathName string, newName string) {
+func parseObj(filePathName string, newName string, rotate bool) {
 	p := parser.ParseObjFile(filePathName)
-	g := p.ToGeometry()
+	g := p.ToGeometry(rotate)
 
 	w := &geometry.World{}
 	objs := make([]primitives.Shape, 0, 0)
@@ -46,12 +47,12 @@ func parseObj(filePathName string, newName string) {
 	w.Objects = objs
 
 	if newName != "" {
-		err := examples.CreateCustomScene(w, newName)
+		err := examples.CreateCustomScene(w, newName, rotate)
 		if err != nil {
 			log.Println(err)
 		}
 	} else {
-		err := examples.CreateCustomScene(w, "example")
+		err := examples.CreateCustomScene(w, "example", rotate)
 		if err != nil {
 			log.Println(err)
 		}
