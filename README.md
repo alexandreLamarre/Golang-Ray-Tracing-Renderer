@@ -21,6 +21,37 @@ It renders and writes to .ppm files which can be opened natively on MacOS with p
    <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/complex%20reflect%20refract.png"/>
 </details>
 
+<details>
+  <summary> Parsed high resolution teapot.obj (1400 x 1000)</summary> 
+  <img src="https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/teapot.png"/>
+ <span style="background-color:grey;">
+   
+   
+    go run main.go -p -parsefile=./pkg/parser/highResTeapot.obj -r
+    2021/03/03 13:59:50 ==================== Golang ray tracer V 0.1 ====================
+    2021/03/03 13:59:50 Opening file : ./pkg/parser/highResTeapot.obj...
+    2021/03/03 13:59:50 Parsing Object file...
+    2021/03/03 14:03:12 Done(3m21.4334392s)!
+    2021/03/03 14:03:12 Optimizing parsed Shapes (12560)...
+    2021/03/03 14:03:14 Done (2.2241431s)!
+    2021/03/03 14:03:14 Rendering scene...
+    2021/03/03 14:40:37 Done (37m22.6883237s)!
+    2021/03/03 15:42:09 Writing results to file ./pkg/examples/example.ppm...
+    2021/03/03 15:42:15 Wrote 8924757 bytes
+    2021/03/03 15:42:15 Done (5.7900586s)!`
+   
+   Whith this camera defined in CreateCustomScene() in pkg/examples/examples.go: 
+   
+   
+    cam, err := camera2.NewCamera(1400, 1000, math.Pi/3,
+		algebra.ViewTransform(
+    0, 30, -50,
+			0, 1, 0,
+			0, 1, 0))
+      
+ </span>
+</details>
+
 Some notable improvements to be made: 
 - making a fast algebra library that binds algebraic manipulations and their data structures to the gpu.
 - replace `getBounds()` method for Groups when Adding a `Shape` to a `Group` to a function that finds a fast AABB union for the `Bounds` struct
@@ -34,7 +65,6 @@ Some notable improvements to be made:
   - [Camera](#Camera)
   - [Noise](#Noise)
     
--[BLAS gpu accelerated](#BLAS-gpu-accelerated)
 
 ### Usage
 [Back To Top](#)
@@ -52,6 +82,7 @@ You can run this command to parse a .obj file and render/write it to a .ppm file
 
 - The parsefile flag accepts a filepath from the root directory and a filename to open and parse.
 - The name flag accepts a string that specificies the name of the file saved to `./pkg/examples/<string:name>.ppm`
+- An optional -r flag can be used to rotate the scene so that y represents depth and z represents height, by default it considers y to be height and z to be depth
 
 ### Implementation Details
 [Back To Top](#)
