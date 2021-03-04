@@ -58,14 +58,14 @@ func TestParseObjFile(t *testing.T) {
 	}
 
 	p = ParseObjFile("./vertexnormal_test.obj")
-	if len(p.Vertices) != 3{
+	if len(p.Vertices) != 3 {
 		t.Errorf("Expected one parsed vertex, got %d", len(p.Vertices))
 	}
-	if len(p.NormalVertices) != 3{
+	if len(p.NormalVertices) != 3 {
 		t.Errorf("Expected one parsed vertex norml, got %d", len(p.NormalVertices))
 	}
 
-	if len(p.DefaultGroup.GetShapes()) != 1 || reflect.TypeOf(p.DefaultGroup.GetShapes()[0]) != reflect.TypeOf(&primitives.SmoothTriangle{}){
+	if len(p.DefaultGroup.GetShapes()) != 1 || reflect.TypeOf(p.DefaultGroup.GetShapes()[0]) != reflect.TypeOf(&primitives.SmoothTriangle{}) {
 		t.Errorf("Expected one smooth triangle, got: %d", len(p.DefaultGroup.GetShapes()))
 	}
 
@@ -77,6 +77,11 @@ func TestParseObjFile(t *testing.T) {
 
 	if len(p.DefaultGroup.GetShapes()) != 3 {
 		t.Errorf("Expected to parse 3 smooth triangles in default group from %s, got : %d", "./normalvertexpolygon_test.obj", len(p.DefaultGroup.GetShapes()))
+	}
+
+	p = ParseObjFile("./missingnormals_test.obj")
+	if len(p.DefaultGroup.GetShapes()) != 1 {
+		t.Errorf("Expected to parse a triangle from missingnormals_test.obj, got %d", len(p.DefaultGroup.GetShapes()))
 	}
 
 }
@@ -116,5 +121,11 @@ func Test_optimize(t *testing.T) {
 }
 
 func TestParser_ToGeometry(t *testing.T) {
+	p := ParseObjFile("./dodecahedron.obj")
+	g := p.ToGeometry(false)
 
+	if len(g.GetShapes()) != 1 {
+		t.Errorf("Expected optimized to Geometry dodecahedron to contain 1 main subshapes, got : %d",
+			len(g.GetShapes()))
+	}
 }

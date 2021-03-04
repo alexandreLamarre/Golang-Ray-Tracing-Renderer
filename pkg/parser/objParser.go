@@ -33,7 +33,9 @@ func (p *Parser) ToGeometry(rotate bool) *primitives.Group {
 	log.Printf("Optimizing parsed Shapes (%d)...", numShapes)
 	start := time.Now()
 	g := primitives.NewGroup(nil)
-	if rotate {g.SetTransform(algebra.RotationX(-math.Pi/2))}
+	if rotate {
+		g.SetTransform(algebra.RotationX(-math.Pi / 2))
+	}
 	optimizedDefaultGroup := optimize(p.DefaultGroup)
 	g.AddChild(optimizedDefaultGroup)
 
@@ -47,7 +49,6 @@ func (p *Parser) ToGeometry(rotate bool) *primitives.Group {
 	log.Printf("Done (%s)!", elapsed)
 	return g
 }
-
 
 //ParseObjFile opens a file with the given path/name from the root directory (main.go)
 func ParseObjFile(filePathName string) *Parser {
@@ -134,7 +135,6 @@ func ParseObjLine(line string, parser *Parser) {
 	}
 }
 
-
 func optimize(g *primitives.Group) *primitives.Group {
 	if g.NumShapes() < MAXGROUPSIZE {
 		return g
@@ -213,21 +213,27 @@ func createTriangle(v []string, parser *Parser) {
 }
 
 func createSmoothTriangle(v []string, parser *Parser) {
-	//TODO: implement smooth triangle parsing
 	vertices := []*algebra.Vector{}
 	normalVertices := []*algebra.Vector{}
-	for i:= 0; i < 3; i++{
+
+	isSmooth := true
+
+	for i := 0; i < 3; i++ {
 		s := strings.Split(v[i], "/")
-		if len(s) != 3{
+		if s[2] == "" {
+			//no vertex normal means triangle isnt smooth
+			isSmooth = false
+		}
+		if len(s) != 3 {
 			log.Printf("Could not parse face delimited with '/' : %s", s)
-		} else{
+		} else {
 			//fetch vertex if possible
-			if vertexIndex, err := strconv.Atoi(s[0]); err != nil{
+			if vertexIndex, err := strconv.Atoi(s[0]); err != nil {
 				log.Println(err)
 				return
 			} else {
 				if vertexIndex-1 >= len(parser.Vertices) || vertexIndex-1 < 0 {
-					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d",vertexIndex-1,
+					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", vertexIndex-1,
 						len(parser.Vertices))
 					return
 				} else {
@@ -235,26 +241,31 @@ func createSmoothTriangle(v []string, parser *Parser) {
 				}
 			}
 			//fetch vertex normal if possible
-			if normalVertexIndex, err := strconv.Atoi(s[2]); err != nil{
-				log.Println(err)
-				return
-			} else {
-				if normalVertexIndex-1 >= len(parser.NormalVertices) || normalVertexIndex-1 < 0 {
-					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", normalVertexIndex-1,
-						len(parser.Vertices))
+			if isSmooth {
+				if normalVertexIndex, err := strconv.Atoi(s[2]); err != nil {
+					log.Println(err)
 					return
 				} else {
-					normalVertices = append(vertices, parser.NormalVertices[normalVertexIndex-1])
+					if normalVertexIndex-1 >= len(parser.NormalVertices) || normalVertexIndex-1 < 0 {
+						log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", normalVertexIndex-1,
+							len(parser.Vertices))
+						return
+					} else {
+						normalVertices = append(vertices, parser.NormalVertices[normalVertexIndex-1])
+					}
 				}
 			}
-
 			//texture := s[1] : Cannot use right now as textures are not implemented
-
 		}
 	}
-	tri := primitives.NewSmoothTriangle(vertices[0], vertices[1], vertices[2],
+	if isSmooth {
+		tri := primitives.NewSmoothTriangle(vertices[0], vertices[1], vertices[2],
 			normalVertices[0], normalVertices[1], normalVertices[2])
-	addToParser(parser, tri)
+		addToParser(parser, tri)
+	} else {
+		tri := primitives.NewTriangle(vertices[0], vertices[1], vertices[2])
+		addToParser(parser, tri)
+	}
 }
 
 func createPolygon(v []string, parser *Parser) {
@@ -277,18 +288,23 @@ func createSmoothPolygon(v []string, parser *Parser) {
 	vertexIndices := make([]int, 0, 0)
 	vertexNormalIndices := make([]int, 0, 0)
 
+	isSmooth := true
+
 	for _, val := range v {
 		s := strings.Split(val, "/")
-
-		if len(s) != 3{
+		if s[2] == "" {
+			//no vertex normal means polygon isn't smooth
+			isSmooth = false
+		}
+		if len(s) != 3 {
 			log.Printf("Could not parse face delimited with '/' : %s", s)
-		} else{
-			if vertexIndex, err := strconv.Atoi(s[0]); err != nil{
+		} else {
+			if vertexIndex, err := strconv.Atoi(s[0]); err != nil {
 				log.Println(err)
 				return
 			} else {
 				if vertexIndex-1 >= len(parser.Vertices) || vertexIndex-1 < 0 {
-					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d",vertexIndex-1,
+					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", vertexIndex-1,
 						len(parser.Vertices))
 					return
 				} else {
@@ -296,26 +312,34 @@ func createSmoothPolygon(v []string, parser *Parser) {
 				}
 			}
 			//fetch vertex normal if possible
-			if normalVertexIndex, err := strconv.Atoi(s[2]); err != nil{
-				log.Println(err)
-				return
-			} else {
-				if normalVertexIndex-1 >= len(parser.NormalVertices) || normalVertexIndex-1 < 0 {
-					log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", normalVertexIndex,
-						len(parser.Vertices))
+			if isSmooth {
+				if normalVertexIndex, err := strconv.Atoi(s[2]); err != nil && isSmooth {
+					log.Println(err)
 					return
 				} else {
-					vertexNormalIndices = append(vertexNormalIndices, normalVertexIndex)
+					if normalVertexIndex-1 >= len(parser.NormalVertices) || normalVertexIndex-1 < 0 {
+						log.Printf("Warning: Parsed vertex index out of bounds %d versus %d", normalVertexIndex,
+							len(parser.Vertices))
+						return
+					} else {
+						vertexNormalIndices = append(vertexNormalIndices, normalVertexIndex)
+					}
 				}
 			}
 		}
 	}
-	triangles := triangulation.SmoothFanTriangulation(vertexIndices, vertexNormalIndices, parser.Vertices, parser.NormalVertices)
-	addToParser(parser, triangles...)
+	if isSmooth {
+		triangles := triangulation.SmoothFanTriangulation(vertexIndices, vertexNormalIndices, parser.Vertices, parser.NormalVertices)
+		addToParser(parser, triangles...)
+	} else {
+		triangles := triangulation.FanTriangulation(vertexIndices, parser.Vertices)
+		addToParser(parser, triangles...)
+	}
+
 }
 
-func addToParser(parser *Parser, triangles ...primitives.Shape){
-	for i := 0; i < len(triangles); i++{
+func addToParser(parser *Parser, triangles ...primitives.Shape) {
+	for i := 0; i < len(triangles); i++ {
 		if parser.setGroup == "" {
 			parser.DefaultGroup.AddChild(triangles[i])
 
