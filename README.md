@@ -4,7 +4,9 @@
 <img src ="https://img.shields.io/github/go-mod/go-version/alexandreLamarre/Golang-Ray-Tracing-Renderer" />
 <img src = "https://img.shields.io/static/v1.svg?label=Coverage&message=~86%&color=green">
 
-A native (no external libraries) golang 3D ray tracing renderer, that implements Ray intersection via the [Phong-Reflection Model](https://en.wikipedia.org/wiki/Phong_reflection_model), Recursive Shape grouping with [AABB optimizations](https://en.wikipedia.org/wiki/Bounding_volume) and [Constructive Solid Geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), augmented with recursively defined Patterns, [Perlin/Simplex noise algorihthms](https://en.wikipedia.org/wiki/Perlin_noise) (for patterns or triangulated objects), efficient convex-hull/half-edge [Delaunay Triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) implementation and a [LindenMayer-System](https://en.wikipedia.org/wiki/L-system) fractal interface (comes with a [mandelbulb](https://en.wikipedia.org/wiki/Mandelbulb) implementation).
+A native (no external libraries) golang 3D ray tracing renderer, that implements Ray intersection via the [Phong-Reflection Model](https://en.wikipedia.org/wiki/Phong_reflection_model), Recursive Shape grouping with [AABB optimizations](https://en.wikipedia.org/wiki/Bounding_volume) and [Constructive Solid Geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), augmented with recursively defined Patterns, [Perlin/Simplex noise algorihthms](https://en.wikipedia.org/wiki/Perlin_noise) (for patterns or triangulated objects). 
+
+<!-- efficient convex-hull/half-edge [Delaunay Triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) implementation and a [LindenMayer-System](https://en.wikipedia.org/wiki/L-system) fractal interface (comes with a [mandelbulb](https://en.wikipedia.org/wiki/Mandelbulb) implementation). -->
 
 The native renderer runs on CPU cycles, so high resolution scenes may take some time to render (5-15mins). Pre-rendering optimizations on .obj files relies on faces that are ordered by position: i.e. that the closest face to the previous face comes directly after it in the .obj definition.
 
@@ -12,20 +14,28 @@ It renders and writes to .ppm files which can be opened natively on MacOS with p
 
 **Examples rendered using this code**:
 
-<details>
-  <summary> Basic refraction/ reflection (1400 x 1000)</summary>
-  <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/basic%20reflect%20refract.png"/>
-</details>
-<details>
-  <summary> Complex(ish) refraction/reflection (1400 x 1000) </summary>
-   <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/complex%20reflect%20refract.png"/>
-</details>
 
-<details>
-  <summary> Parsed high resolution teapot.obj (1400 x 1000)</summary> 
+Basic refraction/ reflection (1400 x 1000)
+
+
+  <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/basic%20reflect%20refract.png"/>
+
+
+ Complex(ish) refraction/reflection (1400 x 1000):
+	
+	
+   <img src = "https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/complex%20reflect%20refract.png"/>
+
+
+
+ Parsed high resolution teapot.obj (1400 x 1000)
+ 
+ 
   <img src="https://github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer/blob/main/examplesnative/teapot.png"/>
  <span style="background-color:grey;">
-   
+	
+ <details>  
+	<summary> Runtime log & and details </summary>
    
     go run main.go -p -parsefile=./pkg/parser/highResTeapot.obj -r
     2021/03/03 13:59:50 ==================== Golang ray tracer V 0.1 ====================
