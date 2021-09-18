@@ -3,6 +3,8 @@
 [![GoReportCard example](https://goreportcard.com/badge/github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer)](https://goreportcard.com/report/github.com/alexandreLamarre/Golang-Ray-Tracing-Renderer)
 <img src ="https://img.shields.io/github/go-mod/go-version/alexandreLamarre/Golang-Ray-Tracing-Renderer" />
 <img src = "https://img.shields.io/static/v1.svg?label=Coverage&message=~86%&color=green">
+<img src = "https://app.travis-ci.com/alexandreLamarre/Golang-Ray-Tracing-Renderer.svg?branch=main" />
+
 
 A native (no external libraries) golang 3D ray tracing renderer, that implements Ray intersection via the [Phong-Reflection Model](https://en.wikipedia.org/wiki/Phong_reflection_model), Recursive Shape grouping with [AABB optimizations](https://en.wikipedia.org/wiki/Bounding_volume) and [Constructive Solid Geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), augmented with recursively defined Patterns, [Perlin/Simplex noise algorihthms](https://en.wikipedia.org/wiki/Perlin_noise) (for patterns or triangulated objects). 
 
