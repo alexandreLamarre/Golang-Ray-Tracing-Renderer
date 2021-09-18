@@ -1,0 +1,9 @@
+sudo: false
+language: go
+
+branches:
+  only:
+    - main
+
+script:
+  - go test ./...
